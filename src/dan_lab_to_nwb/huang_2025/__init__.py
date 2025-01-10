@@ -1,2 +1,2 @@
-from .behaviorinterface import Huang2025BehaviorInterface
-from .nwbconverter import Huang2025NWBConverter
+from .huang_2025_behaviorinterface import Huang2025BehaviorInterface
+from .huang_2025_nwbconverter import Huang2025NWBConverter
