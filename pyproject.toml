@@ -17,7 +17,9 @@ classifiers = [
 dependencies = [
   "neuroconv",
   "nwbinspector",
-  "pre-commit"
+  "pre-commit",
+  "pymatreader",
+  "ipykernel",
 ]
 
 [project.urls]
@@ -70,7 +72,6 @@ ignore-words-list = 'assertin'
 
 [tool.ruff.lint]
 select = [
-    "F401",  # Unused import
     "I",  # All isort rules
 ]
 fixable = ["ALL"]
@@ -79,4 +80,3 @@ fixable = ["ALL"]
 [tool.ruff.lint.isort]
 relative-imports-order = "closest-to-furthest"
 known-first-party = ["neuroconv"]
-
