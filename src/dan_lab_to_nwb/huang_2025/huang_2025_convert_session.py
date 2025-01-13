@@ -60,8 +60,8 @@ if __name__ == "__main__":
     stub_test = False
 
     # Example Session
-    info_file_path = data_dir_path / "M301-241108-072001" / "Info.mat"
-    tdt_folder_path = data_dir_path / "M301-241108-072001"
+    info_file_path = data_dir_path / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001" / "M301-241108-072001" / "Info.mat"
+    tdt_folder_path = data_dir_path / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001" / "M301-241108-072001"
     session_to_nwb(
         info_file_path=info_file_path,
         tdt_folder_path=tdt_folder_path,
