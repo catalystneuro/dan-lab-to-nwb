@@ -9,3 +9,7 @@
 ## Fiber Photometry
 - TODO: Add stub option
 - What are all the different store_ids? Opto? Commanded Voltage? 465B vs 465C?
+- St1_ = Stim 1 = optogenetic stimulation?
+- Or Pu1_ = Pulse Generator 1 = optogenetic stimulation?
+- Or LasT = optogenetic stimulation?
+- Cam1 = Temporal alignment times for camera???
