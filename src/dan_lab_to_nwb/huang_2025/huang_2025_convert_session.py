@@ -60,9 +60,10 @@ if __name__ == "__main__":
     stub_test = False
 
     # Example Session
-    info_file_path = data_dir_path / "M301-241108-072001" / "Info.mat"
+    info_file_path = data_dir_path / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001" / "M301-241108-072001" / "Info.mat"
     video_file_path = (
         data_dir_path
+        / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001"
         / "M301-241108-072001"
         / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001_M301-241108-072001_Cam1.avi"
     )
