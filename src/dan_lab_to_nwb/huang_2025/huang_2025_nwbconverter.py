@@ -1,6 +1,7 @@
 """Primary NWBConverter class for this dataset."""
 from dan_lab_to_nwb.huang_2025 import Huang2025BehaviorInterface
 from neuroconv import NWBConverter
+from neuroconv.datainterfaces import TDTFiberPhotometryInterface
 
 
 class Huang2025NWBConverter(NWBConverter):
@@ -8,4 +9,5 @@ class Huang2025NWBConverter(NWBConverter):
 
     data_interface_classes = dict(
         Behavior=Huang2025BehaviorInterface,
+        FiberPhotometry=TDTFiberPhotometryInterface,
     )
