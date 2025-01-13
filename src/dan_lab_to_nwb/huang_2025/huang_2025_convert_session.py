@@ -10,8 +10,14 @@ from dan_lab_to_nwb.huang_2025 import Huang2025NWBConverter
 from neuroconv.utils import dict_deep_update, load_dict_from_file
 
 
-def session_to_nwb(info_file_path: FilePath, output_dir_path: DirectoryPath, stub_test: bool = False):
+def session_to_nwb(
+    info_file_path: FilePath,
+    tdt_folder_path: DirectoryPath,
+    output_dir_path: DirectoryPath,
+    stub_test: bool = False,
+):
     info_file_path = Path(info_file_path)
+    tdt_folder_path = Path(tdt_folder_path)
     output_dir_path = Path(output_dir_path)
     if stub_test:
         output_dir_path = output_dir_path / "nwb_stub"
@@ -19,6 +25,10 @@ def session_to_nwb(info_file_path: FilePath, output_dir_path: DirectoryPath, stu
 
     source_data = dict()
     conversion_options = dict()
+
+    # Add TDT LFP
+    source_data["Recording"] = dict(folder_path=tdt_folder_path, gain=1.0, stream_id="4")
+    conversion_options["Recording"] = dict()
 
     converter = Huang2025NWBConverter(source_data=source_data)
     metadata = converter.get_metadata()
@@ -50,9 +60,11 @@ if __name__ == "__main__":
     stub_test = False
 
     # Example Session
-    info_file_path = data_dir_path / "M301-241108-072001" / "Info.mat"
+    info_file_path = data_dir_path / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001" / "M301-241108-072001" / "Info.mat"
+    tdt_folder_path = data_dir_path / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001"
     session_to_nwb(
         info_file_path=info_file_path,
+        tdt_folder_path=tdt_folder_path,
         output_dir_path=output_dir_path,
         stub_test=stub_test,
     )
