@@ -18,3 +18,9 @@ Subject:
   age: P0D/  # in ISO 8601, such as "P1W2D"
   sex: U  # One of M, F, U, or O
   date_of_birth: 2014-06-22 00:00:00-04:00  # Example
+
+Behavior:
+  VideoCamera1:
+    - name: VideoCamera1
+      description: Video recorded by camera 1.
+      unit: Frames

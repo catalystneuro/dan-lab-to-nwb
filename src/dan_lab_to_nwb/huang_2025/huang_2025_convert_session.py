@@ -10,8 +10,11 @@ from dan_lab_to_nwb.huang_2025 import Huang2025NWBConverter
 from neuroconv.utils import dict_deep_update, load_dict_from_file
 
 
-def session_to_nwb(info_file_path: FilePath, output_dir_path: DirectoryPath, stub_test: bool = False):
+def session_to_nwb(
+    info_file_path: FilePath, video_file_path: FilePath, output_dir_path: DirectoryPath, stub_test: bool = False
+):
     info_file_path = Path(info_file_path)
+    video_file_path = Path(video_file_path)
     output_dir_path = Path(output_dir_path)
     if stub_test:
         output_dir_path = output_dir_path / "nwb_stub"
@@ -19,6 +22,10 @@ def session_to_nwb(info_file_path: FilePath, output_dir_path: DirectoryPath, stu
 
     source_data = dict()
     conversion_options = dict()
+
+    # Add Video
+    source_data["Video"] = dict(file_paths=[video_file_path], metadata_key_name="VideoCamera1")
+    conversion_options["Video"] = dict()
 
     converter = Huang2025NWBConverter(source_data=source_data)
     metadata = converter.get_metadata()
@@ -38,6 +45,9 @@ def session_to_nwb(info_file_path: FilePath, output_dir_path: DirectoryPath, stu
     metadata["Subject"]["subject_id"] = subject_id
     metadata["NWBFile"]["session_start_time"] = session_start_time
 
+    # Overwrite video metadata
+    metadata["Behavior"]["VideoCamera1"] = editable_metadata["Behavior"]["VideoCamera1"]
+
     # Run conversion
     converter.run_conversion(metadata=metadata, nwbfile_path=nwbfile_path, conversion_options=conversion_options)
 
@@ -51,8 +61,14 @@ if __name__ == "__main__":
 
     # Example Session
     info_file_path = data_dir_path / "M301-241108-072001" / "Info.mat"
+    video_file_path = (
+        data_dir_path
+        / "M301-241108-072001"
+        / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001_M301-241108-072001_Cam1.avi"
+    )
     session_to_nwb(
         info_file_path=info_file_path,
+        video_file_path=video_file_path,
         output_dir_path=output_dir_path,
         stub_test=stub_test,
     )

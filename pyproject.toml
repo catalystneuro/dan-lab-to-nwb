@@ -15,7 +15,7 @@ classifiers = [
 ]
 
 dependencies = [
-  "neuroconv",
+  "neuroconv[video]",
   "nwbinspector",
   "pre-commit",
   "pymatreader",
