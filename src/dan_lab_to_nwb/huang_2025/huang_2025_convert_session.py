@@ -12,11 +12,13 @@ from neuroconv.utils import dict_deep_update, load_dict_from_file
 
 def session_to_nwb(
     info_file_path: FilePath,
+    video_file_path: FilePath,
     tdt_folder_path: DirectoryPath,
     output_dir_path: DirectoryPath,
     stub_test: bool = False,
 ):
     info_file_path = Path(info_file_path)
+    video_file_path = Path(video_file_path)
     tdt_folder_path = Path(tdt_folder_path)
     output_dir_path = Path(output_dir_path)
     if stub_test:
@@ -29,6 +31,14 @@ def session_to_nwb(
     # Add TDT LFP
     source_data["Recording"] = dict(folder_path=tdt_folder_path, gain=1.0, stream_id="4")
     conversion_options["Recording"] = dict()
+
+    # Add Fiber Photometry
+    source_data["FiberPhotometry"] = dict(folder_path=tdt_folder_path)
+    conversion_options["FiberPhotometry"] = dict()
+
+    # Add Video
+    source_data["Video"] = dict(file_paths=[video_file_path], metadata_key_name="VideoCamera1")
+    conversion_options["Video"] = dict()
 
     converter = Huang2025NWBConverter(source_data=source_data)
     metadata = converter.get_metadata()
@@ -48,6 +58,9 @@ def session_to_nwb(
     metadata["Subject"]["subject_id"] = subject_id
     metadata["NWBFile"]["session_start_time"] = session_start_time
 
+    # Overwrite video metadata
+    metadata["Behavior"]["VideoCamera1"] = editable_metadata["Behavior"]["VideoCamera1"]
+
     # Run conversion
     converter.run_conversion(metadata=metadata, nwbfile_path=nwbfile_path, conversion_options=conversion_options)
 
@@ -61,9 +74,16 @@ if __name__ == "__main__":
 
     # Example Session
     info_file_path = data_dir_path / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001" / "M301-241108-072001" / "Info.mat"
-    tdt_folder_path = data_dir_path / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001"
+    video_file_path = (
+        data_dir_path
+        / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001"
+        / "M301-241108-072001"
+        / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001_M301-241108-072001_Cam1.avi"
+    )
+    tdt_folder_path = data_dir_path / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001" / "M301-241108-072001"
     session_to_nwb(
         info_file_path=info_file_path,
+        video_file_path=video_file_path,
         tdt_folder_path=tdt_folder_path,
         output_dir_path=output_dir_path,
         stub_test=stub_test,

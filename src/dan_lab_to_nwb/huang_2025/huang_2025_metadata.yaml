@@ -18,3 +18,107 @@ Subject:
   age: P0D/  # in ISO 8601, such as "P1W2D"
   sex: U  # One of M, F, U, or O
   date_of_birth: 2014-06-22 00:00:00-04:00  # Example
+
+Ophys:
+  FiberPhotometry:
+    OpticalFibers:
+    - name: optical_fiber
+      description: <description of the optical fiber>
+      manufacturer: <manufacturer of the optical fiber>
+      model: <model of the optical fiber>
+      numerical_aperture: -1.0
+      core_diameter_in_um: -1.0
+    ExcitationSources:
+    - name: excitation_source_calcium_signal
+      description: <description of the excitation source for the calcium signal (465nm)>
+      manufacturer: <manufacturer of the excitation source>
+      model: <model of the excitation source>
+      illumination_type: LED
+      excitation_wavelength_in_nm: 465.0
+    - name: excitation_source_isosbestic_control
+      description: <description of the excitation source for the isosbestic control (405nm)>
+      manufacturer: <manufacturer of the excitation source>
+      model: <model of the excitation source>
+      illumination_type: LED
+      excitation_wavelength_in_nm: 405.0
+    Photodetectors:
+    - name: photodetector
+      description: <description of the photodetector>
+      manufacturer: <manufacturer of the photodetector>
+      model: <model of the photodetector>
+      detector_type: photodiode
+      detected_wavelength_in_nm: -1.0
+      gain: -1.0
+    BandOpticalFilters:
+    - name: emission_filter
+      description: <description of emission filter>
+      manufacturer: <manufacturer of the emission filter>
+      model: <model of the emission filter>
+      center_wavelength_in_nm: -1.0
+      bandwidth_in_nm: -1.0
+      filter_type: Bandpass
+    - name: excitation_filter
+      description: <description excitation filter>
+      manufacturer: <manufacturer of the excitation filter>
+      model: <model of the excitation filter>
+      center_wavelength_in_nm: -1.0
+      bandwidth_in_nm: -1.0
+      filter_type: Bandpass
+    DichroicMirrors:
+    - name: dichroic_mirror
+      description: <description of the dichroic mirror>
+      manufacturer: <manufacturer of the dichroic mirror>
+      model: <model of the dichroic mirror>
+    Indicators:
+    - name: indicator
+      description: <description of the indicator>
+      manufacturer: <manufacturer of the indicator>
+      label: <label of the indicator>
+      injection_location: <location of the indicator injection>
+      injection_coordinates_in_mm: [-1.0, -1.0, -1.0]
+    FiberPhotometryTable:
+      name: fiber_photometry_table
+      description: <description of the fiber photometry setup as a whole>
+      rows:
+      - name: 0
+        location: <fiber location>
+        coordinates: [-1.0, -1.0, -1.0]
+        indicator: indicator
+        optical_fiber: optical_fiber
+        excitation_source: excitation_source_calcium_signal
+        photodetector: photodetector
+        excitation_filter: excitation_filter
+        emission_filter: emission_filter
+        dichroic_mirror: dichroic_mirror
+      - name: 1
+        location: <fiber location>
+        coordinates: [-1.0, -1.0, -1.0]
+        indicator: indicator
+        optical_fiber: optical_fiber
+        excitation_source: excitation_source_isosbestic_control
+        photodetector: photodetector
+        excitation_filter: excitation_filter
+        emission_filter: emission_filter
+        dichroic_mirror: dichroic_mirror
+    FiberPhotometryResponseSeries:
+    - name: calcium_signal
+      description: The fluorescence from the calcium signal.
+      stream_name: _465B
+      stream_indices: null
+      unit: a.u.
+      fiber_photometry_table_region: [0]
+      fiber_photometry_table_region_description: The region of the FiberPhotometryTable corresponding to the calcium signal.
+    - name: isosbestic_control
+      description: The fluorescence from the isosbestic control.
+      stream_name: _405B
+      stream_indices: null
+      unit: a.u.
+      fiber_photometry_table_region: [1]
+      fiber_photometry_table_region_description: The region of the FiberPhotometryTable corresponding to the isosbestic control.
+
+Behavior:
+  VideoCamera1:
+    - name: VideoCamera1
+      description: Video recorded by camera 1.
+      unit: Frames
+
