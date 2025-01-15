@@ -5,6 +5,14 @@
 - Most of the content in Notes.txt and StoreListing.txt appear to be replicated in Info.mat --> ignore in favor of the .mat file
 - What is Box1-M301sncCalibrationData.mat?
 
+## Fiber Photometry
+- TODO: Add stub option
+- What are all the different store_ids? Opto? Commanded Voltage? 465B vs 465C?
+- St1_ = Stim 1 = optogenetic stimulation?
+- Or Pu1_ = Pulse Generator 1 = optogenetic stimulation?
+- Or LasT = optogenetic stimulation?
+- Cam1 = Temporal alignment times for camera???
 
 ## Video
 - TODO: Update VideoInterface on neuroconv to make it easier to update the descriptions.
+

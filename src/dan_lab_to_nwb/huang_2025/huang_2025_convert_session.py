@@ -11,10 +11,15 @@ from neuroconv.utils import dict_deep_update, load_dict_from_file
 
 
 def session_to_nwb(
-    info_file_path: FilePath, video_file_path: FilePath, output_dir_path: DirectoryPath, stub_test: bool = False
+    info_file_path: FilePath,
+    video_file_path: FilePath,
+    tdt_folder_path: DirectoryPath,
+    output_dir_path: DirectoryPath,
+    stub_test: bool = False,
 ):
     info_file_path = Path(info_file_path)
     video_file_path = Path(video_file_path)
+    tdt_folder_path = Path(tdt_folder_path)
     output_dir_path = Path(output_dir_path)
     if stub_test:
         output_dir_path = output_dir_path / "nwb_stub"
@@ -22,6 +27,10 @@ def session_to_nwb(
 
     source_data = dict()
     conversion_options = dict()
+
+    # Add Fiber Photometry
+    source_data["FiberPhotometry"] = dict(folder_path=tdt_folder_path)
+    conversion_options["FiberPhotometry"] = dict()
 
     # Add Video
     source_data["Video"] = dict(file_paths=[video_file_path], metadata_key_name="VideoCamera1")
@@ -67,9 +76,11 @@ if __name__ == "__main__":
         / "M301-241108-072001"
         / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001_M301-241108-072001_Cam1.avi"
     )
+    tdt_folder_path = data_dir_path / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001" / "M301-241108-072001"
     session_to_nwb(
         info_file_path=info_file_path,
         video_file_path=video_file_path,
+        tdt_folder_path=tdt_folder_path,
         output_dir_path=output_dir_path,
         stub_test=stub_test,
     )
