@@ -1,5 +1,6 @@
 """Primary script to run to convert an entire session for of data using the NWBConverter."""
 import datetime
+import shutil
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -13,13 +14,15 @@ from neuroconv.utils import dict_deep_update, load_dict_from_file
 def session_to_nwb(
     info_file_path: FilePath,
     video_file_path: FilePath,
-    tdt_folder_path: DirectoryPath,
+    tdt_fp_folder_path: DirectoryPath,
+    tdt_ephys_folder_path: DirectoryPath,
     output_dir_path: DirectoryPath,
     stub_test: bool = False,
 ):
     info_file_path = Path(info_file_path)
     video_file_path = Path(video_file_path)
-    tdt_folder_path = Path(tdt_folder_path)
+    tdt_fp_folder_path = Path(tdt_fp_folder_path)
+    tdt_ephys_folder_path = Path(tdt_ephys_folder_path)
     output_dir_path = Path(output_dir_path)
     if stub_test:
         output_dir_path = output_dir_path / "nwb_stub"
@@ -28,8 +31,12 @@ def session_to_nwb(
     source_data = dict()
     conversion_options = dict()
 
+    # Add TDT LFP
+    source_data["Recording"] = dict(folder_path=tdt_ephys_folder_path, gain=1.0, stream_id="4")
+    conversion_options["Recording"] = dict()
+
     # Add Fiber Photometry
-    source_data["FiberPhotometry"] = dict(folder_path=tdt_folder_path)
+    source_data["FiberPhotometry"] = dict(folder_path=tdt_fp_folder_path)
     conversion_options["FiberPhotometry"] = dict()
 
     # Add Video
@@ -61,12 +68,14 @@ def session_to_nwb(
     converter.run_conversion(metadata=metadata, nwbfile_path=nwbfile_path, conversion_options=conversion_options)
 
 
-if __name__ == "__main__":
-
+def main():
     # Parameters for conversion
     data_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/Test - TDT data")
     output_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/conversion_nwb")
     stub_test = False
+
+    if output_dir_path.exists():
+        shutil.rmtree(output_dir_path)
 
     # Example Session
     info_file_path = data_dir_path / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001" / "M301-241108-072001" / "Info.mat"
@@ -76,11 +85,17 @@ if __name__ == "__main__":
         / "M301-241108-072001"
         / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001_M301-241108-072001_Cam1.avi"
     )
-    tdt_folder_path = data_dir_path / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001" / "M301-241108-072001"
+    tdt_fp_folder_path = data_dir_path / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001" / "M301-241108-072001"
+    tdt_ephys_folder_path = data_dir_path / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001"
     session_to_nwb(
         info_file_path=info_file_path,
         video_file_path=video_file_path,
-        tdt_folder_path=tdt_folder_path,
+        tdt_fp_folder_path=tdt_fp_folder_path,
+        tdt_ephys_folder_path=tdt_ephys_folder_path,
         output_dir_path=output_dir_path,
         stub_test=stub_test,
     )
+
+
+if __name__ == "__main__":
+    main()
