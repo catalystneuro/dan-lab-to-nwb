@@ -115,3 +115,10 @@ Ophys:
       unit: a.u.
       fiber_photometry_table_region: [1]
       fiber_photometry_table_region_description: The region of the FiberPhotometryTable corresponding to the isosbestic control.
+
+Behavior:
+  VideoCamera1:
+    - name: VideoCamera1
+      description: Video recorded by camera 1.
+      unit: Frames
+
