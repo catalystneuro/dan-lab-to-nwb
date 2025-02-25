@@ -24,3 +24,9 @@
 ## Video
 - TODO: Update VideoInterface on neuroconv to make it easier to update the descriptions.
 
+## Behavior
+- There's behavioral video, but no pose estimation or processed behavioral data. Likely that the lab does this analysis
+    but hasn't shared. At the very least there should be sleep and wake times.
+
+## Histology
+- Noted in the kickoff meeting, but not shared in the data.
