@@ -41,6 +41,10 @@ def session_to_nwb(
     source_data["Video"] = dict(file_paths=[video_file_path], metadata_key_name="VideoCamera1")
     conversion_options["Video"] = dict(stub_test=stub_test)
 
+    # Add Optogenetics
+    source_data["Optogenetics"] = dict(folder_path=tdt_fp_folder_path)
+    conversion_options["Optogenetics"] = dict()
+
     converter = Huang2025NWBConverter(source_data=source_data)
     metadata = converter.get_metadata()
 
