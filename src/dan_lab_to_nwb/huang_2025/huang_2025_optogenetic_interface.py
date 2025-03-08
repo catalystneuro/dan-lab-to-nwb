@@ -33,6 +33,7 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
             offset_times = tdt_photometry.epocs[epoc_name].offset
             power = series_metadata["power"]
 
+            # Get timestamps and data from onset and offset times
             timestamps, data = [], []
             for onset_time, offset_time in zip(onset_times, offset_times):
                 timestamps.append(onset_time)
@@ -41,7 +42,7 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
                 data.append(0)
             timestamps, data = np.array(timestamps, dtype=np.float64), np.array(data, dtype=np.float64)
 
-            # Add Device
+            # Extract device and site metadata
             site_name = series_metadata["site_name"]
             site_metadata = next(
                 site_meta for site_meta in opto_metadata["OptogeneticStimulusSite"] if site_meta["name"] == site_name
@@ -50,11 +51,15 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
             device_metadata = next(
                 device_meta for device_meta in opto_metadata["Device"] if device_meta["name"] == device_name
             )
+
+            # Add Device
             if device_name in nwbfile.devices:
                 device = nwbfile.devices[device_name]
             else:
                 device = Device(**device_metadata)
                 nwbfile.add_device(device)
+
+            # Add OptogeneticStimulusSite
             if site_name in nwbfile.ogen_sites:
                 site = nwbfile.ogen_sites[site_name]
             else:
@@ -66,6 +71,8 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
                     location=site_metadata["location"],
                 )
                 nwbfile.add_ogen_site(site)
+
+            # Add OptogeneticSeries
             series = OptogeneticSeries(
                 name=series_name,
                 timestamps=timestamps,
