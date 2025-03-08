@@ -21,43 +21,16 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
         super().__init__(folder_path=folder_path)
 
     def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict):
-        # Read Data
         folder_path = self.source_data["folder_path"]
         with open(os.devnull, "w") as f, redirect_stdout(f):
             tdt_photometry = tdt.read_block(folder_path, evtype=["epocs"])
-        onset_times_vta = []
-        onset_times_pfc = []
-        offset_times_vta = []
-        offset_times_pfc = []
-        for onset_time, offset_time in zip(tdt_photometry.epocs["St1_"].onset, tdt_photometry.epocs["St1_"].offset):
-            onset_times_vta.append(onset_time)
-            offset_times_vta.append(offset_time)
-        for onset_time, offset_time in zip(tdt_photometry.epocs["Wi3_"].onset, tdt_photometry.epocs["Wi3_"].offset):
-            onset_times_vta.append(onset_time)
-            offset_times_vta.append(offset_time)
-        sorting_index = np.argsort(onset_times_vta)
-        onset_times_vta = np.array(onset_times_vta)[sorting_index]
-        offset_times_vta = np.array(offset_times_vta)[sorting_index]
-        for onset_time, offset_time in zip(tdt_photometry.epocs["St2_"].onset, tdt_photometry.epocs["St2_"].offset):
-            onset_times_pfc.append(onset_time)
-            offset_times_pfc.append(offset_time)
-        sorting_index = np.argsort(onset_times_pfc)
-        onset_times_pfc = np.array(onset_times_pfc)[sorting_index]
-        offset_times_pfc = np.array(offset_times_pfc)[sorting_index]
-        series_name_to_onset_times = {
-            "optogenetic_seriesVTA": onset_times_vta,
-            "optogenetic_seriesPFC": onset_times_pfc,
-        }
-        series_name_to_offset_times = {
-            "optogenetic_seriesVTA": offset_times_vta,
-            "optogenetic_seriesPFC": offset_times_pfc,
-        }
 
         opto_metadata = metadata["Optogenetics"]
         for series_metadata in opto_metadata["OptogeneticSeries"]:
             series_name = series_metadata["name"]
-            onset_times = series_name_to_onset_times[series_name]
-            offset_times = series_name_to_offset_times[series_name]
+            epoc_name = series_metadata["epoc_name"]
+            onset_times = tdt_photometry.epocs[epoc_name].onset
+            offset_times = tdt_photometry.epocs[epoc_name].offset
             power = series_metadata["power"]
 
             timestamps, data = [], []
