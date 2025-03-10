@@ -79,7 +79,7 @@ def main():
     if output_dir_path.exists():
         shutil.rmtree(output_dir_path)
 
-    # Example Session
+    # Example Session with "pTra_con" type optogenetics
     info_file_path = data_dir_path / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001" / "M301-241108-072001" / "Info.mat"
     video_file_path = (
         data_dir_path
@@ -89,6 +89,25 @@ def main():
     )
     tdt_fp_folder_path = data_dir_path / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001" / "M301-241108-072001"
     tdt_ephys_folder_path = data_dir_path / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001"
+    session_to_nwb(
+        info_file_path=info_file_path,
+        video_file_path=video_file_path,
+        tdt_fp_folder_path=tdt_fp_folder_path,
+        tdt_ephys_folder_path=tdt_ephys_folder_path,
+        output_dir_path=output_dir_path,
+        stub_test=stub_test,
+    )
+
+    # Example Session with "opto" type optogenetics
+    info_file_path = data_dir_path / "Lindsay_SBO_opto1-Evoke12_2in1-240914-155559" / "M301-240917-163001" / "Info.mat"
+    video_file_path = (
+        data_dir_path
+        / "Lindsay_SBO_opto1-Evoke12_2in1-240914-155559"
+        / "M301-240917-163001"
+        / "Lindsay_SBO_opto1-Evoke12_2in1-240914-155559_M301-240917-163001_Cam1.avi"
+    )
+    tdt_fp_folder_path = data_dir_path / "Lindsay_SBO_opto1-Evoke12_2in1-240914-155559" / "M301-240917-163001"
+    tdt_ephys_folder_path = data_dir_path / "Lindsay_SBO_opto1-Evoke12_2in1-240914-155559"
     session_to_nwb(
         info_file_path=info_file_path,
         video_file_path=video_file_path,

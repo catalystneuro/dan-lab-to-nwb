@@ -1,6 +1,7 @@
 """Primary class for converting optogenetic stimulation."""
 import os
 from contextlib import redirect_stdout
+from pathlib import Path
 
 import numpy as np
 import tdt
@@ -20,15 +21,36 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
     def __init__(self, folder_path: DirectoryPath):
         super().__init__(folder_path=folder_path)
 
+    def get_epoc_name(self, series_name: str):
+        folder_path = Path(self.source_data["folder_path"])
+        file_pattern_to_series_name_to_epoc_name = {
+            "pTra_con": {
+                "optogenetic_series_VTA_test_pulse": "St1_",
+                "optogenetic_series_PFC_test_pulse": "St2_",
+                "optogenetic_series_VTA_intense_stimulation": "Wi3_",
+            },
+            "opto1-Evoke12_2in1": {
+                "optogenetic_series_VTA_test_pulse": "St1_",
+                "optogenetic_series_PFC_test_pulse": "St2_",
+                "optogenetic_series_VTA_intense_stimulation": "LasT",
+            },
+        }
+        for file_pattern, series_name_to_epoc_name in file_pattern_to_series_name_to_epoc_name.items():
+            if file_pattern in folder_path.parent.name:
+                return series_name_to_epoc_name[series_name]
+        raise ValueError(
+            f"No matching file pattern found in {folder_path.parent}. Expected one of: {list(file_pattern_to_series_name_to_epoc_name.keys())}"
+        )
+
     def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict):
-        folder_path = self.source_data["folder_path"]
+        folder_path = Path(self.source_data["folder_path"])
         with open(os.devnull, "w") as f, redirect_stdout(f):
             tdt_photometry = tdt.read_block(folder_path, evtype=["epocs"])
 
         opto_metadata = metadata["Optogenetics"]
         for series_metadata in opto_metadata["OptogeneticSeries"]:
             series_name = series_metadata["name"]
-            epoc_name = series_metadata["epoc_name"]
+            epoc_name = self.get_epoc_name(series_name=series_name)
             onset_times = tdt_photometry.epocs[epoc_name].onset
             offset_times = tdt_photometry.epocs[epoc_name].offset
             power = series_metadata["power"]
