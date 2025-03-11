@@ -24,8 +24,6 @@ def session_to_nwb(
     tdt_fp_folder_path = Path(tdt_fp_folder_path)
     tdt_ephys_folder_path = Path(tdt_ephys_folder_path)
     output_dir_path = Path(output_dir_path)
-    if stub_test:
-        output_dir_path = output_dir_path / "nwb_stub"
     output_dir_path.mkdir(parents=True, exist_ok=True)
 
     source_data = dict()
@@ -33,15 +31,19 @@ def session_to_nwb(
 
     # Add TDT LFP
     source_data["Recording"] = dict(folder_path=tdt_ephys_folder_path, gain=1.0, stream_id="4")
-    conversion_options["Recording"] = dict()
+    conversion_options["Recording"] = dict(stub_test=stub_test)
 
     # Add Fiber Photometry
     source_data["FiberPhotometry"] = dict(folder_path=tdt_fp_folder_path)
-    conversion_options["FiberPhotometry"] = dict()
+    conversion_options["FiberPhotometry"] = dict(stub_test=stub_test)
 
     # Add Video
     source_data["Video"] = dict(file_paths=[video_file_path], metadata_key_name="VideoCamera1")
-    conversion_options["Video"] = dict()
+    conversion_options["Video"] = dict(stub_test=stub_test)
+
+    # Add Optogenetics
+    source_data["Optogenetics"] = dict(folder_path=tdt_fp_folder_path)
+    conversion_options["Optogenetics"] = dict()
 
     converter = Huang2025NWBConverter(source_data=source_data)
     metadata = converter.get_metadata()
@@ -72,12 +74,12 @@ def main():
     # Parameters for conversion
     data_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/Test - TDT data")
     output_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/conversion_nwb")
-    stub_test = False
+    stub_test = True
 
     if output_dir_path.exists():
         shutil.rmtree(output_dir_path)
 
-    # Example Session
+    # Example Session with "pTra_con" type optogenetics
     info_file_path = data_dir_path / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001" / "M301-241108-072001" / "Info.mat"
     video_file_path = (
         data_dir_path
@@ -87,6 +89,25 @@ def main():
     )
     tdt_fp_folder_path = data_dir_path / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001" / "M301-241108-072001"
     tdt_ephys_folder_path = data_dir_path / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001"
+    session_to_nwb(
+        info_file_path=info_file_path,
+        video_file_path=video_file_path,
+        tdt_fp_folder_path=tdt_fp_folder_path,
+        tdt_ephys_folder_path=tdt_ephys_folder_path,
+        output_dir_path=output_dir_path,
+        stub_test=stub_test,
+    )
+
+    # Example Session with "opto" type optogenetics
+    info_file_path = data_dir_path / "Lindsay_SBO_opto1-Evoke12_2in1-240914-155559" / "M301-240917-163001" / "Info.mat"
+    video_file_path = (
+        data_dir_path
+        / "Lindsay_SBO_opto1-Evoke12_2in1-240914-155559"
+        / "M301-240917-163001"
+        / "Lindsay_SBO_opto1-Evoke12_2in1-240914-155559_M301-240917-163001_Cam1.avi"
+    )
+    tdt_fp_folder_path = data_dir_path / "Lindsay_SBO_opto1-Evoke12_2in1-240914-155559" / "M301-240917-163001"
+    tdt_ephys_folder_path = data_dir_path / "Lindsay_SBO_opto1-Evoke12_2in1-240914-155559"
     session_to_nwb(
         info_file_path=info_file_path,
         video_file_path=video_file_path,

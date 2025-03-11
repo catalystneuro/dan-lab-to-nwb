@@ -122,3 +122,32 @@ Behavior:
       description: Video recorded by camera 1.
       unit: Frames
 
+Optogenetics:
+  Device:
+    - name: optogenetic_stimulation_laser
+      description: <description of the optogenetic stimulation laser>
+      manufacturer: <manufacturer of the optogenetic stimulation laser>
+  OptogeneticStimulusSite:
+    - name: optogenetic_stimulus_siteVTA
+      device_name: optogenetic_stimulation_laser
+      description: <description of the optogenetic stimulus site>
+      location: Ventral Tegmental Area (VTA)
+      excitation_lambda: -1.0 # TODO: add excitation wavelength
+    - name: optogenetic_stimulus_sitePFC
+      device_name: optogenetic_stimulation_laser
+      description: <description of the optogenetic stimulus site>
+      location: Prefrontal Cortex (PFC)
+      excitation_lambda: -1.0 # TODO: add excitation wavelength
+  OptogeneticSeries:
+    - name: optogenetic_series_VTA_test_pulse
+      description: <description of the optogenetic series>
+      site_name: optogenetic_stimulus_siteVTA
+      power: 0.020 # 20 mW
+    - name: optogenetic_series_VTA_intense_stimulation
+      description: <description of the optogenetic series>
+      site_name: optogenetic_stimulus_siteVTA
+      power: 0.020 # 20 mW
+    - name: optogenetic_series_PFC_test_pulse
+      description: <description of the optogenetic series>
+      site_name: optogenetic_stimulus_sitePFC
+      power: 0.020 # 20 mW

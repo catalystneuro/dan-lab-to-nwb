@@ -1,2 +1,4 @@
-from .huang_2025_behaviorinterface import Huang2025BehaviorInterface
-from .huang_2025_nwbconverter import Huang2025NWBConverter
+from .huang_2025_behavior_interface import Huang2025BehaviorInterface
+from .huang_2025_optogenetic_interface import Huang2025OptogeneticInterface
+
+from .huang_2025_nwbconverter import Huang2025NWBConverter  # isort: skip
