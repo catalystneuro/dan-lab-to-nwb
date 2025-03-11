@@ -40,7 +40,7 @@ def session_to_nwb(
     conversion_options["FiberPhotometry"] = dict()
 
     # Add Video
-    source_data["Video"] = dict(file_paths=[video_file_path], metadata_key_name="VideoCamera1")
+    source_data["Video"] = dict(file_paths=[video_file_path], video_name="VideoCamera1")
     conversion_options["Video"] = dict()
 
     converter = Huang2025NWBConverter(source_data=source_data)
@@ -62,7 +62,7 @@ def session_to_nwb(
     metadata["NWBFile"]["session_start_time"] = session_start_time
 
     # Overwrite video metadata
-    metadata["Behavior"]["VideoCamera1"] = editable_metadata["Behavior"]["VideoCamera1"]
+    # metadata["Behavior"]["VideoCamera1"] = editable_metadata["Behavior"]["VideoCamera1"]
 
     # Run conversion
     converter.run_conversion(metadata=metadata, nwbfile_path=nwbfile_path, conversion_options=conversion_options)
