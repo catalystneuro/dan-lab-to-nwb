@@ -2,11 +2,11 @@
 from dan_lab_to_nwb.huang_2025 import (
     Huang2025BehaviorInterface,
     Huang2025OptogeneticInterface,
+    Huang2025TdtRecordingInterface,
 )
 from neuroconv import NWBConverter
 from neuroconv.datainterfaces import (
     TDTFiberPhotometryInterface,
-    TdtRecordingInterface,
     VideoInterface,
 )
 
@@ -16,7 +16,7 @@ class Huang2025NWBConverter(NWBConverter):
 
     data_interface_classes = dict(
         Behavior=Huang2025BehaviorInterface,
-        Recording=TdtRecordingInterface,
+        Recording=Huang2025TdtRecordingInterface,
         FiberPhotometry=TDTFiberPhotometryInterface,
         Video=VideoInterface,
         Optogenetics=Huang2025OptogeneticInterface,

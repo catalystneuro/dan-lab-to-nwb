@@ -192,3 +192,24 @@ Optogenetics:
       site_name: optogenetic_stimulus_sitePFC
       power: 0.020 # 20 mW
 
+Ecephys:
+  Device:
+    - name: DeviceEEG
+      description: EEG electrodes consist of 2 wires with X um diameter made of material Y wrapped around a metal screw inserted into the brain in location Z.
+      manufacturer: Dan Lab
+    - name: DeviceEMG
+      description: EMG electrodes consist of 2 wires with X um diameter made of material Y inserted subcutaneously in the neck.
+      manufacturer: Dan Lab
+  ElectrodeGroup:
+    - name: ElectrodeGroupEEG
+      description: ElectrodeGroup for EEG channels.
+      device: DeviceEEG
+      location: Brain Region Z
+    - name: ElectrodeGroupEMG
+      description: ElectrodeGroup for EMG channels.
+      device: DeviceEMG
+      location: Subcutaneous neck
+  ElectricalSeries:
+    - name: ElectricalSeries
+      description: LFP data recorded by a TDT acquisition system with both EEG and EMG channels.
+      filtering: <description of the filtering>
