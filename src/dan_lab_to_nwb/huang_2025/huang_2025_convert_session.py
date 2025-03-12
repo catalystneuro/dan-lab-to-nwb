@@ -31,7 +31,7 @@ def session_to_nwb(
 
     # Add TDT LFP
     source_data["Recording"] = dict(folder_path=tdt_ephys_folder_path, gain=1.0, stream_id="4")
-    conversion_options["Recording"] = dict(stub_test=stub_test)
+    conversion_options["Recording"] = dict(stub_test=stub_test, write_as="lfp")
 
     # Add Fiber Photometry
     source_data["FiberPhotometry"] = dict(folder_path=tdt_fp_folder_path)
