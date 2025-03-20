@@ -17,6 +17,9 @@ class Huang2025TdtRecordingInterface(TdtRecordingInterface):
         return metadata
 
     def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict, **conversion_options):
+        # ElectricalSeries is written manually so that it can be split into EEG and EMG
+        conversion_options["write_electrical_series"] = False
+
         electrode_group_name_to_num_channels = {"ElectrodeGroupEEG": 2, "ElectrodeGroupEMG": 2}
         channel_ids = self.recording_extractor.get_channel_ids()
         locations, group_names = [], []
@@ -30,4 +33,219 @@ class Huang2025TdtRecordingInterface(TdtRecordingInterface):
         self.recording_extractor.set_property(key="brain_area", ids=channel_ids, values=locations)
         self.recording_extractor.set_property(key="group_name", ids=channel_ids, values=group_names)
         self.recording_extractor.set_property(key="channel_name", ids=channel_ids, values=channel_names)
+
         super().add_to_nwbfile(nwbfile=nwbfile, metadata=metadata, **conversion_options)
+        conversion_options.pop("write_electrical_series")
+        conversion_options.pop("stub_test")
+        add_electrical_series_to_nwbfile(
+            recording=self.recording_extractor,
+            nwbfile=nwbfile,
+            metadata=metadata,
+            es_key=self.es_key,
+            **conversion_options,
+        )
+
+
+def add_electrical_series_to_nwbfile(
+    recording,
+    nwbfile,
+    metadata=None,
+    segment_index=0,
+    starting_time=None,
+    write_as="raw",
+    es_key=None,
+    write_scaled=False,
+    iterator_type="v2",
+    iterator_opts=None,
+    always_write_timestamps=False,
+):
+    """
+    Adds traces from recording object as ElectricalSeries to an NWBFile object.
+
+    Parameters
+    ----------
+    recording : SpikeInterfaceRecording
+        A recording extractor from spikeinterface
+    nwbfile : NWBFile
+        nwb file to which the recording information is to be added
+    metadata : dict, optional
+        metadata info for constructing the nwb file.
+        Should be of the format::
+
+            metadata['Ecephys']['ElectricalSeries'] = dict(
+                name=my_name,
+                description=my_description
+            )
+    segment_index : int, default: 0
+        The recording segment to add to the NWBFile.
+    starting_time : float, optional
+        Sets the starting time of the ElectricalSeries to a manually set value.
+    write_as : {'raw', 'processed', 'lfp'}
+        How to save the traces data in the nwb file. Options:
+        - 'raw': save it in acquisition
+        - 'processed': save it as FilteredEphys, in a processing module
+        - 'lfp': save it as LFP, in a processing module
+    es_key : str, optional
+        Key in metadata dictionary containing metadata info for the specific electrical series
+    write_scaled : bool, default: False
+        If True, writes the traces in uV with the right conversion.
+        If False , the data is stored as it is and the right conversions factors are added to the nwbfile.
+    iterator_type: {"v2",  None}, default: 'v2'
+        The type of DataChunkIterator to use.
+        'v2' is the locally developed SpikeInterfaceRecordingDataChunkIterator, which offers full control over chunking.
+        None: write the TimeSeries with no memory chunking.
+    iterator_opts: dict, optional
+        Dictionary of options for the iterator.
+        See https://hdmf.readthedocs.io/en/stable/hdmf.data_utils.html#hdmf.data_utils.GenericDataChunkIterator
+        for the full list of options.
+    always_write_timestamps : bool, default: False
+        Set to True to always write timestamps.
+        By default (False), the function checks if the timestamps are uniformly sampled, and if so, stores the data
+        using a regular sampling rate instead of explicit timestamps. If set to True, timestamps will be written
+        explicitly, regardless of whether the sampling rate is uniform.
+
+    Notes
+    -----
+    Missing keys in an element of metadata['Ecephys']['ElectrodeGroup'] will be auto-populated with defaults
+    whenever possible.
+    """
+    import warnings
+
+    import numpy as np
+    import pynwb
+
+    from neuroconv.tools.nwb_helpers import get_module
+    from neuroconv.tools.spikeinterface.spikeinterface import (
+        _get_electrode_table_indices_for_recording,
+        _recording_traces_to_hdmf_iterator,
+        _report_variable_offset,
+        add_electrodes_to_nwbfile,
+    )
+    from neuroconv.utils import (
+        calculate_regular_series_rate,
+    )
+
+    if starting_time is not None:
+        warnings.warn(
+            "The 'starting_time' parameter is deprecated and will be removed in June 2025. "
+            "Use the time alignment methods or set the recording times directlyfor modifying the starting time or timestamps "
+            "of the data if needed: "
+            "https://neuroconv.readthedocs.io/en/main/user_guide/temporal_alignment.html",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+
+    assert write_as in [
+        "raw",
+        "processed",
+        "lfp",
+    ], f"'write_as' should be 'raw', 'processed' or 'lfp', but instead received value {write_as}"
+
+    modality_signature = write_as.upper() if write_as == "lfp" else write_as.capitalize()
+    default_name = f"ElectricalSeries{modality_signature}"
+    default_description = dict(raw="Raw acquired data", lfp="Processed data - LFP", processed="Processed data")
+
+    eseries_kwargs = dict(name=default_name, description=default_description[write_as])
+
+    # Select and/or create module if lfp or processed data is to be stored.
+    if write_as in ["lfp", "processed"]:
+        ecephys_mod = get_module(
+            nwbfile=nwbfile,
+            name="ecephys",
+            description="Intermediate data from extracellular electrophysiology recordings, e.g., LFP.",
+        )
+        if write_as == "lfp" and "LFP" not in ecephys_mod.data_interfaces:
+            ecephys_mod.add(pynwb.ecephys.LFP(name="LFP"))
+        if write_as == "processed" and "Processed" not in ecephys_mod.data_interfaces:
+            ecephys_mod.add(pynwb.ecephys.FilteredEphys(name="Processed"))
+
+    if metadata is not None and "Ecephys" in metadata and es_key is not None:
+        assert es_key in metadata["Ecephys"], f"metadata['Ecephys'] dictionary does not contain key '{es_key}'"
+        eseries_kwargs.update(metadata["Ecephys"][es_key])
+
+    # If the recording extractor has more than 1 segment, append numbers to the names so that the names are unique.
+    # 0-pad these names based on the number of segments.
+    # If there are 10 segments use 2 digits, if there are 100 segments use 3 digits, etc.
+    if recording.get_num_segments() > 1:
+        width = int(np.ceil(np.log10((recording.get_num_segments()))))
+        eseries_kwargs["name"] += f"{segment_index:0{width}}"
+
+    # The add_electrodes adds a column with channel name to the electrode table.
+    add_electrodes_to_nwbfile(recording=recording, nwbfile=nwbfile, metadata=metadata)
+
+    # Create a region for the electrodes table
+    electrode_table_indices = _get_electrode_table_indices_for_recording(recording=recording, nwbfile=nwbfile)
+    electrode_table_region = nwbfile.create_electrode_table_region(
+        region=electrode_table_indices,
+        description="electrode_table_region",
+    )
+    eseries_kwargs.update(electrodes=electrode_table_region)
+
+    # Spikeinterface guarantees data in micro volts when return_scaled=True. This multiplies by gain and adds offsets
+    # In nwb to get traces in Volts we take data*channel_conversion*conversion + offset
+    channel_conversion = recording.get_channel_gains()
+    channel_offsets = recording.get_channel_offsets()
+
+    unique_channel_conversion = np.unique(channel_conversion)
+    unique_channel_conversion = unique_channel_conversion[0] if len(unique_channel_conversion) == 1 else None
+
+    unique_offset = np.unique(channel_offsets)
+    if unique_offset.size > 1:
+        channel_ids = recording.get_channel_ids()
+        # This prints a user friendly error where the user is provided with a map from offset to channels
+        _report_variable_offset(channel_offsets, channel_ids)
+    unique_offset = unique_offset[0] if unique_offset[0] is not None else 0
+
+    micro_to_volts_conversion_factor = 1e-6
+    if not write_scaled and unique_channel_conversion is None:
+        eseries_kwargs.update(conversion=micro_to_volts_conversion_factor)
+        eseries_kwargs.update(channel_conversion=channel_conversion)
+    elif not write_scaled and unique_channel_conversion is not None:
+        eseries_kwargs.update(conversion=unique_channel_conversion * micro_to_volts_conversion_factor)
+
+    if not write_scaled:
+        eseries_kwargs.update(offset=unique_offset * micro_to_volts_conversion_factor)
+
+    # Iterator
+    ephys_data_iterator = _recording_traces_to_hdmf_iterator(
+        recording=recording,
+        segment_index=segment_index,
+        iterator_type=iterator_type,
+        iterator_opts=iterator_opts,
+    )
+    eseries_kwargs.update(data=ephys_data_iterator)
+
+    starting_time = starting_time if starting_time is not None else 0
+    if always_write_timestamps:
+        timestamps = recording.get_times(segment_index=segment_index)
+        shifted_timestamps = starting_time + timestamps
+        eseries_kwargs.update(timestamps=shifted_timestamps)
+    else:
+        # By default we write the rate if the timestamps are regular
+        recording_has_timestamps = recording.has_time_vector(segment_index=segment_index)
+        if recording_has_timestamps:
+            timestamps = recording.get_times(segment_index=segment_index)
+            rate = calculate_regular_series_rate(series=timestamps)  # Returns None if it is not regular
+            recording_t_start = timestamps[0]
+        else:
+            rate = recording.get_sampling_frequency()
+            recording_t_start = recording._recording_segments[segment_index].t_start or 0
+
+        # Shift timestamps if starting_time is set
+        if rate:
+            starting_time = float(starting_time + recording_t_start)
+            # Note that we call the sampling frequency again because the estimated rate might be different from the
+            # sampling frequency of the recording extractor by some epsilon.
+            eseries_kwargs.update(starting_time=starting_time, rate=recording.get_sampling_frequency())
+        else:
+            shifted_timestamps = starting_time + timestamps
+            eseries_kwargs.update(timestamps=shifted_timestamps)
+
+    # Create ElectricalSeries object and add it to nwbfile
+    es = pynwb.ecephys.ElectricalSeries(**eseries_kwargs)
+    if write_as == "raw":
+        nwbfile.add_acquisition(es)
+    elif write_as == "processed":
+        ecephys_mod.data_interfaces["Processed"].add_electrical_series(es)
+    elif write_as == "lfp":
+        ecephys_mod.data_interfaces["LFP"].add_electrical_series(es)
