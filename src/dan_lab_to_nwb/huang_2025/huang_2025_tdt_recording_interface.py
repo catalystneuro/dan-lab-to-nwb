@@ -50,7 +50,6 @@ def add_electrical_series_to_nwbfile(
     recording,
     nwbfile,
     metadata=None,
-    segment_index=0,
     starting_time=None,
     es_key=None,
     write_scaled=False,
@@ -75,8 +74,6 @@ def add_electrical_series_to_nwbfile(
                 name=my_name,
                 description=my_description
             )
-    segment_index : int, default: 0
-        The recording segment to add to the NWBFile.
     starting_time : float, optional
         Sets the starting time of the ElectricalSeries to a manually set value.
     es_key : str, optional
@@ -146,13 +143,6 @@ def add_electrical_series_to_nwbfile(
         assert es_key in metadata["Ecephys"], f"metadata['Ecephys'] dictionary does not contain key '{es_key}'"
         eseries_kwargs.update(metadata["Ecephys"][es_key])
 
-    # If the recording extractor has more than 1 segment, append numbers to the names so that the names are unique.
-    # 0-pad these names based on the number of segments.
-    # If there are 10 segments use 2 digits, if there are 100 segments use 3 digits, etc.
-    if recording.get_num_segments() > 1:
-        width = int(np.ceil(np.log10((recording.get_num_segments()))))
-        eseries_kwargs["name"] += f"{segment_index:0{width}}"
-
     # The add_electrodes adds a column with channel name to the electrode table.
     add_electrodes_to_nwbfile(recording=recording, nwbfile=nwbfile, metadata=metadata)
 
@@ -192,7 +182,6 @@ def add_electrical_series_to_nwbfile(
     # Iterator
     ephys_data_iterator = _recording_traces_to_hdmf_iterator(
         recording=recording,
-        segment_index=segment_index,
         iterator_type=iterator_type,
         iterator_opts=iterator_opts,
     )
@@ -200,19 +189,19 @@ def add_electrical_series_to_nwbfile(
 
     starting_time = starting_time if starting_time is not None else 0
     if always_write_timestamps:
-        timestamps = recording.get_times(segment_index=segment_index)
+        timestamps = recording.get_times()
         shifted_timestamps = starting_time + timestamps
         eseries_kwargs.update(timestamps=shifted_timestamps)
     else:
         # By default we write the rate if the timestamps are regular
-        recording_has_timestamps = recording.has_time_vector(segment_index=segment_index)
+        recording_has_timestamps = recording.has_time_vector()
         if recording_has_timestamps:
-            timestamps = recording.get_times(segment_index=segment_index)
+            timestamps = recording.get_times()
             rate = calculate_regular_series_rate(series=timestamps)  # Returns None if it is not regular
             recording_t_start = timestamps[0]
         else:
             rate = recording.get_sampling_frequency()
-            recording_t_start = recording._recording_segments[segment_index].t_start or 0
+            recording_t_start = recording._recording_segments[0].t_start or 0
 
         # Shift timestamps if starting_time is set
         if rate:
