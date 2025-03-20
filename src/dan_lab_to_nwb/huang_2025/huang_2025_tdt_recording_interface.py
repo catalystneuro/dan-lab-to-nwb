@@ -130,9 +130,6 @@ def add_electrical_series_to_nwbfile(
         assert es_key in metadata["Ecephys"], f"metadata['Ecephys'] dictionary does not contain key '{es_key}'"
         eseries_kwargs.update(metadata["Ecephys"][es_key])
 
-    # The add_electrodes adds a column with channel name to the electrode table.
-    add_electrodes_to_nwbfile(recording=recording, nwbfile=nwbfile, metadata=metadata)
-
     # Create a region for the electrodes table
     electrode_table_indices = _get_electrode_table_indices_for_recording(recording=recording, nwbfile=nwbfile)
     electrode_table_region = nwbfile.create_electrode_table_region(
@@ -184,17 +181,16 @@ def add_electrical_series_to_nwbfile(
             timestamps = recording.get_times()
             rate = calculate_regular_series_rate(series=timestamps)  # Returns None if it is not regular
             recording_t_start = timestamps[0]
+            if rate is not None:
+                # Note that we call the sampling frequency again because the estimated rate might be different from the
+                # sampling frequency of the recording extractor by some epsilon.
+                eseries_kwargs.update(starting_time=recording_t_start, rate=recording.get_sampling_frequency())
+            else:
+                eseries_kwargs.update(timestamps=timestamps)
         else:
             rate = recording.get_sampling_frequency()
             recording_t_start = recording._recording_segments[0].t_start or 0.0
-
-        # Shift timestamps if starting_time is set
-        if rate:
-            # Note that we call the sampling frequency again because the estimated rate might be different from the
-            # sampling frequency of the recording extractor by some epsilon.
-            eseries_kwargs.update(starting_time=recording_t_start, rate=recording.get_sampling_frequency())
-        else:
-            eseries_kwargs.update(timestamps=timestamps)
+            eseries_kwargs.update(starting_time=recording_t_start, rate=rate)
 
     # Create ElectricalSeries object and add it to nwbfile
     es = pynwb.ecephys.ElectricalSeries(**eseries_kwargs)
