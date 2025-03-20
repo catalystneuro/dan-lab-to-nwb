@@ -52,7 +52,6 @@ def add_electrical_series_to_nwbfile(
     metadata=None,
     segment_index=0,
     starting_time=None,
-    write_as="raw",
     es_key=None,
     write_scaled=False,
     iterator_type="v2",
@@ -80,11 +79,6 @@ def add_electrical_series_to_nwbfile(
         The recording segment to add to the NWBFile.
     starting_time : float, optional
         Sets the starting time of the ElectricalSeries to a manually set value.
-    write_as : {'raw', 'processed', 'lfp'}
-        How to save the traces data in the nwb file. Options:
-        - 'raw': save it in acquisition
-        - 'processed': save it as FilteredEphys, in a processing module
-        - 'lfp': save it as LFP, in a processing module
     es_key : str, optional
         Key in metadata dictionary containing metadata info for the specific electrical series
     write_scaled : bool, default: False
@@ -135,29 +129,18 @@ def add_electrical_series_to_nwbfile(
             stacklevel=2,
         )
 
-    assert write_as in [
-        "raw",
-        "processed",
-        "lfp",
-    ], f"'write_as' should be 'raw', 'processed' or 'lfp', but instead received value {write_as}"
+    default_name = "ElectricalSeriesLFP"
 
-    modality_signature = write_as.upper() if write_as == "lfp" else write_as.capitalize()
-    default_name = f"ElectricalSeries{modality_signature}"
-    default_description = dict(raw="Raw acquired data", lfp="Processed data - LFP", processed="Processed data")
-
-    eseries_kwargs = dict(name=default_name, description=default_description[write_as])
+    eseries_kwargs = dict(name=default_name, description="Processed data - LFP")
 
     # Select and/or create module if lfp or processed data is to be stored.
-    if write_as in ["lfp", "processed"]:
-        ecephys_mod = get_module(
-            nwbfile=nwbfile,
-            name="ecephys",
-            description="Intermediate data from extracellular electrophysiology recordings, e.g., LFP.",
-        )
-        if write_as == "lfp" and "LFP" not in ecephys_mod.data_interfaces:
-            ecephys_mod.add(pynwb.ecephys.LFP(name="LFP"))
-        if write_as == "processed" and "Processed" not in ecephys_mod.data_interfaces:
-            ecephys_mod.add(pynwb.ecephys.FilteredEphys(name="Processed"))
+    ecephys_mod = get_module(
+        nwbfile=nwbfile,
+        name="ecephys",
+        description="Intermediate data from extracellular electrophysiology recordings, e.g., LFP.",
+    )
+    if "LFP" not in ecephys_mod.data_interfaces:
+        ecephys_mod.add(pynwb.ecephys.LFP(name="LFP"))
 
     if metadata is not None and "Ecephys" in metadata and es_key is not None:
         assert es_key in metadata["Ecephys"], f"metadata['Ecephys'] dictionary does not contain key '{es_key}'"
@@ -243,9 +226,4 @@ def add_electrical_series_to_nwbfile(
 
     # Create ElectricalSeries object and add it to nwbfile
     es = pynwb.ecephys.ElectricalSeries(**eseries_kwargs)
-    if write_as == "raw":
-        nwbfile.add_acquisition(es)
-    elif write_as == "processed":
-        ecephys_mod.data_interfaces["Processed"].add_electrical_series(es)
-    elif write_as == "lfp":
-        ecephys_mod.data_interfaces["LFP"].add_electrical_series(es)
+    ecephys_mod.data_interfaces["LFP"].add_electrical_series(es)
