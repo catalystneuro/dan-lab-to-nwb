@@ -50,7 +50,6 @@ def add_electrical_series_to_nwbfile(
     recording,
     nwbfile,
     metadata=None,
-    starting_time=None,
     es_key=None,
     write_scaled=False,
     iterator_type="v2",
@@ -74,8 +73,6 @@ def add_electrical_series_to_nwbfile(
                 name=my_name,
                 description=my_description
             )
-    starting_time : float, optional
-        Sets the starting time of the ElectricalSeries to a manually set value.
     es_key : str, optional
         Key in metadata dictionary containing metadata info for the specific electrical series
     write_scaled : bool, default: False
@@ -115,16 +112,6 @@ def add_electrical_series_to_nwbfile(
     from neuroconv.utils import (
         calculate_regular_series_rate,
     )
-
-    if starting_time is not None:
-        warnings.warn(
-            "The 'starting_time' parameter is deprecated and will be removed in June 2025. "
-            "Use the time alignment methods or set the recording times directlyfor modifying the starting time or timestamps "
-            "of the data if needed: "
-            "https://neuroconv.readthedocs.io/en/main/user_guide/temporal_alignment.html",
-            DeprecationWarning,
-            stacklevel=2,
-        )
 
     default_name = "ElectricalSeriesLFP"
 
@@ -187,11 +174,9 @@ def add_electrical_series_to_nwbfile(
     )
     eseries_kwargs.update(data=ephys_data_iterator)
 
-    starting_time = starting_time if starting_time is not None else 0
     if always_write_timestamps:
         timestamps = recording.get_times()
-        shifted_timestamps = starting_time + timestamps
-        eseries_kwargs.update(timestamps=shifted_timestamps)
+        eseries_kwargs.update(timestamps=timestamps)
     else:
         # By default we write the rate if the timestamps are regular
         recording_has_timestamps = recording.has_time_vector()
@@ -201,17 +186,15 @@ def add_electrical_series_to_nwbfile(
             recording_t_start = timestamps[0]
         else:
             rate = recording.get_sampling_frequency()
-            recording_t_start = recording._recording_segments[0].t_start or 0
+            recording_t_start = recording._recording_segments[0].t_start or 0.0
 
         # Shift timestamps if starting_time is set
         if rate:
-            starting_time = float(starting_time + recording_t_start)
             # Note that we call the sampling frequency again because the estimated rate might be different from the
             # sampling frequency of the recording extractor by some epsilon.
-            eseries_kwargs.update(starting_time=starting_time, rate=recording.get_sampling_frequency())
+            eseries_kwargs.update(starting_time=recording_t_start, rate=recording.get_sampling_frequency())
         else:
-            shifted_timestamps = starting_time + timestamps
-            eseries_kwargs.update(timestamps=shifted_timestamps)
+            eseries_kwargs.update(timestamps=timestamps)
 
     # Create ElectricalSeries object and add it to nwbfile
     es = pynwb.ecephys.ElectricalSeries(**eseries_kwargs)
