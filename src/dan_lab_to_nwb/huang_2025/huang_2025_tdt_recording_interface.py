@@ -63,7 +63,6 @@ def add_electrical_series_to_nwbfile(
     es_key=None,
     group_names=None,
     write_scaled=False,
-    iterator_type="v2",
     iterator_opts=None,
     always_write_timestamps=False,
 ):
@@ -91,10 +90,6 @@ def add_electrical_series_to_nwbfile(
     write_scaled : bool, default: False
         If True, writes the traces in uV with the right conversion.
         If False , the data is stored as it is and the right conversions factors are added to the nwbfile.
-    iterator_type: {"v2",  None}, default: 'v2'
-        The type of DataChunkIterator to use.
-        'v2' is the locally developed SpikeInterfaceRecordingDataChunkIterator, which offers full control over chunking.
-        None: write the TimeSeries with no memory chunking.
     iterator_opts: dict, optional
         Dictionary of options for the iterator.
         See https://hdmf.readthedocs.io/en/stable/hdmf.data_utils.html#hdmf.data_utils.GenericDataChunkIterator
