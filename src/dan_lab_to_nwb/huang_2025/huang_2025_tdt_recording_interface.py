@@ -41,9 +41,13 @@ class Huang2025TdtRecordingInterface(TdtRecordingInterface):
 
         super().add_to_nwbfile(nwbfile=nwbfile, metadata=metadata, **conversion_options)
         conversion_options.pop("write_electrical_series")
-        conversion_options.pop("stub_test")
+        stub_test = conversion_options.pop("stub_test")
+        if stub_test:
+            recording = self.subset_recording(stub_test=stub_test)
+        else:
+            recording = self.recording_extractor
         add_electrical_series_to_nwbfile(
-            recording=self.recording_extractor,
+            recording=recording,
             nwbfile=nwbfile,
             metadata=metadata,
             es_key=self.es_key,
