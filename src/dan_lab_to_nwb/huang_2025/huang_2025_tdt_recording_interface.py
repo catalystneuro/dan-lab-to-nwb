@@ -119,8 +119,6 @@ def add_electrical_series_to_nwbfile(
         name="ecephys",
         description="Intermediate data from extracellular electrophysiology recordings, e.g., LFP.",
     )
-    if "LFP" not in ecephys_mod.data_interfaces:
-        ecephys_mod.add(LFP(name="LFP"))
 
     # Add conversion and offset metadata
     if not write_scaled:
@@ -156,7 +154,7 @@ def add_electrical_series_to_nwbfile(
 
     # Create ElectricalSeries object and add it to nwbfile
     es = ElectricalSeries(**eseries_kwargs)
-    ecephys_mod.data_interfaces["LFP"].add_electrical_series(es)
+    ecephys_mod.add(es)
 
 
 def add_timing_to_eseries_kwargs(eseries_kwargs: dict, recording: TdtRecordingExtractor, always_write_timestamps: bool):
