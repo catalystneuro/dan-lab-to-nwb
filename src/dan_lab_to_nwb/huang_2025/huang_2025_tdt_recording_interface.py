@@ -97,8 +97,6 @@ def add_electrical_series_to_nwbfile(
     Missing keys in an element of metadata['Ecephys']['ElectrodeGroup'] will be auto-populated with defaults
     whenever possible.
     """
-    import warnings
-
     import numpy as np
     import pynwb
 
@@ -107,10 +105,6 @@ def add_electrical_series_to_nwbfile(
         _get_electrode_table_indices_for_recording,
         _recording_traces_to_hdmf_iterator,
         _report_variable_offset,
-        add_electrodes_to_nwbfile,
-    )
-    from neuroconv.utils import (
-        calculate_regular_series_rate,
     )
 
     default_name = "ElectricalSeriesLFP"
@@ -171,27 +165,62 @@ def add_electrical_series_to_nwbfile(
     )
     eseries_kwargs.update(data=ephys_data_iterator)
 
-    if always_write_timestamps:
-        timestamps = recording.get_times()
-        eseries_kwargs.update(timestamps=timestamps)
-    else:
-        # By default we write the rate if the timestamps are regular
-        recording_has_timestamps = recording.has_time_vector()
-        if recording_has_timestamps:
-            timestamps = recording.get_times()
-            rate = calculate_regular_series_rate(series=timestamps)  # Returns None if it is not regular
-            recording_t_start = timestamps[0]
-            if rate is not None:
-                # Note that we call the sampling frequency again because the estimated rate might be different from the
-                # sampling frequency of the recording extractor by some epsilon.
-                eseries_kwargs.update(starting_time=recording_t_start, rate=recording.get_sampling_frequency())
-            else:
-                eseries_kwargs.update(timestamps=timestamps)
-        else:
-            rate = recording.get_sampling_frequency()
-            recording_t_start = recording._recording_segments[0].t_start or 0.0
-            eseries_kwargs.update(starting_time=recording_t_start, rate=rate)
+    eseries_kwargs = add_timing_to_eseries_kwargs(
+        eseries_kwargs=eseries_kwargs,
+        recording=recording,
+        always_write_timestamps=always_write_timestamps,
+    )
 
     # Create ElectricalSeries object and add it to nwbfile
     es = pynwb.ecephys.ElectricalSeries(**eseries_kwargs)
     ecephys_mod.data_interfaces["LFP"].add_electrical_series(es)
+
+
+def add_timing_to_eseries_kwargs(eseries_kwargs: dict, recording, always_write_timestamps: bool):
+    """
+    Add timing information to the eseries_kwargs dictionary.
+
+    Parameters
+    ----------
+    eseries_kwargs : dict
+        The dictionary containing the arguments for creating the ElectricalSeries object.
+    recording : SpikeInterfaceRecording
+        The recording extractor from spikeinterface.
+    always_write_timestamps : bool
+        If True, always write timestamps explicitly, regardless of uniform sampling.
+
+    Returns
+    -------
+    eseries_kwargs : dict
+        The updated dictionary with timing information added.
+    """
+    from neuroconv.utils import (
+        calculate_regular_series_rate,
+    )
+
+    if always_write_timestamps:
+        timestamps = recording.get_times()
+        eseries_kwargs.update(timestamps=timestamps)
+        return eseries_kwargs
+
+    # If the recording does not already have a vector of timestamps, we simply use the starting time and rate
+    if not recording.has_time_vector():
+        rate = recording.get_sampling_frequency()
+        recording_t_start = recording._recording_segments[0].t_start or 0.0
+        eseries_kwargs.update(starting_time=recording_t_start, rate=rate)
+        return eseries_kwargs
+
+    timestamps = recording.get_times()
+    rate = calculate_regular_series_rate(series=timestamps)
+    timestamps_are_regular = rate is not None
+    recording_t_start = timestamps[0]
+    # If the timestamps are regular, we can use starting_time and rate instead of the full timestamps
+    if timestamps_are_regular:
+        # Note that we call the sampling frequency again because the estimated rate might be different from the
+        # sampling frequency of the recording extractor by some epsilon.
+        eseries_kwargs.update(starting_time=recording_t_start, rate=recording.get_sampling_frequency())
+        return eseries_kwargs
+
+    # If the timestamps are not regular, we need to use the full timestamps
+    eseries_kwargs.update(timestamps=timestamps)
+    return eseries_kwargs
