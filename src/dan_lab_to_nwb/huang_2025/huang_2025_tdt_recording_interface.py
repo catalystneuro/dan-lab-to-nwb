@@ -1,6 +1,6 @@
 """Primary class for converting TDT Ephys Recordings."""
 import numpy as np
-from pynwb.ecephys import LFP, ElectricalSeries
+from pynwb.ecephys import ElectricalSeries
 from pynwb.file import NWBFile
 from spikeinterface.extractors import TdtRecordingExtractor
 
