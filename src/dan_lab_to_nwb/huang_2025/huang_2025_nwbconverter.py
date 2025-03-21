@@ -16,7 +16,8 @@ class Huang2025NWBConverter(NWBConverter):
 
     data_interface_classes = dict(
         Behavior=Huang2025BehaviorInterface,
-        Recording=Huang2025TdtRecordingInterface,
+        EEG=Huang2025TdtRecordingInterface,
+        EMG=Huang2025TdtRecordingInterface,
         FiberPhotometry=TDTFiberPhotometryInterface,
         Video=VideoInterface,
         Optogenetics=Huang2025OptogeneticInterface,

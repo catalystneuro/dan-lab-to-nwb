@@ -209,7 +209,11 @@ Ecephys:
       description: ElectrodeGroup for EMG channels.
       device: DeviceEMG
       location: Subcutaneous neck
-  ElectricalSeries:
-    - name: ElectricalSeries
-      description: LFP data recorded by a TDT acquisition system with both EEG and EMG channels.
+  ElectricalSeriesEEG:
+    - name: ElectricalSeriesEEG
+      description: EEG voltage data recorded by a TDT acquisition system.
+      filtering: <description of the filtering>
+  ElectricalSeriesEMG:
+    - name: ElectricalSeriesEMG
+      description: EMG voltage data recorded by a TDT acquisition system.
       filtering: <description of the filtering>
