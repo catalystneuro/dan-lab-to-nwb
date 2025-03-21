@@ -1,4 +1,5 @@
 """Primary class for converting TDT Ephys Recordings."""
+import numpy as np
 from pynwb.file import NWBFile
 from spikeinterface.extractors import TdtRecordingExtractor
 
@@ -97,14 +98,12 @@ def add_electrical_series_to_nwbfile(
     Missing keys in an element of metadata['Ecephys']['ElectrodeGroup'] will be auto-populated with defaults
     whenever possible.
     """
-    import numpy as np
     import pynwb
 
     from neuroconv.tools.nwb_helpers import get_module
     from neuroconv.tools.spikeinterface.spikeinterface import (
         _get_electrode_table_indices_for_recording,
         _recording_traces_to_hdmf_iterator,
-        _report_variable_offset,
     )
 
     default_name = "ElectricalSeriesLFP"
@@ -132,36 +131,15 @@ def add_electrical_series_to_nwbfile(
     )
     eseries_kwargs.update(electrodes=electrode_table_region)
 
-    # Spikeinterface guarantees data in micro volts when return_scaled=True. This multiplies by gain and adds offsets
-    # In nwb to get traces in Volts we take data*channel_conversion*conversion + offset
-    channel_conversion = recording.get_channel_gains()
-    channel_offsets = recording.get_channel_offsets()
-
-    unique_channel_conversion = np.unique(channel_conversion)
-    unique_channel_conversion = unique_channel_conversion[0] if len(unique_channel_conversion) == 1 else None
-
-    unique_offset = np.unique(channel_offsets)
-    if unique_offset.size > 1:
-        channel_ids = recording.get_channel_ids()
-        # This prints a user friendly error where the user is provided with a map from offset to channels
-        _report_variable_offset(channel_offsets, channel_ids)
-    unique_offset = unique_offset[0] if unique_offset[0] is not None else 0
-
-    micro_to_volts_conversion_factor = 1e-6
-    if not write_scaled and unique_channel_conversion is None:
-        eseries_kwargs.update(conversion=micro_to_volts_conversion_factor)
-        eseries_kwargs.update(channel_conversion=channel_conversion)
-    elif not write_scaled and unique_channel_conversion is not None:
-        eseries_kwargs.update(conversion=unique_channel_conversion * micro_to_volts_conversion_factor)
-
     if not write_scaled:
-        eseries_kwargs.update(offset=unique_offset * micro_to_volts_conversion_factor)
+        add_conversion_to_eseries_kwargs(eseries_kwargs=eseries_kwargs, recording=recording)
 
     # Iterator
     ephys_data_iterator = _recording_traces_to_hdmf_iterator(
         recording=recording,
         iterator_type=iterator_type,
         iterator_opts=iterator_opts,
+        return_scaled=write_scaled,
     )
     eseries_kwargs.update(data=ephys_data_iterator)
 
@@ -223,4 +201,49 @@ def add_timing_to_eseries_kwargs(eseries_kwargs: dict, recording, always_write_t
 
     # If the timestamps are not regular, we need to use the full timestamps
     eseries_kwargs.update(timestamps=timestamps)
+    return eseries_kwargs
+
+
+def add_conversion_to_eseries_kwargs(eseries_kwargs: dict, recording):
+    """
+    Add conversion information to the eseries_kwargs dictionary.
+
+    This function determines the conversion factors for the ElectricalSeries object based on the recording extractor.
+    In nwb to get traces in Volts we take data*channel_conversion*conversion + offset.
+
+    Parameters
+    ----------
+    eseries_kwargs : dict
+        The dictionary containing the arguments for creating the ElectricalSeries object.
+    recording : SpikeInterfaceRecording
+        The recording extractor from spikeinterface.
+
+    Returns
+    -------
+    eseries_kwargs : dict
+        The updated dictionary with conversion information added.
+    """
+    from neuroconv.tools.spikeinterface.spikeinterface import _report_variable_offset
+
+    channel_conversion = recording.get_channel_gains()
+    channel_offsets = recording.get_channel_offsets()
+
+    unique_channel_conversion = np.unique(channel_conversion)
+    unique_channel_conversion = unique_channel_conversion[0] if len(unique_channel_conversion) == 1 else None
+
+    unique_offset = np.unique(channel_offsets)
+    if unique_offset.size > 1:
+        channel_ids = recording.get_channel_ids()
+        # This prints a user friendly error where the user is provided with a map from offset to channels
+        _report_variable_offset(channel_offsets, channel_ids)
+    unique_offset = unique_offset[0] if unique_offset[0] is not None else 0
+
+    micro_to_volts_conversion_factor = 1e-6
+    if unique_channel_conversion is None:
+        eseries_kwargs.update(conversion=micro_to_volts_conversion_factor)
+        eseries_kwargs.update(channel_conversion=channel_conversion)
+    elif unique_channel_conversion is not None:
+        eseries_kwargs.update(conversion=unique_channel_conversion * micro_to_volts_conversion_factor)
+    eseries_kwargs.update(offset=unique_offset * micro_to_volts_conversion_factor)
+
     return eseries_kwargs
