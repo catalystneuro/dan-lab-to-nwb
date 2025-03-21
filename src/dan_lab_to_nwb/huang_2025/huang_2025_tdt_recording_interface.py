@@ -1,5 +1,6 @@
 """Primary class for converting TDT Ephys Recordings."""
 import numpy as np
+from pynwb.ecephys import LFP, ElectricalSeries
 from pynwb.file import NWBFile
 from spikeinterface.extractors import TdtRecordingExtractor
 
@@ -98,8 +99,6 @@ def add_electrical_series_to_nwbfile(
     Missing keys in an element of metadata['Ecephys']['ElectrodeGroup'] will be auto-populated with defaults
     whenever possible.
     """
-    import pynwb
-
     from neuroconv.tools.nwb_helpers import get_module
     from neuroconv.tools.spikeinterface.spikeinterface import (
         _get_electrode_table_indices_for_recording,
@@ -107,8 +106,10 @@ def add_electrical_series_to_nwbfile(
     )
 
     default_name = "ElectricalSeriesLFP"
-
     eseries_kwargs = dict(name=default_name, description="Processed data - LFP")
+    if metadata is not None and "Ecephys" in metadata and es_key is not None:
+        assert es_key in metadata["Ecephys"], f"metadata['Ecephys'] dictionary does not contain key '{es_key}'"
+        eseries_kwargs.update(metadata["Ecephys"][es_key])
 
     # Select and/or create module if lfp or processed data is to be stored.
     ecephys_mod = get_module(
@@ -117,11 +118,7 @@ def add_electrical_series_to_nwbfile(
         description="Intermediate data from extracellular electrophysiology recordings, e.g., LFP.",
     )
     if "LFP" not in ecephys_mod.data_interfaces:
-        ecephys_mod.add(pynwb.ecephys.LFP(name="LFP"))
-
-    if metadata is not None and "Ecephys" in metadata and es_key is not None:
-        assert es_key in metadata["Ecephys"], f"metadata['Ecephys'] dictionary does not contain key '{es_key}'"
-        eseries_kwargs.update(metadata["Ecephys"][es_key])
+        ecephys_mod.add(LFP(name="LFP"))
 
     # Create a region for the electrodes table
     electrode_table_indices = _get_electrode_table_indices_for_recording(recording=recording, nwbfile=nwbfile)
@@ -131,6 +128,7 @@ def add_electrical_series_to_nwbfile(
     )
     eseries_kwargs.update(electrodes=electrode_table_region)
 
+    # Add conversion and offset metadata
     if not write_scaled:
         add_conversion_to_eseries_kwargs(eseries_kwargs=eseries_kwargs, recording=recording)
 
@@ -143,6 +141,7 @@ def add_electrical_series_to_nwbfile(
     )
     eseries_kwargs.update(data=ephys_data_iterator)
 
+    # Add timing info (timestamps or starting_time and rate)
     eseries_kwargs = add_timing_to_eseries_kwargs(
         eseries_kwargs=eseries_kwargs,
         recording=recording,
@@ -150,7 +149,7 @@ def add_electrical_series_to_nwbfile(
     )
 
     # Create ElectricalSeries object and add it to nwbfile
-    es = pynwb.ecephys.ElectricalSeries(**eseries_kwargs)
+    es = ElectricalSeries(**eseries_kwargs)
     ecephys_mod.data_interfaces["LFP"].add_electrical_series(es)
 
 
