@@ -6,8 +6,8 @@ from dan_lab_to_nwb.huang_2025 import (
 )
 from neuroconv import NWBConverter
 from neuroconv.datainterfaces import (
+    ExternalVideoInterface,
     TDTFiberPhotometryInterface,
-    VideoInterface,
 )
 
 
@@ -19,6 +19,6 @@ class Huang2025NWBConverter(NWBConverter):
         EEG=Huang2025TdtRecordingInterface,
         EMG=Huang2025TdtRecordingInterface,
         FiberPhotometry=TDTFiberPhotometryInterface,
-        Video=VideoInterface,
+        Video=ExternalVideoInterface,
         Optogenetics=Huang2025OptogeneticInterface,
     )
