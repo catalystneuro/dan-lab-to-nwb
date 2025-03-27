@@ -40,8 +40,8 @@ def session_to_nwb(
     conversion_options["FiberPhotometry"] = dict(stub_test=stub_test)
 
     # Add Video
-    source_data["Video"] = dict(file_paths=[video_file_path], metadata_key_name="VideoCamera1")
-    conversion_options["Video"] = dict(stub_test=stub_test)
+    source_data["Video"] = dict(file_paths=[video_file_path], video_name="VideoCamera1")
+    conversion_options["Video"] = dict()
 
     # Add Optogenetics
     source_data["Optogenetics"] = dict(folder_path=tdt_fp_folder_path)
@@ -64,9 +64,6 @@ def session_to_nwb(
     metadata["NWBFile"]["session_id"] = session_id
     metadata["Subject"]["subject_id"] = subject_id
     metadata["NWBFile"]["session_start_time"] = session_start_time
-
-    # Overwrite video metadata
-    metadata["Behavior"]["VideoCamera1"] = editable_metadata["Behavior"]["VideoCamera1"]
 
     # Run conversion
     converter.run_conversion(metadata=metadata, nwbfile_path=nwbfile_path, conversion_options=conversion_options)
