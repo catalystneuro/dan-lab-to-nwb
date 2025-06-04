@@ -62,3 +62,4 @@ For file names containing "opto":
 - Filtering Parameters from TDT
 - TDT data for DLC sessions and/or DLC data for TDT sessions and/or new session(s) with both TDT and DLC
 - DLC video is named "Cam 2" while TDT video is named "Cam 1" is there a difference between these two cameras?
+- Need config.yaml for DLC
