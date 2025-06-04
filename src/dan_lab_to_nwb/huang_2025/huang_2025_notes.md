@@ -43,14 +43,16 @@ For file names containing "opto":
 - Laser is On during St1/St2 and LasT
 
 ## Video
-- Cam1.onset = Temporal alignment times for camera
+- Cam1.onset = Temporal alignment times for camera (Cam1.onset is located in the tdt data)
 
 ## Behavior
 - Should be a .mat file with sleep and wake times
 - Plan: Load this data into the epochs table
 
 ## Pose Estimation
-- Should be standard DLC output
+- Standard DLC output (.h5)
+- Need config.yaml
+- SampFreq.mat should contain the video sampling rate for temporal alignment
 
 ## Histology
 - Should be a folder of .tiffs for each animal after they have been sacrificed
