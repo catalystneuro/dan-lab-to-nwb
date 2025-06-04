@@ -46,7 +46,18 @@ For file names containing "opto":
 - Cam1.onset = Temporal alignment times for camera (Cam1.onset is located in the tdt data)
 
 ## Behavior
-- Should be a .mat file with sleep and wake times
+- Labels is an array with 3 values (1, 2, 3) with shape (2878,) which matches neither the number of video/dlc frames (143946,) nor the EEG data (14642688,)
+- There is also a behavioral summary file which lists
+    - t_LM = ?
+    - t_NL = ?
+    - t_QW = time spent in quiet wakefulness?
+    - t_NREM = time spent in non-rem sleep
+    - t_REM = time spent in rem sleep
+    - distance_out_of_nest = average(?) distance from the nest?
+    - distance_in_nest = ???
+    - time_in_nest = time spent in the nest
+    - time_out_of_nest = time spent out of the nest
+    - session = S1 or S2 or etc.
 - Plan: Load this data into the epochs table
 
 ## Pose Estimation
@@ -65,3 +76,6 @@ For file names containing "opto":
 - TDT data for DLC sessions and/or DLC data for TDT sessions and/or new session(s) with both TDT and DLC
 - DLC video is named "Cam 2" while TDT video is named "Cam 1" is there a difference between these two cameras?
 - Need config.yaml for DLC
+- What do the values of labels correspond to?
+- Are there timestamps for these labels?
+- t_LM? t_NL? distance_in/out of the nest?
