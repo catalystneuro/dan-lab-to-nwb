@@ -29,19 +29,19 @@ def session_to_nwb(
     source_data = dict()
     conversion_options = dict()
 
-    # Add TDT EEG and EMG
-    source_data["EEG"] = dict(folder_path=tdt_ephys_folder_path, gain=1.0, stream_id="4", es_key="ElectricalSeriesEEG")
-    conversion_options["EEG"] = dict(stub_test=stub_test, group_names=["ElectrodeGroupEEG"])
-    source_data["EMG"] = dict(folder_path=tdt_ephys_folder_path, gain=1.0, stream_id="4", es_key="ElectricalSeriesEMG")
-    conversion_options["EMG"] = dict(stub_test=stub_test, group_names=["ElectrodeGroupEMG"])
+    # # Add TDT EEG and EMG
+    # source_data["EEG"] = dict(folder_path=tdt_ephys_folder_path, gain=1.0, stream_id="4", es_key="ElectricalSeriesEEG")
+    # conversion_options["EEG"] = dict(stub_test=stub_test, group_names=["ElectrodeGroupEEG"])
+    # source_data["EMG"] = dict(folder_path=tdt_ephys_folder_path, gain=1.0, stream_id="4", es_key="ElectricalSeriesEMG")
+    # conversion_options["EMG"] = dict(stub_test=stub_test, group_names=["ElectrodeGroupEMG"])
 
-    # Add Fiber Photometry
-    source_data["FiberPhotometry"] = dict(folder_path=tdt_fp_folder_path)
-    conversion_options["FiberPhotometry"] = dict(stub_test=stub_test)
+    # # Add Fiber Photometry
+    # source_data["FiberPhotometry"] = dict(folder_path=tdt_fp_folder_path)
+    # conversion_options["FiberPhotometry"] = dict(stub_test=stub_test)
 
-    # Add Video
-    source_data["Video"] = dict(file_paths=[video_file_path], video_name="VideoCamera1")
-    conversion_options["Video"] = dict()
+    # # Add Video
+    # source_data["Video"] = dict(file_paths=[video_file_path], video_name="VideoCamera1")
+    # conversion_options["Video"] = dict()
 
     # Add Optogenetics
     source_data["Optogenetics"] = dict(folder_path=tdt_fp_folder_path)
