@@ -6,6 +6,7 @@ from pathlib import Path
 
 import numpy as np
 import tdt
+from hdmf.common import VectorData
 from ndx_optogenetics import (
     ExcitationSource,
     ExcitationSourceModel,
@@ -113,8 +114,34 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
                 )
             optical_fiber_locations_table.add_row(**row_metadata)
 
-        optogenetic_viruses = OptogeneticViruses(optogenetic_virus=[])
-        optogenetic_virus_injections = OptogeneticVirusInjections(optogenetic_virus_injections=[])
+        # TODO: remove and make optional
+        # Create virus and injection metadata
+        virus = OptogeneticVirus(
+            name="AAV-EF1a-DIO-hChR2(H134R)-EYFP",
+            construct_name="AAV-EF1a-DIO-hChR2(H134R)-EYFP",
+            description="Excitatory optogenetic construct for ChR2-EYFP expression",
+            manufacturer="UNC Vector Core",
+            titer_in_vg_per_ml=1.0e12,
+        )
+        optogenetic_viruses = OptogeneticViruses(optogenetic_virus=[virus])
+
+        virus_injection = OptogeneticVirusInjection(
+            name="AAV-EF1a-DIO-hChR2(H134R)-EYFP Injection",
+            description="AAV-EF1a-DIO-hChR2(H134R)-EYFP injection into GPe.",
+            hemisphere="right",
+            location="GPe",
+            ap_in_mm=-1.5,
+            ml_in_mm=3.2,
+            dv_in_mm=-6.0,
+            roll_in_deg=0.0,
+            pitch_in_deg=0.0,
+            yaw_in_deg=0.0,
+            reference="Bregma at the cortical surface",
+            virus=virus,
+            volume_in_uL=0.45,
+        )
+        optogenetic_virus_injections = OptogeneticVirusInjections(optogenetic_virus_injections=[virus_injection])
+
         optogenetic_experiment_metadata = OptogeneticExperimentMetadata(
             optical_fiber_locations_table=optical_fiber_locations_table,
             stimulation_software=opto_metadata["stimulation_software"],
@@ -122,7 +149,6 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
             optogenetic_virus_injections=optogenetic_virus_injections,
         )
         nwbfile.add_lab_meta_data(optogenetic_experiment_metadata)
-        print("Added optogenetic experiment metadata to NWBFile")
 
         power_in_mW = opto_metadata["ExcitationSources"][0]["power_in_W"] * 1000  # Convert from Watts to mW
 
@@ -146,18 +172,6 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
 
             for onset_time, offset_time in zip(onset_times, offset_times, strict=True):
                 pulse_length_in_ms = (offset_time - onset_time) * 1000  # Convert to milliseconds
-                # opto_epochs_table.add_row(
-                #     stimulus_type=stimulus_type,
-                #     start_time=onset_time,
-                #     stop_time=offset_time,
-                #     stimulation_on=True,
-                #     pulse_length_in_ms=pulse_length_in_ms,
-                #     period_in_ms=pulse_length_in_ms,
-                #     number_pulses_per_pulse_train=1,
-                #     number_trains=1,
-                #     intertrain_interval_in_ms=0.0,
-                #     power_in_mW=power_in_mW,
-                # )
                 column_name_to_data["start_time"].append(onset_time)
                 column_name_to_data["stop_time"].append(offset_time)
                 column_name_to_data["stimulation_on"].append(True)
@@ -169,9 +183,9 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
                 column_name_to_data["power_in_mW"].append(power_in_mW)
                 stimulus_types.append(stimulus_type)
 
-        stimulus_types = np.array(stimulus_types, dtype="S")
+        stimulus_types = np.array(stimulus_types, dtype="U")  # TODO: Figure out how to add this column to the table
         colnames = list(column_name_to_data.keys())
-        columns = [{"name": colname, "data": column_name_to_data[colname]} for colname in colnames]
+        columns = [VectorData(name=colname, description="", data=column_name_to_data[colname]) for colname in colnames]
         # colnames.append("stimulus_type")
         # columns.append({"name": "stimulus_type", "data": stimulus_types, "description": "Type of optogenetic stimulus (e.g., 'test_pulse', 'intense_stimulation')"})
         opto_epochs_table = OptogeneticEpochsTable(
@@ -179,5 +193,10 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
             description="Metadata about optogenetic stimulation parameters per epoch",
             colnames=colnames,
             columns=columns,
+        )
+        opto_epochs_table.add_column(
+            name="stimulus_type",
+            data=stimulus_types,
+            description="Type of optogenetic stimulus (e.g., 'test_pulse', 'intense_stimulation')",
         )
         nwbfile.add_time_intervals(opto_epochs_table)
