@@ -152,20 +152,31 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
 
         power_in_mW = opto_metadata["ExcitationSources"][0]["power_in_W"] * 1000  # Convert from Watts to mW
 
-        column_name_to_data = dict(
-            start_time=[],
-            stop_time=[],
-            stimulation_on=[],
-            pulse_length_in_ms=[],
-            period_in_ms=[],
-            number_pulses_per_pulse_train=[],
-            number_trains=[],
-            intertrain_interval_in_ms=[],
-            power_in_mW=[],
-        )
-        stimulus_types = []
+        column_name_to_data = {}
+        column_name_to_description = {}
+        colnames = [
+            "start_time",
+            "stop_time",
+            "stimulation_on",
+            "pulse_length_in_ms",
+            "period_in_ms",
+            "number_pulses_per_pulse_train",
+            "number_trains",
+            "intertrain_interval_in_ms",
+            "power_in_mW",
+        ]
+        for col in OptogeneticEpochsTable.__columns__:
+            if col["name"] not in colnames:
+                continue
+            column_name_to_data[col["name"]] = []
+            column_name_to_description[col["name"]] = col["description"]
+        colnames.append("stimulus_type")
+        column_name_to_data["stimulus_type"] = []
+        column_name_to_description[
+            "stimulus_type"
+        ] = "Type of optogenetic stimulus (e.g., 'test_pulse', 'intense_stimulation')"
+
         for epoc_name in self.epoc_names:
-            print(f"Processing epoc: {epoc_name}")
             stimulus_type = self.epoc_name_to_stimulus_type[epoc_name]
             onset_times = tdt_photometry.epocs[epoc_name].onset
             offset_times = tdt_photometry.epocs[epoc_name].offset
@@ -181,22 +192,16 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
                 column_name_to_data["number_trains"].append(1)
                 column_name_to_data["intertrain_interval_in_ms"].append(0.0)
                 column_name_to_data["power_in_mW"].append(power_in_mW)
-                stimulus_types.append(stimulus_type)
+                column_name_to_data["stimulus_type"].append(stimulus_type)
 
-        stimulus_types = np.array(stimulus_types, dtype="U")  # TODO: Figure out how to add this column to the table
-        colnames = list(column_name_to_data.keys())
-        columns = [VectorData(name=colname, description="", data=column_name_to_data[colname]) for colname in colnames]
-        # colnames.append("stimulus_type")
-        # columns.append({"name": "stimulus_type", "data": stimulus_types, "description": "Type of optogenetic stimulus (e.g., 'test_pulse', 'intense_stimulation')"})
+        columns = [
+            VectorData(name=colname, description=column_name_to_description[colname], data=column_name_to_data[colname])
+            for colname in colnames
+        ]
         opto_epochs_table = OptogeneticEpochsTable(
             name="optogenetic_epochs",
             description="Metadata about optogenetic stimulation parameters per epoch",
             colnames=colnames,
             columns=columns,
-        )
-        opto_epochs_table.add_column(
-            name="stimulus_type",
-            data=stimulus_types,
-            description="Type of optogenetic stimulus (e.g., 'test_pulse', 'intense_stimulation')",
         )
         nwbfile.add_time_intervals(opto_epochs_table)
