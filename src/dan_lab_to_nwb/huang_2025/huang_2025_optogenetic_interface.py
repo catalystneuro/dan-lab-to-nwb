@@ -15,15 +15,9 @@ from ndx_optogenetics import (
     OpticalFiberModel,
     OptogeneticEpochsTable,
     OptogeneticExperimentMetadata,
-    OptogeneticVirus,
-    OptogeneticViruses,
-    OptogeneticVirusInjection,
-    OptogeneticVirusInjections,
 )
 from pydantic import DirectoryPath
-from pynwb.device import Device
 from pynwb.file import NWBFile
-from pynwb.ogen import OptogeneticSeries, OptogeneticStimulusSite
 
 from neuroconv.basedatainterface import BaseDataInterface
 
@@ -47,11 +41,11 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
             "Wi3_": "intense_stimulation",
             "LasT": "intense_stimulation",
         }
-        self.epoc_name_to_fiber_name = {
-            "St1_": "optical_fiberVTA",
-            "St2_": "optical_fiberPFC",
-            "Wi3_": "optical_fiberVTA",
-            "LasT": "optical_fiberVTA",
+        self.epoc_name_to_optical_fiber_locations_table_row = {
+            "St1_": 0,
+            "St2_": 1,
+            "Wi3_": 0,
+            "LasT": 0,
         }
         for file_pattern, epoc_names in file_pattern_to_epoc_names.items():
             if file_pattern in folder_path.parent.name:
@@ -119,39 +113,9 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
                 )
             optical_fiber_locations_table.add_row(**row_metadata)
 
-        # TODO: remove and make optional
-        # Create virus and injection metadata
-        virus = OptogeneticVirus(
-            name="AAV-EF1a-DIO-hChR2(H134R)-EYFP",
-            construct_name="AAV-EF1a-DIO-hChR2(H134R)-EYFP",
-            description="Excitatory optogenetic construct for ChR2-EYFP expression",
-            manufacturer="UNC Vector Core",
-            titer_in_vg_per_ml=1.0e12,
-        )
-        optogenetic_viruses = OptogeneticViruses(optogenetic_virus=[virus])
-
-        virus_injection = OptogeneticVirusInjection(
-            name="AAV-EF1a-DIO-hChR2(H134R)-EYFP Injection",
-            description="AAV-EF1a-DIO-hChR2(H134R)-EYFP injection into GPe.",
-            hemisphere="right",
-            location="GPe",
-            ap_in_mm=-1.5,
-            ml_in_mm=3.2,
-            dv_in_mm=-6.0,
-            roll_in_deg=0.0,
-            pitch_in_deg=0.0,
-            yaw_in_deg=0.0,
-            reference="Bregma at the cortical surface",
-            virus=virus,
-            volume_in_uL=0.45,
-        )
-        optogenetic_virus_injections = OptogeneticVirusInjections(optogenetic_virus_injections=[virus_injection])
-
         optogenetic_experiment_metadata = OptogeneticExperimentMetadata(
             optical_fiber_locations_table=optical_fiber_locations_table,
             stimulation_software=opto_metadata["stimulation_software"],
-            optogenetic_viruses=optogenetic_viruses,
-            optogenetic_virus_injections=optogenetic_virus_injections,
         )
         nwbfile.add_lab_meta_data(optogenetic_experiment_metadata)
 
@@ -186,13 +150,7 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
             stimulus_type = self.epoc_name_to_stimulus_type[epoc_name]
             onset_times = tdt_photometry.epocs[epoc_name].onset
             offset_times = tdt_photometry.epocs[epoc_name].offset
-            fiber_name = self.epoc_name_to_fiber_name[epoc_name]
-            if fiber_name == "optical_fiberVTA":
-                region = 0
-            elif fiber_name == "optical_fiberPFC":
-                region = 1
-            else:
-                raise ValueError(f"Unknown optical fiber name: {fiber_name}")
+            row = self.epoc_name_to_optical_fiber_locations_table_row[epoc_name]
 
             for onset_time, offset_time in zip(onset_times, offset_times, strict=True):
                 pulse_length_in_ms = (offset_time - onset_time) * 1000  # Convert to milliseconds
@@ -207,7 +165,7 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
                 column_name_to_data["power_in_mW"].append(power_in_mW)
                 column_name_to_data["stimulus_type"].append(stimulus_type)
 
-                optical_fiber_locations_table_region_data.append(region)
+                optical_fiber_locations_table_region_data.append(row)
 
         columns = [
             VectorData(name=colname, description=column_name_to_description[colname], data=column_name_to_data[colname])
@@ -215,7 +173,7 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
         ]
         optical_fiber_locations_table_region = DynamicTableRegion(
             name="optical_fiber_locations_table_region",
-            description="Region of the optical fiber locations table corresponding to this epoch",
+            description="Region of the optical fiber locations table corresponding to this epoch.",
             data=optical_fiber_locations_table_region_data,
             table=optical_fiber_locations_table,
         )
