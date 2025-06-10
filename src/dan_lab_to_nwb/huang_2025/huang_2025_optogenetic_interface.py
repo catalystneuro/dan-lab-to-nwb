@@ -6,7 +6,7 @@ from pathlib import Path
 
 import numpy as np
 import tdt
-from hdmf.common import VectorData
+from hdmf.common import DynamicTableRegion, VectorData
 from ndx_optogenetics import (
     ExcitationSource,
     ExcitationSourceModel,
@@ -47,6 +47,12 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
             "Wi3_": "intense_stimulation",
             "LasT": "intense_stimulation",
         }
+        self.epoc_name_to_fiber_name = {
+            "St1_": "optical_fiberVTA",
+            "St2_": "optical_fiberPFC",
+            "Wi3_": "optical_fiberVTA",
+            "LasT": "optical_fiberVTA",
+        }
         for file_pattern, epoc_names in file_pattern_to_epoc_names.items():
             if file_pattern in folder_path.parent.name:
                 self.epoc_names = epoc_names
@@ -56,7 +62,6 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
         )
 
     def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict):
-        print("add_to_nwbfile()")
         folder_path = Path(self.source_data["folder_path"])
         with open(os.devnull, "w") as f, redirect_stdout(f):
             tdt_photometry = tdt.read_block(folder_path, evtype=["epocs"])
@@ -176,10 +181,18 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
             "stimulus_type"
         ] = "Type of optogenetic stimulus (e.g., 'test_pulse', 'intense_stimulation')"
 
+        optical_fiber_locations_table_region_data = []
         for epoc_name in self.epoc_names:
             stimulus_type = self.epoc_name_to_stimulus_type[epoc_name]
             onset_times = tdt_photometry.epocs[epoc_name].onset
             offset_times = tdt_photometry.epocs[epoc_name].offset
+            fiber_name = self.epoc_name_to_fiber_name[epoc_name]
+            if fiber_name == "optical_fiberVTA":
+                region = 0
+            elif fiber_name == "optical_fiberPFC":
+                region = 1
+            else:
+                raise ValueError(f"Unknown optical fiber name: {fiber_name}")
 
             for onset_time, offset_time in zip(onset_times, offset_times, strict=True):
                 pulse_length_in_ms = (offset_time - onset_time) * 1000  # Convert to milliseconds
@@ -194,10 +207,20 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
                 column_name_to_data["power_in_mW"].append(power_in_mW)
                 column_name_to_data["stimulus_type"].append(stimulus_type)
 
+                optical_fiber_locations_table_region_data.append(region)
+
         columns = [
             VectorData(name=colname, description=column_name_to_description[colname], data=column_name_to_data[colname])
             for colname in colnames
         ]
+        optical_fiber_locations_table_region = DynamicTableRegion(
+            name="optical_fiber_locations_table_region",
+            description="Region of the optical fiber locations table corresponding to this epoch",
+            data=optical_fiber_locations_table_region_data,
+            table=optical_fiber_locations_table,
+        )
+        colnames.append("optical_fiber_locations_table_region")
+        columns.append(optical_fiber_locations_table_region)
         opto_epochs_table = OptogeneticEpochsTable(
             name="optogenetic_epochs",
             description="Metadata about optogenetic stimulation parameters per epoch",
