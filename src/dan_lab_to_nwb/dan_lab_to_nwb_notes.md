@@ -1,4 +1,4 @@
-# Notes concerning the huang_2025 conversion
+# Notes concerning the dan_lab_to_nwb conversion project
 
 ## Miscellaneous
 - Info.mat contains various metadata info such as session start time and date
