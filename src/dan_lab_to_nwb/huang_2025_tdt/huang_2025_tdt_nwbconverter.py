@@ -5,7 +5,6 @@ from dan_lab_to_nwb.huang_2025_tdt import (
 )
 from neuroconv import NWBConverter
 from neuroconv.datainterfaces import (
-    DeepLabCutInterface,
     ExternalVideoInterface,
     TDTFiberPhotometryInterface,
 )
@@ -20,5 +19,4 @@ class Huang2025NWBConverter(NWBConverter):
         FiberPhotometry=TDTFiberPhotometryInterface,
         Video=ExternalVideoInterface,
         Optogenetics=Huang2025OptogeneticInterface,
-        DeepLabCut=DeepLabCutInterface,
     )

@@ -15,57 +15,41 @@ def session_to_nwb(
     *,
     info_file_path: FilePath,
     output_dir_path: DirectoryPath,
-    video_file_path: FilePath | None = None,
-    tdt_fp_folder_path: DirectoryPath | None = None,
-    tdt_ephys_folder_path: DirectoryPath | None = None,
-    dlc_file_path: FilePath | None = None,
+    video_file_path: FilePath,
+    tdt_fp_folder_path: DirectoryPath,
+    tdt_ephys_folder_path: DirectoryPath,
     stub_test: bool = False,
     verbose: bool = True,
 ):
     info_file_path = Path(info_file_path)
-    if video_file_path is not None:
-        video_file_path = Path(video_file_path)
-    if tdt_fp_folder_path is not None:
-        tdt_fp_folder_path = Path(tdt_fp_folder_path)
-    if tdt_ephys_folder_path is not None:
-        tdt_ephys_folder_path = Path(tdt_ephys_folder_path)
+    video_file_path = Path(video_file_path)
+    tdt_fp_folder_path = Path(tdt_fp_folder_path)
+    tdt_ephys_folder_path = Path(tdt_ephys_folder_path)
+    tdt_ephys_folder_path = Path(tdt_ephys_folder_path)
     output_dir_path = Path(output_dir_path)
     output_dir_path.mkdir(parents=True, exist_ok=True)
 
     source_data = dict()
     conversion_options = dict()
 
-    # Add TDT EEG and EMG (only if ephys folder is provided)
-    if tdt_ephys_folder_path is not None:
-        source_data["EEG"] = dict(
-            folder_path=tdt_ephys_folder_path, gain=1.0, stream_id="4", es_key="ElectricalSeriesEEG"
-        )
-        conversion_options["EEG"] = dict(stub_test=stub_test, group_names=["ElectrodeGroupEEG"])
-        source_data["EMG"] = dict(
-            folder_path=tdt_ephys_folder_path, gain=1.0, stream_id="4", es_key="ElectricalSeriesEMG"
-        )
-        conversion_options["EMG"] = dict(stub_test=stub_test, group_names=["ElectrodeGroupEMG"])
+    # Add TDT EEG and EMG
+    source_data["EEG"] = dict(folder_path=tdt_ephys_folder_path, gain=1.0, stream_id="4", es_key="ElectricalSeriesEEG")
+    conversion_options["EEG"] = dict(stub_test=stub_test, group_names=["ElectrodeGroupEEG"])
+    source_data["EMG"] = dict(folder_path=tdt_ephys_folder_path, gain=1.0, stream_id="4", es_key="ElectricalSeriesEMG")
+    conversion_options["EMG"] = dict(stub_test=stub_test, group_names=["ElectrodeGroupEMG"])
 
-    # Add Fiber Photometry (only if fp folder is provided)
-    if tdt_fp_folder_path is not None:
-        source_data["FiberPhotometry"] = dict(folder_path=tdt_fp_folder_path)
-        conversion_options["FiberPhotometry"] = dict(stub_test=stub_test)
+    # Add Fiber Photometry
+    source_data["FiberPhotometry"] = dict(folder_path=tdt_fp_folder_path)
+    conversion_options["FiberPhotometry"] = dict(stub_test=stub_test)
 
-    # Add Video (only if video file is provided)
-    if video_file_path is not None:
-        source_data["Video"] = dict(file_paths=[video_file_path], video_name="VideoCamera1")
-        conversion_options["Video"] = dict()
+    # Add Video
+    video_file_path = Path(video_file_path)
+    source_data["Video"] = dict(file_paths=[video_file_path], video_name="VideoCamera1")
+    conversion_options["Video"] = dict()
 
-    # Add Optogenetics (only if fp folder is provided)
-    if tdt_fp_folder_path is not None:
-        source_data["Optogenetics"] = dict(folder_path=tdt_fp_folder_path)
-        conversion_options["Optogenetics"] = dict()
-
-    # Add DeepLabCut (only if dlc file is provided)
-    if dlc_file_path is not None:
-        dlc_file_path = Path(dlc_file_path)
-        source_data["DeepLabCut"] = dict(file_path=dlc_file_path)
-        conversion_options["DeepLabCut"] = dict()
+    # Add Optogenetics
+    source_data["Optogenetics"] = dict(folder_path=tdt_fp_folder_path)
+    conversion_options["Optogenetics"] = dict()
 
     converter = Huang2025NWBConverter(source_data=source_data, verbose=verbose)
     metadata = converter.get_metadata()
@@ -153,22 +137,6 @@ def main():
         video_file_path=video_file_path,
         tdt_fp_folder_path=tdt_fp_folder_path,
         tdt_ephys_folder_path=tdt_ephys_folder_path,
-        output_dir_path=output_dir_path,
-        stub_test=stub_test,
-    )
-
-    # Example Session with DLC only
-    info_file_path = data_dir_path / "Test - video analysis" / "M407" / "M407-S1" / "check_FP" / "Info.mat"
-    dlc_file_path = (
-        data_dir_path
-        / "Test - video analysis"
-        / "M407"
-        / "M407-S1"
-        / "Lindsay_SBOX_2animals_R-250411-223215_M405_M407-250412-081001_Cam2DLC_resnet50_Box2BehaviorSep10shuffle1_100000.h5"
-    )
-    session_to_nwb(
-        info_file_path=info_file_path,
-        dlc_file_path=dlc_file_path,
         output_dir_path=output_dir_path,
         stub_test=stub_test,
     )
