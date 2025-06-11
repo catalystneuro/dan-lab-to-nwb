@@ -7,7 +7,7 @@ from zoneinfo import ZoneInfo
 from pydantic import DirectoryPath, FilePath
 from pymatreader import read_mat
 
-from dan_lab_to_nwb.huang_2025 import Huang2025NWBConverter
+from dan_lab_to_nwb.huang_2025_tdt import Huang2025NWBConverter
 from neuroconv.utils import dict_deep_update, load_dict_from_file
 
 
@@ -71,7 +71,7 @@ def session_to_nwb(
     metadata = converter.get_metadata()
 
     # Update default metadata with the editable in the corresponding yaml file
-    editable_metadata_path = Path(__file__).parent / "huang_2025_metadata.yaml"
+    editable_metadata_path = Path(__file__).parent / "huang_2025_tdt_metadata.yaml"
     editable_metadata = load_dict_from_file(editable_metadata_path)
     metadata = dict_deep_update(metadata, editable_metadata)
 
