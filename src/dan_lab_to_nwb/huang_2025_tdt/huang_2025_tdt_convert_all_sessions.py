@@ -8,7 +8,7 @@ from typing import Union
 from pydantic import DirectoryPath
 from tqdm import tqdm
 
-from .huang_2025_convert_session import session_to_nwb
+from .huang_2025_tdt_convert_session import session_to_nwb
 
 
 def dataset_to_nwb(
