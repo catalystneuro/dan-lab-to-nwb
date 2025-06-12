@@ -30,7 +30,11 @@ def session_to_nwb(
     conversion_options = dict()
 
     # Add Video
-    source_data["Video"] = dict(file_paths=[video_file_path], video_name="VideoCamera1")
+    if "Cam1" in video_file_path.name:
+        video_name = "Video1"
+    elif "Cam2" in video_file_path.name:
+        video_name = "Video2"
+    source_data["Video"] = dict(file_paths=[video_file_path], video_name=video_name)
     conversion_options["Video"] = dict()
 
     # Add DeepLabCut
