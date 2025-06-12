@@ -71,25 +71,20 @@ def session_to_nwb(
 
 def main():
     # Parameters for conversion
-    data_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan")
-    output_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/conversion_nwb")
+    data_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/Test - video analysis")
+    output_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/conversion_nwb/huang_2025_dlc")
     stub_test = True
 
     if output_dir_path.exists():
         shutil.rmtree(output_dir_path)
 
     # Example Session
-    info_file_path = data_dir_path / "Test - video analysis" / "M407" / "M407-S1" / "check_FP" / "Info.mat"
+    info_file_path = data_dir_path / "M407" / "M407-S1" / "check_FP" / "Info.mat"
     video_file_path = (
-        data_dir_path
-        / "Test - video analysis"
-        / "M407"
-        / "M407-S1"
-        / "Lindsay_SBOX_2animals_R-250411-223215_M405_M407-250412-081001_Cam2.avi"
+        data_dir_path / "M407" / "M407-S1" / "Lindsay_SBOX_2animals_R-250411-223215_M405_M407-250412-081001_Cam2.avi"
     )
     dlc_file_path = (
         data_dir_path
-        / "Test - video analysis"
         / "M407"
         / "M407-S1"
         / "Lindsay_SBOX_2animals_R-250411-223215_M405_M407-250412-081001_Cam2DLC_resnet50_Box2BehaviorSep10shuffle1_100000.h5"
