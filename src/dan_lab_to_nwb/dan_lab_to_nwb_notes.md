@@ -70,6 +70,5 @@ For file names containing "opto":
 
 ## Active Questions/Requests
 - General metadata outlined on the project setup meeting slide
-- Filtering Parameters from TDT
 - Are there start/stop times for these labels?
 - Units for behavioral summary?
