@@ -17,7 +17,6 @@ def session_to_nwb(
     output_dir_path: DirectoryPath,
     video_file_path: FilePath,
     dlc_file_path: FilePath,
-    dlc_config_file_path: FilePath,
     stub_test: bool = False,
     verbose: bool = True,
 ):
@@ -35,7 +34,7 @@ def session_to_nwb(
     conversion_options["Video"] = dict()
 
     # Add DeepLabCut
-    source_data["DeepLabCut"] = dict(file_path=dlc_file_path, config_file_path=dlc_config_file_path)
+    source_data["DeepLabCut"] = dict(file_path=dlc_file_path)
     conversion_options["DeepLabCut"] = dict()
 
     converter = Huang2025DLCNWBConverter(source_data=source_data, verbose=verbose)
@@ -55,6 +54,9 @@ def session_to_nwb(
     metadata["NWBFile"]["session_id"] = session_id
     metadata["Subject"]["subject_id"] = subject_id
     metadata["NWBFile"]["session_start_time"] = session_start_time
+    metadata["PoseEstimation"]["PoseEstimationContainers"]["PoseEstimationDeepLabCut"]["original_videos"] = [
+        str(video_file_path)
+    ]
 
     # Run conversion
     converter.run_conversion(metadata=metadata, nwbfile_path=nwbfile_path, conversion_options=conversion_options)
@@ -88,12 +90,10 @@ def main():
         / "M407-S1"
         / "Lindsay_SBOX_2animals_R-250411-223215_M405_M407-250412-081001_Cam2DLC_resnet50_Box2BehaviorSep10shuffle1_100000.h5"
     )
-    dlc_config_file_path = data_dir_path / "Test - video analysis" / "CAM2config.yaml"
     session_to_nwb(
         info_file_path=info_file_path,
         video_file_path=video_file_path,
         dlc_file_path=dlc_file_path,
-        dlc_config_file_path=dlc_config_file_path,
         output_dir_path=output_dir_path,
         stub_test=stub_test,
     )

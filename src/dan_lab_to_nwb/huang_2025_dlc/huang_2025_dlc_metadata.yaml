@@ -19,6 +19,11 @@ Subject:
   sex: U  # One of M, F, U, or O
   date_of_birth: 2014-06-22 00:00:00-04:00  # Example
 
+PoseEstimation:
+  PoseEstimationContainers:
+    PoseEstimationDeepLabCut:
+      dimensions: [[[480, 640]]]
+
 Ecephys:
   Device:
     - name: DeviceEEG
