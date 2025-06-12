@@ -8,9 +8,10 @@
 
 ## LFP
 - LFP channels are both EEG (1,2) and EMG (3,4) automatically filtered (and downsampled?) from TDT
-- filtering parameters will be shared in an image of the tdt software screen
+- filtering parameters were shared in an image of the tdt software screen
 - EEG electrodes are wires wrapped around a screw in the brain
 - EMG electrodes are wires inserted subcutaneously in the neck
+- In TDT EEG and EMG data are 2 channels each, but in the .mat files, they each only have one channel
 
 ## Fiber Photometry
 - 465B and 465C correspond to 2 different fibers: One in VTA and the other in PFC
@@ -72,3 +73,5 @@ For file names containing "opto":
 - General metadata outlined on the project setup meeting slide
 - Are there start/stop times for these labels?
 - Units for behavioral summary?
+- Only one channel in .mat file ephys data?
+- Bing-202504 vs. WS8-202504?
