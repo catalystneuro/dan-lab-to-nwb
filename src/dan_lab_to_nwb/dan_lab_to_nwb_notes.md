@@ -62,7 +62,6 @@ For file names containing "opto":
 
 ## Pose Estimation
 - Standard DLC output (.h5)
-- Need config.yaml
 - SampFreq.mat should contain the video sampling rate for temporal alignment
 
 ## Histology
@@ -73,9 +72,5 @@ For file names containing "opto":
 ## Active Questions/Requests
 - General metadata outlined on the project setup meeting slide
 - Filtering Parameters from TDT
-- TDT data for DLC sessions and/or DLC data for TDT sessions and/or new session(s) with both TDT and DLC
-- DLC video is named "Cam 2" while TDT video is named "Cam 1" is there a difference between these two cameras?
-- Need config.yaml for DLC
-- What do the values of labels correspond to?
 - Are there timestamps for these labels?
 - t_LM? t_NL? distance_in/out of the nest?
