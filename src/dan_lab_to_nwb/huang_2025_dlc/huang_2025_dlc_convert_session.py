@@ -14,16 +14,19 @@ from neuroconv.utils import dict_deep_update, load_dict_from_file
 def session_to_nwb(
     *,
     info_file_path: FilePath,
-    output_dir_path: DirectoryPath,
     video_file_path: FilePath,
     dlc_file_path: FilePath,
     labels_file_path: FilePath,
+    behavioral_summary_file_path: FilePath,
+    output_dir_path: DirectoryPath,
     stub_test: bool = False,
     verbose: bool = True,
 ):
     info_file_path = Path(info_file_path)
     video_file_path = Path(video_file_path)
     dlc_file_path = Path(dlc_file_path)
+    labels_file_path = Path(labels_file_path)
+    behavioral_summary_file_path = Path(behavioral_summary_file_path)
     output_dir_path = Path(output_dir_path)
     output_dir_path.mkdir(parents=True, exist_ok=True)
 
@@ -43,7 +46,9 @@ def session_to_nwb(
     conversion_options["DeepLabCut"] = dict()
 
     # Add Behavior
-    source_data["Behavior"] = dict(labels_file_path=labels_file_path)
+    source_data["Behavior"] = dict(
+        labels_file_path=labels_file_path, behavioral_summary_file_path=behavioral_summary_file_path
+    )
     conversion_options["Behavior"] = dict()
 
     converter = Huang2025DLCNWBConverter(source_data=source_data, verbose=verbose)
@@ -94,13 +99,16 @@ def main():
         / "M407-S1"
         / "Lindsay_SBOX_2animals_R-250411-223215_M405_M407-250412-081001_Cam2DLC_resnet50_Box2BehaviorSep10shuffle1_100000.h5"
     )
-    # /Volumes/T7/CatalystNeuro/Dan/Test - video analysis/M407/M407-S1/check_FP/labels.mat
+    # /Volumes/T7/CatalysvtNeuro/Dan/Test - video analysis/M407/M407-S1/check_FP/labels.mat
     labels_file_path = data_dir_path / "M407" / "M407-S1" / "check_FP" / "labels.mat"
+    # /Volumes/T7/CatalystNeuro/Dan/Test - video analysis/M407/M407_beh_summary.csv
+    behavioral_summary_file_path = data_dir_path / "M407" / "M407_beh_summary.csv"
     session_to_nwb(
         info_file_path=info_file_path,
         video_file_path=video_file_path,
         dlc_file_path=dlc_file_path,
         labels_file_path=labels_file_path,
+        behavioral_summary_file_path=behavioral_summary_file_path,
         output_dir_path=output_dir_path,
         stub_test=stub_test,
     )
