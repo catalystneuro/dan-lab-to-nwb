@@ -17,6 +17,7 @@ def session_to_nwb(
     output_dir_path: DirectoryPath,
     video_file_path: FilePath,
     dlc_file_path: FilePath,
+    labels_file_path: FilePath,
     stub_test: bool = False,
     verbose: bool = True,
 ):
@@ -40,6 +41,10 @@ def session_to_nwb(
     # Add DeepLabCut
     source_data["DeepLabCut"] = dict(file_path=dlc_file_path)
     conversion_options["DeepLabCut"] = dict()
+
+    # Add Behavior
+    source_data["Behavior"] = dict(labels_file_path=labels_file_path)
+    conversion_options["Behavior"] = dict()
 
     converter = Huang2025DLCNWBConverter(source_data=source_data, verbose=verbose)
     metadata = converter.get_metadata()
@@ -89,10 +94,13 @@ def main():
         / "M407-S1"
         / "Lindsay_SBOX_2animals_R-250411-223215_M405_M407-250412-081001_Cam2DLC_resnet50_Box2BehaviorSep10shuffle1_100000.h5"
     )
+    # /Volumes/T7/CatalystNeuro/Dan/Test - video analysis/M407/M407-S1/check_FP/labels.mat
+    labels_file_path = data_dir_path / "M407" / "M407-S1" / "check_FP" / "labels.mat"
     session_to_nwb(
         info_file_path=info_file_path,
         video_file_path=video_file_path,
         dlc_file_path=dlc_file_path,
+        labels_file_path=labels_file_path,
         output_dir_path=output_dir_path,
         stub_test=stub_test,
     )
