@@ -61,8 +61,8 @@ class Huang2025DlcBehaviorInterface(BaseDataInterface):
         # Load label data
         labels_file_path = Path(self.source_data["labels_file_path"])
         label_ids = read_mat(filename=labels_file_path)["labels"]
-        start_times = np.asarray(np.arange(len(label_ids)), dtype=np.float64)  # TODO: Get start_times for these labels
-        stop_times = start_times + 1.0  # TODO: Get stop_times for these labels
+        start_times = np.arange(len(label_ids)) * 5.0
+        stop_times = np.concatenate((start_times[1:], [start_times[-1] + 5.0]))
 
         # Add epochs for each behavior label
         for label_id, start_time, stop_time in zip(label_ids, start_times, stop_times, strict=True):

@@ -40,9 +40,9 @@ Behavior:
       - name: t_REM
         description: Fraction of time spent in REM sleep.
       - name: distance_in_nest
-        description: Total distance traveled while in the nest in cm. # TODO: confirm units
+        description: Total distance traveled while in the nest in cm.
       - name: distance_out_of_nest
-        description: Total distance traveled while out of the nest in cm. # TODO: confirm units
+        description: Total distance traveled while out of the nest in cm.
       - name: time_in_nest
         description: Total time spent in the nest in seconds.
       - name: time_out_of_nest
