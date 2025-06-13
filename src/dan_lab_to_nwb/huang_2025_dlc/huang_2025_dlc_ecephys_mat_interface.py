@@ -3,17 +3,12 @@ from copy import deepcopy
 from pathlib import Path
 
 import numpy as np
-import pandas as pd
-from pydantic import DirectoryPath, FilePath
+from pydantic import FilePath
 from pymatreader import read_mat
-from pynwb.core import DynamicTable
 from pynwb.ecephys import Device, ElectricalSeries, ElectrodeGroup
 from pynwb.file import NWBFile
 
 from neuroconv.basedatainterface import BaseDataInterface
-from neuroconv.datainterfaces.ecephys.baserecordingextractorinterface import (
-    BaseRecordingExtractorInterface,
-)
 from neuroconv.tools.nwb_helpers import get_module
 from neuroconv.tools.spikeinterface import add_devices_to_nwbfile
 from neuroconv.utils import get_base_schema
@@ -165,8 +160,6 @@ def add_electrical_series_to_nwbfile(
     # Link to Electrodes table
     electrode_table_indices = []
     for group_name in group_names:
-        print(f"{group_name=}")
-        print(f"{nwbfile.electrodes.group_name.data[:]=}")
         electrode_group_names = np.asarray(nwbfile.electrodes.group_name.data[:])
         group_indices = np.where(electrode_group_names == group_name)[0]
         electrode_table_indices.extend(group_indices)
@@ -175,16 +168,6 @@ def add_electrical_series_to_nwbfile(
         description="electrode_table_region",
     )
     eseries_kwargs.update(electrodes=electrode_table_region)
-
-    # Iterator
-    # iterator_opts = iterator_opts if iterator_opts is not None else {}
-    # iterator_opts["return_scaled"] = write_scaled
-    # ephys_data_iterator = Huang2025RecordingDataChunkIterator(
-    #     recording=recording,
-    #     channel_indices=electrode_table_indices,
-    #     **iterator_opts,
-    # )
-    # eseries_kwargs.update(data=ephys_data_iterator)
 
     # Create ElectricalSeries object and add it to nwbfile
     es = ElectricalSeries(**eseries_kwargs)
