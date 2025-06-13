@@ -47,6 +47,7 @@ For file names containing "opto":
 
 ## Behavior
 - Labels is an array with 3 values (1, 2, 3) with shape (2878,) which matches neither the number of video/dlc frames (143946,) nor the EEG data (14642688,)
+- The labels start from time 0, and each label covers 5s. At the end of the video file, the residual data less than 5 seconds will be discarded.
 - There is also a behavioral summary file which lists
     - t_LM = time spent in locomotion
     - t_NL = time spent doing non-locomotive movements
