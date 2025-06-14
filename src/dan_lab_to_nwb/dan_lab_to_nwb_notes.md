@@ -45,6 +45,7 @@ For file names containing "opto":
 
 ## Video
 - Cam1.onset = Temporal alignment times for camera (Cam1.onset is located in the tdt data)
+- But, for Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001/M301-241108-072001, len(Cam1.onset) = 257944 ≠ number of frames = 257953
 
 ## Behavior
 - Labels is an array with 3 values (1, 2, 3) with shape (2878,) which matches neither the number of video/dlc frames (143946,) nor the EEG data (14642688,)
@@ -73,3 +74,5 @@ For file names containing "opto":
 ## Active Questions/Requests
 - General metadata outlined on the project setup meeting slide
 - Bing-202504 vs. WS8-202504?
+- Length mismatch for TDT video temporal alignment?
+- ephys-video temporal alignment for dlc data?
