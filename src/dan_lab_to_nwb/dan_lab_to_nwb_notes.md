@@ -1,4 +1,4 @@
-# Notes concerning the huang_2025 conversion
+# Notes concerning the dan_lab_to_nwb conversion project
 
 ## Miscellaneous
 - Info.mat contains various metadata info such as session start time and date
@@ -13,8 +13,6 @@
 - EMG electrodes are wires inserted subcutaneously in the neck
 
 ## Fiber Photometry
-- TODO: Add stub option
-- Still need descriptions for Pu1_, Pu2_, PC2_, PC3_, TC1_, TC2_, St1_, St2_, ISI1_, ISI2_
 - 465B and 465C correspond to 2 different fibers: One in VTA and the other in PFC
 - But other experimental protocols use different locations for the 2 fibers (SNC and/or striatum)
 
@@ -45,16 +43,34 @@ For file names containing "opto":
 - Laser is On during St1/St2 and LasT
 
 ## Video
-- TODO: Update VideoInterface on neuroconv to make it easier to update the descriptions.
-- Cam1.onset = Temporal alignment times for camera
+- Cam1.onset = Temporal alignment times for camera (Cam1.onset is located in the tdt data)
 
 ## Behavior
-- Should be a .mat file with sleep and wake times
+- Labels is an array with 3 values (1, 2, 3) with shape (2878,) which matches neither the number of video/dlc frames (143946,) nor the EEG data (14642688,)
+- There is also a behavioral summary file which lists
+    - t_LM = ?
+    - t_NL = ?
+    - t_QW = time spent in quiet wakefulness?
+    - t_NREM = time spent in non-rem sleep
+    - t_REM = time spent in rem sleep
+    - distance_out_of_nest = average(?) distance from the nest?
+    - distance_in_nest = ???
+    - time_in_nest = time spent in the nest
+    - time_out_of_nest = time spent out of the nest
+    - session = S1 or S2 or etc.
 - Plan: Load this data into the epochs table
 
 ## Pose Estimation
-- Should be standard DLC output
+- Standard DLC output (.h5)
+- SampFreq.mat should contain the video sampling rate for temporal alignment
 
 ## Histology
 - Should be a folder of .tiffs for each animal after they have been sacrificed
 - Plan: Store each in pynwb.image.GreyscaleImage or pynwb.image.RGBImage
+
+
+## Active Questions/Requests
+- General metadata outlined on the project setup meeting slide
+- Filtering Parameters from TDT
+- Are there timestamps for these labels?
+- t_LM? t_NL? distance_in/out of the nest?

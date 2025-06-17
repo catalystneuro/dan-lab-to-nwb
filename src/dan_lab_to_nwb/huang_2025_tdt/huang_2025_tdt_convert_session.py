@@ -7,17 +7,19 @@ from zoneinfo import ZoneInfo
 from pydantic import DirectoryPath, FilePath
 from pymatreader import read_mat
 
-from dan_lab_to_nwb.huang_2025 import Huang2025NWBConverter
+from dan_lab_to_nwb.huang_2025_tdt import Huang2025NWBConverter
 from neuroconv.utils import dict_deep_update, load_dict_from_file
 
 
 def session_to_nwb(
+    *,
     info_file_path: FilePath,
+    output_dir_path: DirectoryPath,
     video_file_path: FilePath,
     tdt_fp_folder_path: DirectoryPath,
     tdt_ephys_folder_path: DirectoryPath,
-    output_dir_path: DirectoryPath,
     stub_test: bool = False,
+    verbose: bool = True,
 ):
     info_file_path = Path(info_file_path)
     video_file_path = Path(video_file_path)
@@ -40,18 +42,22 @@ def session_to_nwb(
     conversion_options["FiberPhotometry"] = dict(stub_test=stub_test)
 
     # Add Video
-    source_data["Video"] = dict(file_paths=[video_file_path], video_name="VideoCamera1")
+    if "Cam1" in video_file_path.name:
+        video_name = "Video1"
+    elif "Cam2" in video_file_path.name:
+        video_name = "Video2"
+    source_data["Video"] = dict(file_paths=[video_file_path], video_name=video_name)
     conversion_options["Video"] = dict()
 
     # Add Optogenetics
     source_data["Optogenetics"] = dict(folder_path=tdt_fp_folder_path)
     conversion_options["Optogenetics"] = dict()
 
-    converter = Huang2025NWBConverter(source_data=source_data)
+    converter = Huang2025NWBConverter(source_data=source_data, verbose=verbose)
     metadata = converter.get_metadata()
 
     # Update default metadata with the editable in the corresponding yaml file
-    editable_metadata_path = Path(__file__).parent / "huang_2025_metadata.yaml"
+    editable_metadata_path = Path(__file__).parent / "huang_2025_tdt_metadata.yaml"
     editable_metadata = load_dict_from_file(editable_metadata_path)
     metadata = dict_deep_update(metadata, editable_metadata)
 
@@ -68,11 +74,14 @@ def session_to_nwb(
     # Run conversion
     converter.run_conversion(metadata=metadata, nwbfile_path=nwbfile_path, conversion_options=conversion_options)
 
+    if verbose:
+        print(f"Session {session_id} for subject {subject_id} converted successfully to NWB format at {nwbfile_path}")
+
 
 def main():
     # Parameters for conversion
     data_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/Test - TDT data")
-    output_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/conversion_nwb")
+    output_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/conversion_nwb/huang_2025_tdt")
     stub_test = True
 
     if output_dir_path.exists():
