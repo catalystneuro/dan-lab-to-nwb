@@ -1,4 +1,5 @@
 """Primary script to run to convert all sessions in a dataset using session_to_nwb."""
+import shutil
 import traceback
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
@@ -6,9 +7,10 @@ from pprint import pformat
 from typing import Union
 
 from pydantic import DirectoryPath
+from pymatreader import read_mat
 from tqdm import tqdm
 
-from .huang_2025_tdt_convert_session import session_to_nwb
+from dan_lab_to_nwb.huang_2025_tdt.huang_2025_tdt_convert_session import session_to_nwb
 
 
 def dataset_to_nwb(
@@ -41,7 +43,8 @@ def dataset_to_nwb(
         for session_to_nwb_kwargs in session_to_nwb_kwargs_per_session:
             session_to_nwb_kwargs["output_dir_path"] = output_dir_path
             session_to_nwb_kwargs["verbose"] = verbose
-            exception_file_path = data_dir_path / f"ERROR_<nwbfile_name>.txt"  # Add error file path here
+            nwbfile_name = get_nwbfile_name(session_to_nwb_kwargs=session_to_nwb_kwargs)
+            exception_file_path = output_dir_path / f"ERROR_{nwbfile_name}.txt"
             futures.append(
                 executor.submit(
                     safe_session_to_nwb,
@@ -72,6 +75,27 @@ def safe_session_to_nwb(*, session_to_nwb_kwargs: dict, exception_file_path: Uni
             f.write(traceback.format_exc())
 
 
+def get_nwbfile_name(*, session_to_nwb_kwargs: dict) -> str:
+    """Get the NWB file name based on the session_to_nwb_kwargs.
+
+    Parameters
+    ----------
+    session_to_nwb_kwargs : dict
+        The kwargs for session_to_nwb, which should contain the path to the info file.
+
+    Returns
+    -------
+    str
+        The NWB file name.
+    """
+    info_file_path = session_to_nwb_kwargs["info_file_path"]
+    info = read_mat(filename=info_file_path)["Info"]
+    session_id = info["blockname"]
+    subject_id = info["Subject"]
+    nwbfile_name = f"sub-{subject_id}_ses-{session_id}.nwb"
+    return nwbfile_name
+
+
 def get_session_to_nwb_kwargs_per_session(
     *,
     data_dir_path: DirectoryPath,
@@ -88,24 +112,62 @@ def get_session_to_nwb_kwargs_per_session(
     list[dict[str, Any]]
         A list of dictionaries containing the kwargs for session_to_nwb for each session.
     """
-    #####
-    # # Implement this function to return the kwargs for session_to_nwb for each session
-    # This can be a specific list with hard-coded sessions, a path expansion or any conversion specific logic that you might need
-    #####
-    raise NotImplementedError
+    data_dir_path = Path(data_dir_path)
+    session_to_nwb_kwargs_per_session = []
+
+    # Example Session with "pTra_con" type optogenetics
+    info_file_path = data_dir_path / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001" / "M301-241108-072001" / "Info.mat"
+    video_file_path = (
+        data_dir_path
+        / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001"
+        / "M301-241108-072001"
+        / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001_M301-241108-072001_Cam1.avi"
+    )
+    tdt_fp_folder_path = data_dir_path / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001" / "M301-241108-072001"
+    tdt_ephys_folder_path = data_dir_path / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001"
+    session_to_nwb_kwargs = dict(
+        info_file_path=info_file_path,
+        video_file_path=video_file_path,
+        tdt_fp_folder_path=tdt_fp_folder_path,
+        tdt_ephys_folder_path=tdt_ephys_folder_path,
+    )
+    session_to_nwb_kwargs_per_session.append(session_to_nwb_kwargs)
+
+    # Example Session with "opto" type optogenetics
+    info_file_path = data_dir_path / "Lindsay_SBO_opto1-Evoke12_2in1-240914-155559" / "M301-240917-163001" / "Info.mat"
+    video_file_path = (
+        data_dir_path
+        / "Lindsay_SBO_opto1-Evoke12_2in1-240914-155559"
+        / "M301-240917-163001"
+        / "Lindsay_SBO_opto1-Evoke12_2in1-240914-155559_M301-240917-163001_Cam1.avi"
+    )
+    tdt_fp_folder_path = data_dir_path / "Lindsay_SBO_opto1-Evoke12_2in1-240914-155559" / "M301-240917-163001"
+    tdt_ephys_folder_path = data_dir_path / "Lindsay_SBO_opto1-Evoke12_2in1-240914-155559"
+    session_to_nwb_kwargs = dict(
+        info_file_path=info_file_path,
+        video_file_path=video_file_path,
+        tdt_fp_folder_path=tdt_fp_folder_path,
+        tdt_ephys_folder_path=tdt_ephys_folder_path,
+    )
+    session_to_nwb_kwargs_per_session.append(session_to_nwb_kwargs)
+
+    return session_to_nwb_kwargs_per_session
 
 
 if __name__ == "__main__":
 
     # Parameters for conversion
-    data_dir_path = Path("/Directory/With/Raw/Formats/")
-    output_dir_path = Path("~/conversion_nwb/")
-    max_workers = 1
+    data_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/Test - TDT data")
+    output_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/conversion_nwb/huang_2025_tdt")
+    max_workers = 4
     verbose = False
+
+    if output_dir_path.exists():
+        shutil.rmtree(output_dir_path)
 
     dataset_to_nwb(
         data_dir_path=data_dir_path,
         output_dir_path=output_dir_path,
         max_workers=max_workers,
-        verbose=False,
+        verbose=verbose,
     )
