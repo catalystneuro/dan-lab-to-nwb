@@ -47,18 +47,18 @@ For file names containing "opto":
 
 ## Behavior
 - Labels is an array with 3 values (1, 2, 3) with shape (2878,) which matches neither the number of video/dlc frames (143946,) nor the EEG data (14642688,)
+- The labels start from time 0, and each label covers 5s. At the end of the video file, the residual data less than 5 seconds will be discarded.
 - There is also a behavioral summary file which lists
-    - t_LM = ?
-    - t_NL = ?
-    - t_QW = time spent in quiet wakefulness?
+    - t_LM = time spent in locomotion
+    - t_NL = time spent doing non-locomotive movements
+    - t_QW = time spent in quiet wakefulness
     - t_NREM = time spent in non-rem sleep
     - t_REM = time spent in rem sleep
-    - distance_out_of_nest = average(?) distance from the nest?
-    - distance_in_nest = ???
+    - distance_out_of_nest = total distance traveled while out of the nest (cm?)
+    - distance_in_nest = total distance traveled while in the nest (cm?)
     - time_in_nest = time spent in the nest
     - time_out_of_nest = time spent out of the nest
     - session = S1 or S2 or etc.
-- Plan: Load this data into the epochs table
 
 ## Pose Estimation
 - Standard DLC output (.h5)
@@ -72,5 +72,3 @@ For file names containing "opto":
 ## Active Questions/Requests
 - General metadata outlined on the project setup meeting slide
 - Filtering Parameters from TDT
-- Are there timestamps for these labels?
-- t_LM? t_NL? distance_in/out of the nest?

@@ -24,6 +24,30 @@ PoseEstimation:
     PoseEstimationDeepLabCut:
       dimensions: [[[480, 640]]]
 
+Behavior:
+  BehavioralSummaryTable:
+    name: behavioral_summary
+    description: Summary of behavioral states for the session
+    columns:
+      - name: t_LM
+        description: Fraction of time spent in locomotion.
+      - name: t_NL
+        description: Fraction of time spent making non-locomotor movements.
+      - name: t_QW
+        description: Fraction of time spent in quiet wakefulness.
+      - name: t_NREM
+        description: Fraction of time spent in NREM sleep.
+      - name: t_REM
+        description: Fraction of time spent in REM sleep.
+      - name: distance_in_nest
+        description: Total distance traveled while in the nest in cm.
+      - name: distance_out_of_nest
+        description: Total distance traveled while out of the nest in cm.
+      - name: time_in_nest
+        description: Total time spent in the nest in seconds.
+      - name: time_out_of_nest
+        description: Total time spent out of the nest in seconds.
+
 Ecephys:
   Device:
     - name: DeviceEEG
