@@ -8,9 +8,10 @@
 
 ## LFP
 - LFP channels are both EEG (1,2) and EMG (3,4) automatically filtered (and downsampled?) from TDT
-- filtering parameters will be shared in an image of the tdt software screen
+- filtering parameters were shared in an image of the tdt software screen
 - EEG electrodes are wires wrapped around a screw in the brain
 - EMG electrodes are wires inserted subcutaneously in the neck
+- In TDT EEG and EMG data are 2 channels each, but in the .mat files, they each only have one channel
 
 ## Fiber Photometry
 - 465B and 465C correspond to 2 different fibers: One in VTA and the other in PFC
@@ -44,6 +45,7 @@ For file names containing "opto":
 
 ## Video
 - Cam1.onset = Temporal alignment times for camera (Cam1.onset is located in the tdt data)
+- But, for Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001/M301-241108-072001, len(Cam1.onset) = 257944 ≠ number of frames = 257953
 
 ## Behavior
 - Labels is an array with 3 values (1, 2, 3) with shape (2878,) which matches neither the number of video/dlc frames (143946,) nor the EEG data (14642688,)
@@ -71,4 +73,6 @@ For file names containing "opto":
 
 ## Active Questions/Requests
 - General metadata outlined on the project setup meeting slide
-- Filtering Parameters from TDT
+- Bing-202504 vs. WS8-202504?
+- Length mismatch for TDT video temporal alignment?
+- ephys-video temporal alignment for dlc data?

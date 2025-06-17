@@ -1,6 +1,7 @@
 """Primary NWBConverter class for this dataset."""
 from dan_lab_to_nwb.huang_2025_dlc import (
     Huang2025DlcBehaviorInterface,
+    Huang2025DlcEcephysMatInterface,
 )
 from neuroconv import NWBConverter
 from neuroconv.datainterfaces import (
@@ -16,4 +17,5 @@ class Huang2025DLCNWBConverter(NWBConverter):
         Video=ExternalVideoInterface,
         DeepLabCut=DeepLabCutInterface,
         Behavior=Huang2025DlcBehaviorInterface,
+        Ecephys=Huang2025DlcEcephysMatInterface,
     )

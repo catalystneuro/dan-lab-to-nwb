@@ -22,8 +22,9 @@ class Huang2025TdtRecordingInterface(TdtRecordingInterface):
     def add_to_nwbfile(
         self, nwbfile: NWBFile, metadata: dict, group_names: list[str] = ["ElectrodeGroup"], **conversion_options
     ):
+        from neuroconv.tools.spikeinterface import add_recording_metadata_to_nwbfile
+
         # ElectricalSeries is written manually so that it can be split into EEG and EMG
-        conversion_options["write_electrical_series"] = False
 
         electrode_group_name_to_num_channels = {"ElectrodeGroupEEG": 2, "ElectrodeGroupEMG": 2}
         channel_ids = self.recording_extractor.get_channel_ids()
@@ -39,8 +40,11 @@ class Huang2025TdtRecordingInterface(TdtRecordingInterface):
         self.recording_extractor.set_property(key="group_name", ids=channel_ids, values=names)
         self.recording_extractor.set_property(key="channel_name", ids=channel_ids, values=channel_names)
 
-        super().add_to_nwbfile(nwbfile=nwbfile, metadata=metadata, **conversion_options)
-        conversion_options.pop("write_electrical_series")
+        add_recording_metadata_to_nwbfile(
+            recording=self.recording_extractor,
+            nwbfile=nwbfile,
+            metadata=metadata,
+        )
         stub_test = conversion_options.pop("stub_test")
         if stub_test:
             recording = self.subset_recording(stub_test=stub_test)
