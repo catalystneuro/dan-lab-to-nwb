@@ -67,9 +67,9 @@ Ecephys:
       location: Subcutaneous neck
   ElectricalSeriesEEG:
     name: ElectricalSeriesEEG
-    description: EEG voltage data recorded by a TDT acquisition system.
+    description: EEG voltage data was recorded by a TDT acquisition system. A second backup channel was recorded in case the signal in the first channel is compromised. During data extraction, the redundant channel was discarded to conserve space.
     filtering: The data was band-pass filtered between 0.5 Hz and 750 Hz using second-order filters. Notch filters were applied at 60 Hz, 120 Hz, 180 Hz, and 240 Hz with 20 dB attenuation and 1/10th octave bandwidth to remove power line interference and its harmonics.
   ElectricalSeriesEMG:
     name: ElectricalSeriesEMG
-    description: EMG voltage data recorded by a TDT acquisition system.
+    description: EMG voltage data was recorded by a TDT acquisition system. A second backup channel was recorded in case the signal in the first channel is compromised. During data extraction, the redundant channel was discarded to conserve space.
     filtering: The data was band-pass filtered between 0.5 Hz and 750 Hz using second-order filters. Notch filters were applied at 60 Hz, 120 Hz, 180 Hz, and 240 Hz with 20 dB attenuation and 1/10th octave bandwidth to remove power line interference and its harmonics.
