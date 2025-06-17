@@ -25,7 +25,6 @@ def session_to_nwb(
     video_file_path = Path(video_file_path)
     tdt_fp_folder_path = Path(tdt_fp_folder_path)
     tdt_ephys_folder_path = Path(tdt_ephys_folder_path)
-    tdt_ephys_folder_path = Path(tdt_ephys_folder_path)
     output_dir_path = Path(output_dir_path)
     output_dir_path.mkdir(parents=True, exist_ok=True)
 
