@@ -121,27 +121,30 @@ def get_session_to_nwb_kwargs_per_session(
     ]
     for folder_name in dataset_folder_names:
         dataset_folder = data_dir_path / folder_name
-        for session_folder in dataset_folder.iterdir():
-            if not session_folder.is_dir():
+        for outer_session_folder in dataset_folder.iterdir():
+            if not outer_session_folder.is_dir():
                 continue
-            for segment_folder in session_folder.iterdir():
-                if not segment_folder.is_dir():
+            for session_folder in outer_session_folder.iterdir():
+                if not session_folder.is_dir():
                     continue
-                info_file_path = segment_folder / "Info.mat"
-                try:
-                    video_file_path = next(segment_folder.glob("*.avi"))
-                except StopIteration:
-                    print(f"No .avi file found in {segment_folder}")
-                    continue
-                tdt_fp_folder_path = segment_folder
-                tdt_ephys_folder_path = session_folder
-                session_to_nwb_kwargs = dict(
-                    info_file_path=info_file_path,
-                    video_file_path=video_file_path,
-                    tdt_fp_folder_path=tdt_fp_folder_path,
-                    tdt_ephys_folder_path=tdt_ephys_folder_path,
-                )
-                session_to_nwb_kwargs_per_session.append(session_to_nwb_kwargs)
+                for segment_folder in session_folder.iterdir():
+                    if not segment_folder.is_dir():
+                        continue
+                    info_file_path = segment_folder / "Info.mat"
+                    try:
+                        video_file_path = next(segment_folder.glob("*.avi"))
+                    except StopIteration:
+                        print(f"No .avi file found in {segment_folder}")
+                        continue
+                    tdt_fp_folder_path = segment_folder
+                    tdt_ephys_folder_path = session_folder
+                    session_to_nwb_kwargs = dict(
+                        info_file_path=info_file_path,
+                        video_file_path=video_file_path,
+                        tdt_fp_folder_path=tdt_fp_folder_path,
+                        tdt_ephys_folder_path=tdt_ephys_folder_path,
+                    )
+                    session_to_nwb_kwargs_per_session.append(session_to_nwb_kwargs)
 
     return session_to_nwb_kwargs_per_session
 
