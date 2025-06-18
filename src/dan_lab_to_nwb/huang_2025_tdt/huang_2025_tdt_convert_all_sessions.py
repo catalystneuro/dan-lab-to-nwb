@@ -44,7 +44,8 @@ def dataset_to_nwb(
             session_to_nwb_kwargs["output_dir_path"] = output_dir_path
             session_to_nwb_kwargs["verbose"] = verbose
             nwbfile_name = get_nwbfile_name(session_to_nwb_kwargs=session_to_nwb_kwargs)
-            exception_file_path = output_dir_path / f"ERROR_{nwbfile_name}.txt"
+            nwbfile_stem = Path(nwbfile_name).stem
+            exception_file_path = output_dir_path / f"ERROR_{nwbfile_stem}.txt"
             futures.append(
                 executor.submit(
                     safe_session_to_nwb,
