@@ -20,9 +20,12 @@ def reorganize_data(data_dir_path: FilePath):
                 continue
             tsq_file = tsq_files[0]
             session_name = tsq_file.name.split(sub_folder.name)[0].strip("_")
-            session_folder_path = dataset_folder / session_name
-            session_folder_path.mkdir(exist_ok=True)
-            sub_folder.rename(session_folder_path / sub_folder.name)
+
+            temp_path = sub_folder.rename(dataset_folder / f"temp_{sub_folder.name}")
+            sub_folder.mkdir()
+            session_folder_path = sub_folder / session_name
+            session_folder_path.mkdir()
+            temp_path.rename(session_folder_path / sub_folder.name)
 
     # Special case for stand-alone example sessions
     example_session_dataset_folder = data_dir_path / "ExampleSessions"
@@ -38,9 +41,12 @@ def reorganize_data(data_dir_path: FilePath):
 
         tsq_file = list(folder_path.glob("*.tsq"))[0]
         session_name = tsq_file.name.split(folder_name)[0].strip("_")
-        session_folder_path = example_session_dataset_folder / session_name
-        session_folder_path.mkdir(exist_ok=True)
-        folder_path.rename(session_folder_path / folder_name)
+
+        sub_folder = example_session_dataset_folder / folder_name
+        sub_folder.mkdir(exist_ok=True)
+        session_folder = sub_folder / session_name
+        session_folder.mkdir(exist_ok=True)
+        folder_path.rename(session_folder / folder_name)
 
 
 def main():
