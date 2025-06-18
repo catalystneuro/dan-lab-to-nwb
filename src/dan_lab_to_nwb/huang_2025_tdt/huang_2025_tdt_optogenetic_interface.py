@@ -34,10 +34,18 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
                 "optogenetic_series_PFC_test_pulse": "St2_",
                 "optogenetic_series_VTA_intense_stimulation": "LasT",
             },
+            "SBOX_R_evoke_2in1": {
+                "optogenetic_series_VTA_test_pulse": "St1_",
+                "optogenetic_series_PFC_test_pulse": "St2_",
+            },
+            "TDTb_R_evoke_2in1": {
+                "optogenetic_series_VTA_test_pulse": "St1_",
+                "optogenetic_series_PFC_test_pulse": "St2_",
+            },
         }
         for file_pattern, series_name_to_epoc_name in file_pattern_to_series_name_to_epoc_name.items():
             if file_pattern in folder_path.parent.name:
-                return series_name_to_epoc_name[series_name]
+                return series_name_to_epoc_name.get(series_name)
         raise ValueError(
             f"No matching file pattern found in {folder_path.parent}. Expected one of: {list(file_pattern_to_series_name_to_epoc_name.keys())}"
         )
@@ -51,6 +59,8 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
         for series_metadata in opto_metadata["OptogeneticSeries"]:
             series_name = series_metadata["name"]
             epoc_name = self.get_epoc_name(series_name=series_name)
+            if epoc_name is None:
+                continue
             onset_times = tdt_photometry.epocs[epoc_name].onset
             offset_times = tdt_photometry.epocs[epoc_name].offset
             power = series_metadata["power"]
