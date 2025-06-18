@@ -112,6 +112,18 @@ def get_session_to_nwb_kwargs_per_session(
     list[dict[str, Any]]
         A list of dictionaries containing the kwargs for session_to_nwb for each session.
     """
+    sessions_to_skip = [
+        "M405_M407-250412-081001(done)",
+        "M404_M409-250406-141501(done)",
+        "M404_M409-250405-151801(done)",
+        "M405_M407-250412-142001(done)",
+        "M404-M409-250406-153701 (M404 bad signal, done)",
+        "M405_M407-250413-081001(done)",
+        "M405_M407-250413-152101(done)",
+        "M409_M404-250407-153704 (done)",
+        "M405_M407-250414-081001(done)",
+    ]
+
     data_dir_path = Path(data_dir_path)
     session_to_nwb_kwargs_per_session = []
     dataset_folder_names = [
@@ -124,6 +136,8 @@ def get_session_to_nwb_kwargs_per_session(
         for outer_session_folder in dataset_folder.iterdir():
             if not outer_session_folder.is_dir():
                 continue
+            if outer_session_folder.name in sessions_to_skip:
+                continue
             for session_folder in outer_session_folder.iterdir():
                 if not session_folder.is_dir():
                     continue
@@ -131,11 +145,7 @@ def get_session_to_nwb_kwargs_per_session(
                     if not segment_folder.is_dir():
                         continue
                     info_file_path = segment_folder / "Info.mat"
-                    try:
-                        video_file_path = next(segment_folder.glob("*.avi"))
-                    except StopIteration:
-                        print(f"No .avi file found in {segment_folder}")
-                        continue
+                    video_file_path = next(segment_folder.glob("*.avi"))
                     tdt_fp_folder_path = segment_folder
                     tdt_ephys_folder_path = session_folder
                     session_to_nwb_kwargs = dict(
