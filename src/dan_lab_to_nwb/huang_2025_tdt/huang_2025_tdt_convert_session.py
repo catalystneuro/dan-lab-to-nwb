@@ -80,7 +80,7 @@ def session_to_nwb(
 
 def main():
     # Parameters for conversion
-    data_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/Test - TDT data")
+    data_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/Test - TDT data/ExampleSessions")
     output_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/conversion_nwb/huang_2025_tdt")
     stub_test = True
 
