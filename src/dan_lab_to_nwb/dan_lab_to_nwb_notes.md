@@ -5,6 +5,16 @@
 - Most of the content in Notes.txt and StoreListing.txt appear to be replicated in Info.mat --> ignore in favor of the .mat file
 - Box1-M301sncCalibrationData.mat is useless -- Don't worry about it.
 - Reorganized folders to match expected structure from neo for TDT data.
+- The following sessions do not have video nor fiber photometry and will be excluded from the final dataset, skipping:
+    'M405_M407-250412-081001(done)',
+    'M404_M409-250406-141501(done)',
+    'M404_M409-250405-151801(done)',
+    'M405_M407-250412-142001(done)',
+    'M404-M409-250406-153701 (M404 bad signal, done)',
+    'M405_M407-250413-081001(done)',
+    'M405_M407-250413-152101(done)',
+    'M409_M404-250407-153704 (done)',
+    'M405_M407-250414-081001(done)'
 
 ## LFP
 - LFP channels are both EEG (1,2) and EMG (3,4) automatically filtered (and downsampled?) from TDT
