@@ -21,6 +21,7 @@ dependencies = [
   "pymatreader",
   "ipykernel",
   "matplotlib",
+  "ndx-optogenetics",
 ]
 
 [project.urls]

@@ -163,34 +163,63 @@ Behavior:
       unit: Frames
 
 Optogenetics:
-  Device:
-    - name: optogenetic_stimulation_laser
-      description: <description of the optogenetic stimulation laser>
-      manufacturer: <manufacturer of the optogenetic stimulation laser>
-  OptogeneticStimulusSite:
-    - name: optogenetic_stimulus_siteVTA
-      device_name: optogenetic_stimulation_laser
-      description: <description of the optogenetic stimulus site>
-      location: Ventral Tegmental Area (VTA)
-      excitation_lambda: -1.0 # TODO: add excitation wavelength
-    - name: optogenetic_stimulus_sitePFC
-      device_name: optogenetic_stimulation_laser
-      description: <description of the optogenetic stimulus site>
-      location: Prefrontal Cortex (PFC)
-      excitation_lambda: -1.0 # TODO: add excitation wavelength
-  OptogeneticSeries:
-    - name: optogenetic_series_VTA_test_pulse
-      description: <description of the optogenetic series>
-      site_name: optogenetic_stimulus_siteVTA
-      power: 0.020 # 20 mW
-    - name: optogenetic_series_VTA_intense_stimulation
-      description: <description of the optogenetic series>
-      site_name: optogenetic_stimulus_siteVTA
-      power: 0.020 # 20 mW
-    - name: optogenetic_series_PFC_test_pulse
-      description: <description of the optogenetic series>
-      site_name: optogenetic_stimulus_sitePFC
-      power: 0.020 # 20 mW
+  stimulation_software: <name of the software used for optogenetic stimulation>
+  ExcitationSourceModels:
+    - name: optogenetic_laser_model
+      description: <description of the laser model>
+      manufacturer: <manufacturer of the laser>
+      illumination_type: laser
+      wavelength_range_in_nm: [-1.0, -1.0] # TODO: add excitation wavelength range
+  ExcitationSources:
+    - name: optogenetic_laser
+      model: optogenetic_laser_model
+      wavelength_in_nm: -1.0 # TODO: add excitation wavelength
+      power_in_W: -1.0 # TODO: add power in W
+      intensity_in_W_per_m2: -1.0 # TODO: add intensity in W/m2
+  OpticalFiberModels:
+    - name: optical_fiber_model
+      description: <description of the optical fiber model>
+      fiber_name: <name of the optical fiber>
+      fiber_model: <model of the optical fiber>
+      manufacturer: <manufacturer of the optical fiber>
+      numerical_aperture: -1.0 # TODO: add numerical aperture
+      core_diameter_in_um: -1.0 # TODO: add core diameter in um
+      active_length_in_mm: -1.0 # TODO: add active length in mm
+      ferrule_name: <name of the ferrule>
+      ferrule_diameter_in_mm: -1.0 # TODO: add ferrule diameter in mm
+  OpticalFibers:
+    - name: optical_fiberVTA
+      model: optical_fiber_model
+    - name: optical_fiberPFC
+      model: optical_fiber_model
+  OpticalFiberLocationsTable:
+    description: Information about implanted optical fiber locations
+    reference: Bregma at the cortical surface
+    rows:
+      - name: 0
+        implanted_fiber_description: Optical fiber implanted into VTA.
+        location: Ventral Tegmental Area (VTA)
+        hemisphere: left or right # TODO: add hemisphere
+        ap_in_mm: 0.0 # TODO: add AP coordinate
+        ml_in_mm: 0.0 # TODO: add ML coordinate
+        dv_in_mm: 0.0 # TODO: add DV coordinate
+        roll_in_deg: 0.0 # TODO: add roll angle
+        pitch_in_deg: 0.0 # TODO: add pitch angle
+        yaw_in_deg: 0.0 # TODO: add yaw angle
+        excitation_source: optogenetic_laser
+        optical_fiber: optical_fiberVTA
+      - name: 1
+        implanted_fiber_description: Optical fiber implanted into PFC.
+        location: Prefrontal Cortex (PFC)
+        hemisphere: left or right # TODO: add hemisphere
+        ap_in_mm: 0.0 # TODO: add AP coordinate
+        ml_in_mm: 0.0 # TODO: add ML coordinate
+        dv_in_mm: 0.0 # TODO: add DV coordinate
+        roll_in_deg: 0.0 # TODO: add roll angle
+        pitch_in_deg: 0.0 # TODO: add pitch angle
+        yaw_in_deg: 0.0 # TODO: add yaw angle
+        excitation_source: optogenetic_laser
+        optical_fiber: optical_fiberPFC
 
 Ecephys:
   Device:
