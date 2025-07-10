@@ -162,18 +162,18 @@ Behavior:
       description: Video recorded by camera 1.
       unit: Frames
 
-Optogenetics:
+Optogenetics: # TODO: update metadata
   stimulation_software: <name of the software used for optogenetic stimulation>
   ExcitationSourceModels:
     - name: optogenetic_laser_model
       description: <description of the laser model>
       manufacturer: <manufacturer of the laser>
-      illumination_type: laser
+      source_type: laser
+      excitation_mode: one-photon
       wavelength_range_in_nm: [-1.0, -1.0] # TODO: add excitation wavelength range
   ExcitationSources:
     - name: optogenetic_laser
       model: optogenetic_laser_model
-      wavelength_in_nm: -1.0 # TODO: add excitation wavelength
       power_in_W: -1.0 # TODO: add power in W
       intensity_in_W_per_m2: -1.0 # TODO: add intensity in W/m2
   OpticalFiberModels:
