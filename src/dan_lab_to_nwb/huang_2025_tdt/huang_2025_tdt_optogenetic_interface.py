@@ -7,14 +7,23 @@ from pathlib import Path
 import numpy as np
 import tdt
 from hdmf.common import DynamicTableRegion, VectorData
-from ndx_optogenetics import (
+from ndx_ophys_devices import (
+    Effector,
     ExcitationSource,
     ExcitationSourceModel,
+    FiberInsertion,
     OpticalFiber,
-    OpticalFiberLocationsTable,
     OpticalFiberModel,
+    ViralVector,
+    ViralVectorInjection,
+)
+from ndx_optogenetics import (
+    OptogeneticEffectors,
     OptogeneticEpochsTable,
     OptogeneticExperimentMetadata,
+    OptogeneticSitesTable,
+    OptogeneticViruses,
+    OptogeneticVirusInjections,
 )
 from pydantic import DirectoryPath
 from pynwb.file import NWBFile
@@ -41,7 +50,7 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
             "Wi3_": "intense_stimulation",
             "LasT": "intense_stimulation",
         }
-        self.epoc_name_to_optical_fiber_locations_table_row = {
+        self.epoc_name_to_optogenetic_sites_table_row = {
             "St1_": 0,
             "St2_": 1,
             "Wi3_": 0,
@@ -87,17 +96,68 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
                     f"Optical fiber model '{model_name}' not found in NWBFile devices. "
                     "Ensure that OpticalFiberModels has a model with this name."
                 )
+            insertion_metadata = optical_fiber_metadata["fiber_insertion"]
+            fiber_insertion = FiberInsertion(**insertion_metadata)
+            optical_fiber_metadata["fiber_insertion"] = fiber_insertion
             optical_fiber = OpticalFiber(**optical_fiber_metadata)
             nwbfile.add_device(optical_fiber)
-        optical_fiber_locations_table = OpticalFiberLocationsTable(
-            description=opto_metadata["OpticalFiberLocationsTable"]["description"],
-            reference=opto_metadata["OpticalFiberLocationsTable"]["reference"],
+
+        name_to_virus = {}
+        for virus_metadata in opto_metadata["OptogeneticViruses"]:
+            virus = ViralVector(**virus_metadata)
+            name_to_virus[virus.name] = virus
+        if len(name_to_virus) > 0:
+            optogenetic_viruses = OptogeneticViruses(viral_vectors=list(name_to_virus.values()))
+        else:
+            optogenetic_viruses = None
+
+        name_to_virus_injection = {}
+        for virus_injection_metadata in opto_metadata["OptogeneticVirusInjections"]:
+            if virus_injection_metadata["virus"] in name_to_virus:
+                virus_injection_metadata["virus"] = name_to_virus[virus_injection_metadata["virus"]]
+            else:
+                raise ValueError(
+                    f"Virus '{virus_injection_metadata['virus']}' not found in NWBFile viruses. "
+                    "Ensure that OptogeneticViruses has a virus with this name."
+                )
+            virus_injection = ViralVectorInjection(**virus_injection_metadata)
+            name_to_virus_injection[virus_injection.name] = virus_injection
+        if len(name_to_virus_injection) > 0:
+            optogenetic_virus_injections = OptogeneticVirusInjections(
+                viral_vector_injections=list(name_to_virus_injection.values())
+            )
+        else:
+            optogenetic_virus_injections = None
+
+        name_to_effector = {}
+        for effector_metadata in opto_metadata["OptogeneticEffectors"]:
+            if effector_metadata["viral_vector_injection"] in name_to_virus_injection:
+                if effector_metadata["viral_vector_injection"] in name_to_virus_injection:
+                    effector_metadata["viral_vector_injection"] = name_to_virus_injection[
+                        effector_metadata["viral_vector_injection"]
+                    ]
+                else:
+                    raise ValueError(
+                        f"Viral vector injection '{effector_metadata['viral_vector_injection']}' not found in NWBFile virus injections. "
+                        "Ensure that OptogeneticVirusInjections has an injection with this name."
+                    )
+            effector = Effector(**effector_metadata)
+            name_to_effector[effector.name] = effector
+        if len(name_to_effector) > 0:
+            optogenetic_effectors = OptogeneticEffectors(effectors=list(name_to_effector.values()))
+        else:
+            raise ValueError(
+                "No optogenetic effectors found in metadata. Ensure that OptogeneticEffectors has at least one effector."
+            )
+
+        optogenetic_sites_table = OptogeneticSitesTable(
+            description=opto_metadata["OptogeneticSitesTable"]["description"]
         )
-        for row_metadata in opto_metadata["OpticalFiberLocationsTable"]["rows"]:
+        for row_metadata in opto_metadata["OptogeneticSitesTable"]["rows"]:
             row_metadata.pop("name")  # dict_deep_update requires a 'name' key, but we don't need it in the NWBFile
             excitation_source_name = row_metadata["excitation_source"]
             if excitation_source_name in nwbfile.devices:
-                row_metadata["excitation_source"] = nwbfile.devices[excitation_source_name]
+                excitation_source = nwbfile.devices[excitation_source_name]
             else:
                 raise ValueError(
                     f"Excitation source '{excitation_source_name}' not found in NWBFile devices. "
@@ -105,16 +165,37 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
                 )
             optical_fiber_name = row_metadata["optical_fiber"]
             if optical_fiber_name in nwbfile.devices:
-                row_metadata["optical_fiber"] = nwbfile.devices[optical_fiber_name]
+                optical_fiber = nwbfile.devices[optical_fiber_name]
             else:
                 raise ValueError(
                     f"Optical fiber '{optical_fiber_name}' not found in NWBFile devices. "
                     "Ensure that OpticalFibers has a fiber with this name."
                 )
-            optical_fiber_locations_table.add_row(**row_metadata)
+            if "effector" in row_metadata:
+                effector_name = row_metadata["effector"]
+                if effector_name in name_to_effector:
+                    effector = name_to_effector[effector_name]
+                else:
+                    raise ValueError(
+                        f"Effector '{effector_name}' not found in NWBFile effectors. "
+                        "Ensure that OptogeneticEffectors has an effector with this name."
+                    )
+            else:
+                raise ValueError(
+                    "Effector is required in OptogeneticSitesTable rows. "
+                    "Ensure that OptogeneticEffectors has an effector for each site."
+                )
+            optogenetic_sites_table.add_row(
+                excitation_source=excitation_source,
+                optical_fiber=optical_fiber,
+                effector=effector,
+            )
 
         optogenetic_experiment_metadata = OptogeneticExperimentMetadata(
-            optical_fiber_locations_table=optical_fiber_locations_table,
+            optogenetic_sites_table=optogenetic_sites_table,
+            optogenetic_viruses=optogenetic_viruses,
+            optogenetic_virus_injections=optogenetic_virus_injections,
+            optogenetic_effectors=optogenetic_effectors,
             stimulation_software=opto_metadata["stimulation_software"],
         )
         nwbfile.add_lab_meta_data(optogenetic_experiment_metadata)
@@ -133,6 +214,8 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
             "number_trains",
             "intertrain_interval_in_ms",
             "power_in_mW",
+            "wavelength_in_nm",
+            "optogenetic_sites",
         ]
         for col in OptogeneticEpochsTable.__columns__:
             if col["name"] not in colnames:
@@ -145,12 +228,12 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
             "stimulus_type"
         ] = "Type of optogenetic stimulus (e.g., 'test_pulse', 'intense_stimulation')"
 
-        optical_fiber_locations_table_region_data = []
+        optogenetic_sites_table_region_data = []
         for epoc_name in self.epoc_names:
             stimulus_type = self.epoc_name_to_stimulus_type[epoc_name]
             onset_times = tdt_photometry.epocs[epoc_name].onset
             offset_times = tdt_photometry.epocs[epoc_name].offset
-            row = self.epoc_name_to_optical_fiber_locations_table_row[epoc_name]
+            row = self.epoc_name_to_optogenetic_sites_table_row[epoc_name]
 
             for onset_time, offset_time in zip(onset_times, offset_times, strict=True):
                 pulse_length_in_ms = (offset_time - onset_time) * 1000  # Convert to milliseconds
@@ -165,20 +248,20 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
                 column_name_to_data["power_in_mW"].append(power_in_mW)
                 column_name_to_data["stimulus_type"].append(stimulus_type)
 
-                optical_fiber_locations_table_region_data.append(row)
+                optogenetic_sites_table_region_data.append(row)
 
         columns = [
             VectorData(name=colname, description=column_name_to_description[colname], data=column_name_to_data[colname])
             for colname in colnames
         ]
-        optical_fiber_locations_table_region = DynamicTableRegion(
-            name="optical_fiber_locations_table_region",
-            description="Region of the optical fiber locations table corresponding to this epoch.",
-            data=optical_fiber_locations_table_region_data,
-            table=optical_fiber_locations_table,
+        optogenetic_sites_table_region = DynamicTableRegion(
+            name="optogenetic_sites_table_region",
+            description="Region of the optogenetic sites table corresponding to this epoch.",
+            data=optogenetic_sites_table_region_data,
+            table=optogenetic_sites_table,
         )
-        colnames.append("optical_fiber_locations_table_region")
-        columns.append(optical_fiber_locations_table_region)
+        colnames.append("optogenetic_sites_table_region")
+        columns.append(optogenetic_sites_table_region)
         opto_epochs_table = OptogeneticEpochsTable(
             name="optogenetic_epochs",
             description="Metadata about optogenetic stimulation parameters per epoch",
