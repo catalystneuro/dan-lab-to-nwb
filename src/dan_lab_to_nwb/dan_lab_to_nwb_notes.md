@@ -82,7 +82,10 @@ For file names containing "opto":
 
 
 ## Active Questions/Requests
-- General metadata outlined on the project setup meeting slide
 - Bing-202504 vs. WS8-202504?
-- Length mismatch for TDT video temporal alignment?
-- ephys-video temporal alignment for dlc data?
+- Temporal Alignment
+    - Length mismatch for TDT video temporal alignment?
+    - ephys-video temporal alignment for dlc data?
+- Fiber Optic Cables
+    - Are there separate cables for fiber photometry and optogenetics or do they share?
+    - Need fiber insertion coordinates for optogenetics
