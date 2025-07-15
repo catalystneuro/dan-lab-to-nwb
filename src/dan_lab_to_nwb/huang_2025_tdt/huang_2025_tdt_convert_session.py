@@ -158,6 +158,7 @@ def main():
         output_dir_path=output_dir_path,
         stub_test=stub_test,
     )
+    return
 
     # Example Session with "SBOX_R" type optogenetics
     info_file_path = (

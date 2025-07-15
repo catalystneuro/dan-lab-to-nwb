@@ -6,7 +6,7 @@ from pathlib import Path
 
 import numpy as np
 import tdt
-from hdmf.common import DynamicTableRegion, VectorData
+from hdmf.common import DynamicTableRegion, VectorData, VectorIndex
 from ndx_ophys_devices import (
     Effector,
     ExcitationSource,
@@ -113,11 +113,11 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
 
         name_to_virus_injection = {}
         for virus_injection_metadata in opto_metadata["OptogeneticVirusInjections"]:
-            if virus_injection_metadata["virus"] in name_to_virus:
-                virus_injection_metadata["virus"] = name_to_virus[virus_injection_metadata["virus"]]
+            if virus_injection_metadata["viral_vector"] in name_to_virus:
+                virus_injection_metadata["viral_vector"] = name_to_virus[virus_injection_metadata["viral_vector"]]
             else:
                 raise ValueError(
-                    f"Virus '{virus_injection_metadata['virus']}' not found in NWBFile viruses. "
+                    f"Virus '{virus_injection_metadata['viral_vector']}' not found in NWBFile viruses. "
                     "Ensure that OptogeneticViruses has a virus with this name."
                 )
             virus_injection = ViralVectorInjection(**virus_injection_metadata)
@@ -201,6 +201,7 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
         nwbfile.add_lab_meta_data(optogenetic_experiment_metadata)
 
         power_in_mW = opto_metadata["ExcitationSources"][0]["power_in_W"] * 1000  # Convert from Watts to mW
+        wavelength_in_nm = opto_metadata["excitation_wavelength_in_nm"]
 
         column_name_to_data = {}
         column_name_to_description = {}
@@ -215,7 +216,6 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
             "intertrain_interval_in_ms",
             "power_in_mW",
             "wavelength_in_nm",
-            "optogenetic_sites",
         ]
         for col in OptogeneticEpochsTable.__columns__:
             if col["name"] not in colnames:
@@ -228,7 +228,7 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
             "stimulus_type"
         ] = "Type of optogenetic stimulus (e.g., 'test_pulse', 'intense_stimulation')"
 
-        optogenetic_sites_table_region_data = []
+        optogenetic_sites_data = []
         for epoc_name in self.epoc_names:
             stimulus_type = self.epoc_name_to_stimulus_type[epoc_name]
             onset_times = tdt_photometry.epocs[epoc_name].onset
@@ -246,22 +246,29 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
                 column_name_to_data["number_trains"].append(1)
                 column_name_to_data["intertrain_interval_in_ms"].append(0.0)
                 column_name_to_data["power_in_mW"].append(power_in_mW)
+                column_name_to_data["wavelength_in_nm"].append(wavelength_in_nm)
                 column_name_to_data["stimulus_type"].append(stimulus_type)
 
-                optogenetic_sites_table_region_data.append(row)
+                optogenetic_sites_data.append(row)
 
         columns = [
             VectorData(name=colname, description=column_name_to_description[colname], data=column_name_to_data[colname])
             for colname in colnames
         ]
-        optogenetic_sites_table_region = DynamicTableRegion(
-            name="optogenetic_sites_table_region",
+        optogenetic_sites = DynamicTableRegion(
+            name="optogenetic_sites",
             description="Region of the optogenetic sites table corresponding to this epoch.",
-            data=optogenetic_sites_table_region_data,
+            data=optogenetic_sites_data,
             table=optogenetic_sites_table,
         )
-        colnames.append("optogenetic_sites_table_region")
-        columns.append(optogenetic_sites_table_region)
+        colnames.append("optogenetic_sites")
+        columns.append(optogenetic_sites)
+        optogenetic_sites_index = VectorIndex(
+            name="optogenetic_sites_index",
+            target=optogenetic_sites,
+            data=np.arange(1, len(optogenetic_sites_data) + 1),
+        )
+        columns.append(optogenetic_sites_index)
         opto_epochs_table = OptogeneticEpochsTable(
             name="optogenetic_epochs",
             description="Metadata about optogenetic stimulation parameters per epoch",
