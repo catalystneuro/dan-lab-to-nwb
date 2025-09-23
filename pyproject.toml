@@ -15,13 +15,13 @@ classifiers = [
 ]
 
 dependencies = [
-  "neuroconv[tdt,tdt_fp,video,deeplabcut] @ git+https://github.com/catalystneuro/neuroconv.git@main",
+  "neuroconv[tdt,tdt_fp,video,deeplabcut]",
   "nwbinspector",
   "pre-commit",
   "pymatreader",
   "ipykernel",
   "matplotlib",
-  "ndx-optogenetics",
+  "ndx-optogenetics >= 0.3.0",
 ]
 
 [project.urls]

@@ -74,11 +74,11 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
         opto_metadata = copy.deepcopy(metadata["Optogenetics"])
         for excitation_source_model_metadata in opto_metadata["ExcitationSourceModels"]:
             excitation_source_model = ExcitationSourceModel(**excitation_source_model_metadata)
-            nwbfile.add_device(excitation_source_model)
+            nwbfile.add_device_model(excitation_source_model)
         for excitation_source_metadata in opto_metadata["ExcitationSources"]:
             model_name = excitation_source_metadata["model"]
-            if model_name in nwbfile.devices:
-                excitation_source_metadata["model"] = nwbfile.devices[model_name]
+            if model_name in nwbfile.device_models:
+                excitation_source_metadata["model"] = nwbfile.device_models[model_name]
             else:
                 raise ValueError(
                     f"Excitation source model '{model_name}' not found in NWBFile devices. "
@@ -88,11 +88,11 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
             nwbfile.add_device(excitation_source)
         for optical_fiber_model_metadata in opto_metadata["OpticalFiberModels"]:
             optical_fiber_model = OpticalFiberModel(**optical_fiber_model_metadata)
-            nwbfile.add_device(optical_fiber_model)
+            nwbfile.add_device_model(optical_fiber_model)
         for optical_fiber_metadata in opto_metadata["OpticalFibers"]:
             model_name = optical_fiber_metadata["model"]
-            if model_name in nwbfile.devices:
-                optical_fiber_metadata["model"] = nwbfile.devices[model_name]
+            if model_name in nwbfile.device_models:
+                optical_fiber_metadata["model"] = nwbfile.device_models[model_name]
             else:
                 raise ValueError(
                     f"Optical fiber model '{model_name}' not found in NWBFile devices. "
