@@ -37,9 +37,9 @@ def session_to_nwb(
     source_data["EMG"] = dict(folder_path=tdt_ephys_folder_path, gain=1.0, stream_id="4", es_key="ElectricalSeriesEMG")
     conversion_options["EMG"] = dict(stub_test=stub_test, group_names=["ElectrodeGroupEMG"])
 
-    # # Add Fiber Photometry
-    # source_data["FiberPhotometry"] = dict(folder_path=tdt_fp_folder_path)
-    # conversion_options["FiberPhotometry"] = dict(stub_test=stub_test)
+    # Add Fiber Photometry
+    source_data["FiberPhotometry"] = dict(folder_path=tdt_fp_folder_path)
+    conversion_options["FiberPhotometry"] = dict(stub_test=stub_test)
 
     # Add Video
     if "Cam1" in video_file_path.name:

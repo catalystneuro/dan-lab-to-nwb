@@ -21,111 +21,238 @@ Subject:
 
 Ophys:
   FiberPhotometry:
+    OpticalFiberModels:
+    - name: optical_fiber_model_1
+      description: <description of optical fiber model 1>
+      manufacturer: <manufacturer of the optical fiber>
+      model_number: <model of the optical fiber>
+      numerical_aperture: -1.0
+      core_diameter_in_um: -1.0
+    - name: optical_fiber_model_2
+      description: <description of optical fiber model 2>
+      manufacturer: <manufacturer of the optical fiber>
+      model_number: <model of the optical fiber>
+      numerical_aperture: -1.0
+      core_diameter_in_um: -1.0
+
     OpticalFibers:
     - name: optical_fiber1
       description: <description of the optical fiber>
-      manufacturer: <manufacturer of the optical fiber>
-      model: <model of the optical fiber>
-      numerical_aperture: -1.0
-      core_diameter_in_um: -1.0
+      model: optical_fiber_model_1
+      serial_number: "OF001"
+      fiber_insertion:
+        depth_in_mm: -1.0
+        insertion_position_ap_in_mm: -1.0
+        insertion_position_ml_in_mm: -1.0
+        insertion_position_dv_in_mm: -1.0
+        position_reference: bregma
+        hemisphere: <hemisphere>
+        insertion_angle_pitch_in_deg: 0.0
+        insertion_angle_yaw_in_deg: 0.0
+        insertion_angle_roll_in_deg: 0.0
     - name: optical_fiber2
       description: <description of the optical fiber>
-      manufacturer: <manufacturer of the optical fiber>
-      model: <model of the optical fiber>
-      numerical_aperture: -1.0
-      core_diameter_in_um: -1.0
+      model: optical_fiber_model_2
+      serial_number: "OF002"
+      fiber_insertion:
+        depth_in_mm: -1.0
+        insertion_position_ap_in_mm: -1.0
+        insertion_position_ml_in_mm: -1.0
+        insertion_position_dv_in_mm: -1.0
+        position_reference: bregma
+        hemisphere: <hemisphere>
+        insertion_angle_pitch_in_deg: 0.0
+        insertion_angle_yaw_in_deg: 0.0
+        insertion_angle_roll_in_deg: 0.0
+
+    ExcitationSourceModels:
+    - name: excitation_source_model_calcium
+      description: <description of the excitation source model for calcium signal>
+      manufacturer: <manufacturer of the excitation source>
+      model_number: <model of the excitation source>
+      source_type: LED
+      excitation_mode: one-photon
+      wavelength_range_in_nm: [460, 470]
+    - name: excitation_source_model_isosbestic
+      description: <description of the excitation source model for isosbestic control>
+      manufacturer: <manufacturer of the excitation source>
+      model_number: <model of the excitation source>
+      source_type: LED
+      excitation_mode: one-photon
+      wavelength_range_in_nm: [400, 410]
+
     ExcitationSources:
     - name: excitation_source_calcium_signal
       description: <description of the excitation source for the calcium signal (465nm)>
-      manufacturer: <manufacturer of the excitation source>
-      model: <model of the excitation source>
-      illumination_type: LED
-      excitation_wavelength_in_nm: 465.0
+      model: excitation_source_model_calcium
+      power_in_W: -1.0
+      intensity_in_W_per_m2: -1.0
+      exposure_time_in_s: -1.0
     - name: excitation_source_isosbestic_control
       description: <description of the excitation source for the isosbestic control (405nm)>
-      manufacturer: <manufacturer of the excitation source>
-      model: <model of the excitation source>
-      illumination_type: LED
-      excitation_wavelength_in_nm: 405.0
+      model: excitation_source_model_isosbestic
+      power_in_W: -1.0
+      intensity_in_W_per_m2: -1.0
+      exposure_time_in_s: -1.0
+
+    PhotodetectorModels:
+    - name: photodetector_model
+      description: <description of the photodetector model>
+      manufacturer: <manufacturer of the photodetector>
+      model_number: <model of the photodetector>
+      detector_type: photodiode
+      wavelength_range_in_nm: [400, 700]
+      gain: -1.0
+      gain_unit: V/W
+
     Photodetectors:
     - name: photodetector
       description: <description of the photodetector>
-      manufacturer: <manufacturer of the photodetector>
-      model: <model of the photodetector>
-      detector_type: photodiode
-      detected_wavelength_in_nm: -1.0
-      gain: -1.0
+      model: photodetector_model
+      serial_number: "PD001"
+
+    BandOpticalFilterModels:
+    - name: emission_filter_model
+      description: <description of emission filter model>
+      manufacturer: <manufacturer of the emission filter>
+      model_number: <model of the emission filter>
+      filter_type: Bandpass
+      center_wavelength_in_nm: -1.0
+      bandwidth_in_nm: -1.0
+    - name: excitation_filter_model
+      description: <description of excitation filter model>
+      manufacturer: <manufacturer of the excitation filter>
+      model_number: <model of the excitation filter>
+      filter_type: Bandpass
+      center_wavelength_in_nm: -1.0
+      bandwidth_in_nm: -1.0
+
     BandOpticalFilters:
     - name: emission_filter
       description: <description of emission filter>
-      manufacturer: <manufacturer of the emission filter>
-      model: <model of the emission filter>
-      center_wavelength_in_nm: -1.0
-      bandwidth_in_nm: -1.0
-      filter_type: Bandpass
+      model: emission_filter_model
     - name: excitation_filter
-      description: <description excitation filter>
-      manufacturer: <manufacturer of the excitation filter>
-      model: <model of the excitation filter>
-      center_wavelength_in_nm: -1.0
-      bandwidth_in_nm: -1.0
-      filter_type: Bandpass
+      description: <description of excitation filter>
+      model: excitation_filter_model
+
+    DichroicMirrorModels:
+    - name: dichroic_mirror_model
+      description: <description of the dichroic mirror model>
+      manufacturer: <manufacturer of the dichroic mirror>
+      model_number: <model of the dichroic mirror>
+      cut_on_wavelength_in_nm: -1.0
+      cut_off_wavelength_in_nm: -1.0
+      reflection_band_in_nm: [-1.0, -1.0]
+      transmission_band_in_nm: [-1.0, -1.0]
+      angle_of_incidence_in_degrees: -1.0
+
     DichroicMirrors:
     - name: dichroic_mirror
       description: <description of the dichroic mirror>
-      manufacturer: <manufacturer of the dichroic mirror>
-      model: <model of the dichroic mirror>
-    Indicators:
-    - name: indicator
-      description: <description of the indicator>
+      model: dichroic_mirror_model
+      serial_number: "DM001"
+
+    FiberPhotometryViruses:
+    - name: vta_virus
+      description: <description of the viral vector for VTA>
+      manufacturer: <manufacturer of the viral vector>
+      construct_name: <construct name>
+      titer_in_vg_per_ml: -1.0
+    - name: pfc_virus
+      description: <description of the viral vector for PFC>
+      manufacturer: <manufacturer of the viral vector>
+      construct_name: <construct name>
+      titer_in_vg_per_ml: -1.0
+
+    FiberPhotometryVirusInjections:
+    - name: vta_virus_injection
+      description: <description of viral injection for VTA>
+      viral_vector: vta_virus
+      location: <injection location>
+      hemisphere: <hemisphere>
+      reference: bregma at the cortical surface
+      ap_in_mm: -1.0
+      ml_in_mm: -1.0
+      dv_in_mm: -1.0
+      volume_in_uL: -1.0
+    - name: pfc_virus_injection
+      description: <description of viral injection for PFC>
+      viral_vector: pfc_virus
+      location: <injection location>
+      hemisphere: <hemisphere>
+      reference: bregma at the cortical surface
+      ap_in_mm: -1.0
+      ml_in_mm: -1.0
+      dv_in_mm: -1.0
+      volume_in_uL: -1.0
+
+    FiberPhotometryIndicators:
+    - name: vta_indicator
+      description: <description of the indicator for VTA>
       manufacturer: <manufacturer of the indicator>
       label: <label of the indicator>
-      injection_location: <location of the indicator injection>
-      injection_coordinates_in_mm: [-1.0, -1.0, -1.0]
+      viral_vector_injection: vta_virus_injection
+    - name: pfc_indicator
+      description: <description of the indicator for PFC>
+      manufacturer: <manufacturer of the indicator>
+      label: <label of the indicator>
+      viral_vector_injection: pfc_virus_injection
+
+
+
     FiberPhotometryTable:
       name: fiber_photometry_table
       description: <description of the fiber photometry setup as a whole>
       rows:
       - name: 0
         location: Ventral Tegmental Area (VTA)
-        coordinates: [-1.0, -1.0, -1.0]
-        indicator: indicator
+        excitation_wavelength_in_nm: 465.0
+        emission_wavelength_in_nm: -1.0
+        indicator: vta_indicator
         optical_fiber: optical_fiber1
         excitation_source: excitation_source_calcium_signal
+
         photodetector: photodetector
-        excitation_filter: excitation_filter
-        emission_filter: emission_filter
         dichroic_mirror: dichroic_mirror
+        emission_filter: emission_filter
+        excitation_filter: excitation_filter
       - name: 1
         location: Ventral Tegmental Area (VTA)
-        coordinates: [-1.0, -1.0, -1.0]
-        indicator: indicator
+        excitation_wavelength_in_nm: 405.0
+        emission_wavelength_in_nm: -1.0
+        indicator: vta_indicator
         optical_fiber: optical_fiber1
         excitation_source: excitation_source_isosbestic_control
+
         photodetector: photodetector
-        excitation_filter: excitation_filter
-        emission_filter: emission_filter
         dichroic_mirror: dichroic_mirror
+        emission_filter: emission_filter
+        excitation_filter: excitation_filter
       - name: 2
         location: Prefrontal Cortex (PFC)
-        coordinates: [-1.0, -1.0, -1.0]
-        indicator: indicator
+        excitation_wavelength_in_nm: 465.0
+        emission_wavelength_in_nm: -1.0
+        indicator: pfc_indicator
         optical_fiber: optical_fiber2
         excitation_source: excitation_source_calcium_signal
+
         photodetector: photodetector
-        excitation_filter: excitation_filter
-        emission_filter: emission_filter
         dichroic_mirror: dichroic_mirror
+        emission_filter: emission_filter
+        excitation_filter: excitation_filter
       - name: 3
         location: Prefrontal Cortex (PFC)
-        coordinates: [-1.0, -1.0, -1.0]
-        indicator: indicator
+        excitation_wavelength_in_nm: 405.0
+        emission_wavelength_in_nm: -1.0
+        indicator: pfc_indicator
         optical_fiber: optical_fiber2
         excitation_source: excitation_source_isosbestic_control
+
         photodetector: photodetector
-        excitation_filter: excitation_filter
-        emission_filter: emission_filter
         dichroic_mirror: dichroic_mirror
+        emission_filter: emission_filter
+        excitation_filter: excitation_filter
+
     FiberPhotometryResponseSeries:
     - name: calcium_signalVTA
       description: The fluorescence from the calcium signal from VTA.
