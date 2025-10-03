@@ -74,7 +74,7 @@ For file names containing "opto":
 
 ## Pose Estimation
 - Standard DLC output (.h5)
-- SampFreq.mat should contain the video sampling rate for temporal alignment
+- "Both of them [video and ephys] are aligned to the starting time as time 0."
 
 ## Histology
 - Should be a folder of .tiffs for each animal after they have been sacrificed
@@ -82,7 +82,6 @@ For file names containing "opto":
 
 
 ## Active Questions/Requests
-- Bing-202504 vs. WS8-202504?
 - Temporal Alignment
     - Length mismatch for TDT video temporal alignment?
     - ephys-video temporal alignment for dlc data?
@@ -90,3 +89,4 @@ For file names containing "opto":
     - Are there separate cables for fiber photometry and optogenetics or do they share?
     - Need fiber insertion coordinates for optogenetics
 - In the optogenetics metadata questionnaire, I have locations listed for VTA, basal forebrain, and locus coeruleus. But in our email, we had talked about the VTA and PFC. Do we have data with PFC optogenetics? Are we going to get a subject mapping?
+- edges for DLC?

@@ -19,3 +19,7 @@ class Huang2025DLCNWBConverter(NWBConverter):
         Behavior=Huang2025DlcBehaviorInterface,
         Ecephys=Huang2025DlcEcephysMatInterface,
     )
+
+    def temporally_align_data_interfaces(self, metadata: dict | None = None, conversion_options: dict | None = None):
+        video_timestamps = self.data_interface_objects["Video"].get_timestamps()[0]
+        self.data_interface_objects["DeepLabCut"].set_aligned_timestamps(video_timestamps)

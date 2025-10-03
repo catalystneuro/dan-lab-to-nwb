@@ -93,7 +93,7 @@ def main():
     # Parameters for conversion
     data_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/Test - video analysis")
     output_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/conversion_nwb/huang_2025_dlc")
-    stub_test = True
+    stub_test = False
 
     if output_dir_path.exists():
         shutil.rmtree(output_dir_path)
