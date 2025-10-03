@@ -1,4 +1,10 @@
 """Primary NWBConverter class for this dataset."""
+import os
+from contextlib import redirect_stdout
+from pathlib import Path
+
+import tdt
+
 from dan_lab_to_nwb.huang_2025_tdt import (
     Huang2025OptogeneticInterface,
     Huang2025TdtRecordingInterface,
@@ -20,3 +26,10 @@ class Huang2025NWBConverter(NWBConverter):
         Video=ExternalVideoInterface,
         Optogenetics=Huang2025OptogeneticInterface,
     )
+
+    def temporally_align_data_interfaces(self, metadata: dict | None = None, conversion_options: dict | None = None):
+        tdt_fp_folder_path = Path(self.data_interface_objects["FiberPhotometry"].source_data["folder_path"])
+        with open(os.devnull, "w") as f, redirect_stdout(f):
+            tdt_photometry = tdt.read_block(tdt_fp_folder_path, evtype=["epocs"])
+        video_timestamps = tdt_photometry.epocs["Cam1"].onset[:]
+        self.data_interface_objects["Video"].set_aligned_timestamps([video_timestamps])
