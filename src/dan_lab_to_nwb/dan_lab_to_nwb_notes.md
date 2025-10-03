@@ -74,7 +74,7 @@ For file names containing "opto":
 
 ## Pose Estimation
 - Standard DLC output (.h5)
-- SampFreq.mat should contain the video sampling rate for temporal alignment
+- "Both of them [video and ephys] are aligned to the starting time as time 0."
 
 ## Histology
 - Should be a folder of .tiffs for each animal after they have been sacrificed
