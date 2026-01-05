@@ -22,7 +22,10 @@ class Huang2025TdtRecordingInterface(TdtRecordingInterface):
     def add_to_nwbfile(
         self, nwbfile: NWBFile, metadata: dict, group_names: list[str] = ["ElectrodeGroup"], **conversion_options
     ):
-        from neuroconv.tools.spikeinterface import add_recording_metadata_to_nwbfile
+        from neuroconv.tools.spikeinterface import (
+            _stub_recording,
+            add_recording_metadata_to_nwbfile,
+        )
 
         # ElectricalSeries is written manually so that it can be split into EEG and EMG
 
@@ -47,7 +50,7 @@ class Huang2025TdtRecordingInterface(TdtRecordingInterface):
         )
         stub_test = conversion_options.pop("stub_test")
         if stub_test:
-            recording = self.subset_recording(stub_test=stub_test)
+            recording = _stub_recording(recording=self.recording_extractor)
         else:
             recording = self.recording_extractor
         add_electrical_series_to_nwbfile(
@@ -255,6 +258,38 @@ def add_conversion_to_eseries_kwargs(eseries_kwargs: dict, recording):
     return eseries_kwargs
 
 
+def _get_electrodes_table_global_ids(nwbfile) -> list[str]:
+    """
+    Generate a list of global identifiers for channels in the electrode table of an NWB file.
+
+    These identifiers are used to map electrodes across writing operations.
+
+    Parameters
+    ----------
+    nwbfile : pynwb.NWBFile
+        The NWB file from which to extract the electrode table information.
+
+    Returns
+    -------
+    list[str]
+        A list of unique keys, each representing a combination of channel name and
+        group name from the electrodes table. If the electrodes table or the
+        necessary columns are not present, an empty list is returned.
+    """
+
+    if nwbfile.electrodes is None:
+        return []
+
+    if "channel_name" not in nwbfile.electrodes.colnames or "group_name" not in nwbfile.electrodes.colnames:
+        return []
+
+    channel_names = nwbfile.electrodes["channel_name"][:]
+    group_names = nwbfile.electrodes["group_name"][:]
+    unique_keys = [f"{ch_name}_{gr_name}" for ch_name, gr_name in zip(channel_names, group_names)]
+
+    return unique_keys
+
+
 def get_electrode_table_indices_for_group(
     recording: TdtRecordingExtractor, nwbfile: NWBFile, group_name: str
 ) -> list[int]:
@@ -284,7 +319,6 @@ def get_electrode_table_indices_for_group(
     """
     from neuroconv.tools.spikeinterface.spikeinterface import (
         _get_channel_name,
-        _get_electrodes_table_global_ids,
         _get_group_name,
     )
 

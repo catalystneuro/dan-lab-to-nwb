@@ -82,7 +82,7 @@ def main():
     # Parameters for conversion
     data_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/Test - TDT data")
     output_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/conversion_nwb/huang_2025_tdt")
-    stub_test = False
+    stub_test = True
 
     if output_dir_path.exists():
         shutil.rmtree(output_dir_path)
