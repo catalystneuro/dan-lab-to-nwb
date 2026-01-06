@@ -80,147 +80,191 @@ def session_to_nwb(
 
 def main():
     # Parameters for conversion
-    data_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/Test - TDT data")
+    # data_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/Test - TDT data")
+    data_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets")
     output_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/conversion_nwb/huang_2025_tdt")
     stub_test = True
 
     if output_dir_path.exists():
         shutil.rmtree(output_dir_path)
 
-    # Example Session with "pTra_con" type optogenetics
-    info_file_path = (
-        data_dir_path
-        / "ExampleSessions"
-        / "M301-241108-072001"
-        / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001"
-        / "M301-241108-072001"
-        / "Info.mat"
-    )
-    video_file_path = (
-        data_dir_path
-        / "ExampleSessions"
-        / "M301-241108-072001"
-        / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001"
-        / "M301-241108-072001"
-        / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001_M301-241108-072001_Cam1.avi"
-    )
-    tdt_fp_folder_path = (
-        data_dir_path
-        / "ExampleSessions"
-        / "M301-241108-072001"
-        / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001"
-        / "M301-241108-072001"
-    )
-    tdt_ephys_folder_path = (
-        data_dir_path / "ExampleSessions" / "M301-241108-072001" / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001"
-    )
-    session_to_nwb(
-        info_file_path=info_file_path,
-        video_file_path=video_file_path,
-        tdt_fp_folder_path=tdt_fp_folder_path,
-        tdt_ephys_folder_path=tdt_ephys_folder_path,
-        output_dir_path=output_dir_path,
-        stub_test=stub_test,
-    )
+    # # Example Session with "pTra_con" type optogenetics
+    # info_file_path = (
+    #     data_dir_path
+    #     / "ExampleSessions"
+    #     / "M301-241108-072001"
+    #     / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001"
+    #     / "M301-241108-072001"
+    #     / "Info.mat"
+    # )
+    # video_file_path = (
+    #     data_dir_path
+    #     / "ExampleSessions"
+    #     / "M301-241108-072001"
+    #     / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001"
+    #     / "M301-241108-072001"
+    #     / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001_M301-241108-072001_Cam1.avi"
+    # )
+    # tdt_fp_folder_path = (
+    #     data_dir_path
+    #     / "ExampleSessions"
+    #     / "M301-241108-072001"
+    #     / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001"
+    #     / "M301-241108-072001"
+    # )
+    # tdt_ephys_folder_path = (
+    #     data_dir_path / "ExampleSessions" / "M301-241108-072001" / "Lindsay_SBO_op1-E_2in1_pTra_con-241101-072001"
+    # )
+    # session_to_nwb(
+    #     info_file_path=info_file_path,
+    #     video_file_path=video_file_path,
+    #     tdt_fp_folder_path=tdt_fp_folder_path,
+    #     tdt_ephys_folder_path=tdt_ephys_folder_path,
+    #     output_dir_path=output_dir_path,
+    #     stub_test=stub_test,
+    # )
 
-    # Example Session with "opto" type optogenetics
-    info_file_path = (
-        data_dir_path
-        / "ExampleSessions"
-        / "M301-240917-163001"
-        / "Lindsay_SBO_opto1-Evoke12_2in1-240914-155559"
-        / "M301-240917-163001"
-        / "Info.mat"
-    )
-    video_file_path = (
-        data_dir_path
-        / "ExampleSessions"
-        / "M301-240917-163001"
-        / "Lindsay_SBO_opto1-Evoke12_2in1-240914-155559"
-        / "M301-240917-163001"
-        / "Lindsay_SBO_opto1-Evoke12_2in1-240914-155559_M301-240917-163001_Cam1.avi"
-    )
-    tdt_fp_folder_path = (
-        data_dir_path
-        / "ExampleSessions"
-        / "M301-240917-163001"
-        / "Lindsay_SBO_opto1-Evoke12_2in1-240914-155559"
-        / "M301-240917-163001"
-    )
-    tdt_ephys_folder_path = (
-        data_dir_path / "ExampleSessions" / "M301-240917-163001" / "Lindsay_SBO_opto1-Evoke12_2in1-240914-155559"
-    )
-    session_to_nwb(
-        info_file_path=info_file_path,
-        video_file_path=video_file_path,
-        tdt_fp_folder_path=tdt_fp_folder_path,
-        tdt_ephys_folder_path=tdt_ephys_folder_path,
-        output_dir_path=output_dir_path,
-        stub_test=stub_test,
-    )
+    # # Example Session with "opto" type optogenetics
+    # info_file_path = (
+    #     data_dir_path
+    #     / "ExampleSessions"
+    #     / "M301-240917-163001"
+    #     / "Lindsay_SBO_opto1-Evoke12_2in1-240914-155559"
+    #     / "M301-240917-163001"
+    #     / "Info.mat"
+    # )
+    # video_file_path = (
+    #     data_dir_path
+    #     / "ExampleSessions"
+    #     / "M301-240917-163001"
+    #     / "Lindsay_SBO_opto1-Evoke12_2in1-240914-155559"
+    #     / "M301-240917-163001"
+    #     / "Lindsay_SBO_opto1-Evoke12_2in1-240914-155559_M301-240917-163001_Cam1.avi"
+    # )
+    # tdt_fp_folder_path = (
+    #     data_dir_path
+    #     / "ExampleSessions"
+    #     / "M301-240917-163001"
+    #     / "Lindsay_SBO_opto1-Evoke12_2in1-240914-155559"
+    #     / "M301-240917-163001"
+    # )
+    # tdt_ephys_folder_path = (
+    #     data_dir_path / "ExampleSessions" / "M301-240917-163001" / "Lindsay_SBO_opto1-Evoke12_2in1-240914-155559"
+    # )
+    # session_to_nwb(
+    #     info_file_path=info_file_path,
+    #     video_file_path=video_file_path,
+    #     tdt_fp_folder_path=tdt_fp_folder_path,
+    #     tdt_ephys_folder_path=tdt_ephys_folder_path,
+    #     output_dir_path=output_dir_path,
+    #     stub_test=stub_test,
+    # )
 
-    # Example Session with "SBOX_R" type optogenetics
-    info_file_path = (
-        data_dir_path
-        / "WS8-202504"
-        / "M315-250417-082001"
-        / "Lindsay_SBOX_R_evoke_2in1-250416-184040"
-        / "M315-250417-082001"
-        / "Info.mat"
-    )
-    video_file_path = (
-        data_dir_path
-        / "WS8-202504"
-        / "M315-250417-082001"
-        / "Lindsay_SBOX_R_evoke_2in1-250416-184040"
-        / "M315-250417-082001"
-        / "Lindsay_SBOX_R_evoke_2in1-250416-184040_M315-250417-082001_Cam1.avi"
-    )
-    tdt_fp_folder_path = (
-        data_dir_path
-        / "WS8-202504"
-        / "M315-250417-082001"
-        / "Lindsay_SBOX_R_evoke_2in1-250416-184040"
-        / "M315-250417-082001"
-    )
-    tdt_ephys_folder_path = (
-        data_dir_path / "WS8-202504" / "M315-250417-082001" / "Lindsay_SBOX_R_evoke_2in1-250416-184040"
-    )
-    session_to_nwb(
-        info_file_path=info_file_path,
-        video_file_path=video_file_path,
-        tdt_fp_folder_path=tdt_fp_folder_path,
-        tdt_ephys_folder_path=tdt_ephys_folder_path,
-        output_dir_path=output_dir_path,
-        stub_test=stub_test,
-    )
+    # # Example Session with "SBOX_R" type optogenetics
+    # info_file_path = (
+    #     data_dir_path
+    #     / "WS8-202504"
+    #     / "M315-250417-082001"
+    #     / "Lindsay_SBOX_R_evoke_2in1-250416-184040"
+    #     / "M315-250417-082001"
+    #     / "Info.mat"
+    # )
+    # video_file_path = (
+    #     data_dir_path
+    #     / "WS8-202504"
+    #     / "M315-250417-082001"
+    #     / "Lindsay_SBOX_R_evoke_2in1-250416-184040"
+    #     / "M315-250417-082001"
+    #     / "Lindsay_SBOX_R_evoke_2in1-250416-184040_M315-250417-082001_Cam1.avi"
+    # )
+    # tdt_fp_folder_path = (
+    #     data_dir_path
+    #     / "WS8-202504"
+    #     / "M315-250417-082001"
+    #     / "Lindsay_SBOX_R_evoke_2in1-250416-184040"
+    #     / "M315-250417-082001"
+    # )
+    # tdt_ephys_folder_path = (
+    #     data_dir_path / "WS8-202504" / "M315-250417-082001" / "Lindsay_SBOX_R_evoke_2in1-250416-184040"
+    # )
+    # session_to_nwb(
+    #     info_file_path=info_file_path,
+    #     video_file_path=video_file_path,
+    #     tdt_fp_folder_path=tdt_fp_folder_path,
+    #     tdt_ephys_folder_path=tdt_ephys_folder_path,
+    #     output_dir_path=output_dir_path,
+    #     stub_test=stub_test,
+    # )
 
-    # Example Session with "TDTb_R" type optogenetics
+    # # Example Session with "TDTb_R" type optogenetics
+    # info_file_path = (
+    #     data_dir_path
+    #     / "Bing-202504"
+    #     / "M412-250421-072001"
+    #     / "Lindsay_TDTb_R_evoke_2in1-250421-000320"
+    #     / "M412-250421-072001"
+    #     / "Info.mat"
+    # )
+    # video_file_path = (
+    #     data_dir_path
+    #     / "Bing-202504"
+    #     / "M412-250421-072001"
+    #     / "Lindsay_TDTb_R_evoke_2in1-250421-000320"
+    #     / "M412-250421-072001"
+    #     / "Lindsay_TDTb_R_evoke_2in1-250421-000320_M412-250421-072001_Cam1.avi"
+    # )
+    # tdt_fp_folder_path = (
+    #     data_dir_path
+    #     / "Bing-202504"
+    #     / "M412-250421-072001"
+    #     / "Lindsay_TDTb_R_evoke_2in1-250421-000320"
+    #     / "M412-250421-072001"
+    # )
+    # tdt_ephys_folder_path = (
+    #     data_dir_path / "Bing-202504" / "M412-250421-072001" / "Lindsay_TDTb_R_evoke_2in1-250421-000320"
+    # )
+    # session_to_nwb(
+    #     info_file_path=info_file_path,
+    #     video_file_path=video_file_path,
+    #     tdt_fp_folder_path=tdt_fp_folder_path,
+    #     tdt_ephys_folder_path=tdt_ephys_folder_path,
+    #     output_dir_path=output_dir_path,
+    #     stub_test=stub_test,
+    # )
+
+    # Example Session from Setup - Bing
     info_file_path = (
         data_dir_path
+        / "Setup - Bing"
         / "Bing-202504"
-        / "M412-250421-072001"
-        / "Lindsay_TDTb_R_evoke_2in1-250421-000320"
-        / "M412-250421-072001"
+        / "M411-250409-071001"
+        / "Lindsay_TDTb_opto1-Evoke12_2in1-250327-080244"
+        / "M411-250409-071001"
         / "Info.mat"
     )
     video_file_path = (
         data_dir_path
+        / "Setup - Bing"
         / "Bing-202504"
-        / "M412-250421-072001"
-        / "Lindsay_TDTb_R_evoke_2in1-250421-000320"
-        / "M412-250421-072001"
-        / "Lindsay_TDTb_R_evoke_2in1-250421-000320_M412-250421-072001_Cam1.avi"
+        / "M411-250409-071001"
+        / "Lindsay_TDTb_opto1-Evoke12_2in1-250327-080244"
+        / "M411-250409-071001"
+        / "Lindsay_TDTb_opto1-Evoke12_2in1-250327-080244_M411-250409-071001_Cam1.avi"
     )
     tdt_fp_folder_path = (
         data_dir_path
+        / "Setup - Bing"
         / "Bing-202504"
-        / "M412-250421-072001"
-        / "Lindsay_TDTb_R_evoke_2in1-250421-000320"
-        / "M412-250421-072001"
+        / "M411-250409-071001"
+        / "Lindsay_TDTb_opto1-Evoke12_2in1-250327-080244"
+        / "M411-250409-071001"
     )
     tdt_ephys_folder_path = (
-        data_dir_path / "Bing-202504" / "M412-250421-072001" / "Lindsay_TDTb_R_evoke_2in1-250421-000320"
+        data_dir_path
+        / "Setup - Bing"
+        / "Bing-202504"
+        / "M411-250409-071001"
+        / "Lindsay_TDTb_opto1-Evoke12_2in1-250327-080244"
     )
     session_to_nwb(
         info_file_path=info_file_path,
