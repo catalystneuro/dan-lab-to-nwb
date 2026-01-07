@@ -243,7 +243,7 @@ def main():
     )
     subject_id = "M411"
     row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
-    sex = "M" if row["M"] else "F"
+    sex = "M" if row["M"] == 1 else "F"
     pst = ZoneInfo("US/Pacific")
     dob = row["DOB"].to_pydatetime().replace(tzinfo=pst)
     info_file_path = (

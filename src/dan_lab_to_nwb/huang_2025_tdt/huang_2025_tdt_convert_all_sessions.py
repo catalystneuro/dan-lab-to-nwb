@@ -128,7 +128,7 @@ def read_excel_metadata(*, metadata_folder_path: DirectoryPath):
                 if subject_id not in subject_id_to_metadata:
                     subject_id_to_metadata[subject_id] = {}
                 metadata = subject_id_to_metadata[subject_id]
-                metadata["sex"] = "M" if row["M"] else "F"
+                metadata["sex"] = "M" if row["M"] == 1 else "F"
                 metadata["dob"] = row["DOB"].to_pydatetime().replace(tzinfo=pst)
                 if "session_dates" not in metadata:
                     metadata["session_dates"] = []
@@ -175,7 +175,10 @@ def get_session_to_nwb_kwargs_per_session(
             if not sub_folder.is_dir():
                 continue
             for outer_session_folder in sub_folder.iterdir():
-                subject_id = outer_session_folder.name.split("-")[0]  # ex. M323-250120-142001 --> M323
+                subject_id = outer_session_folder.name.split("-")[
+                    0
+                ]  # ex. M323-250120-142001 --> M323, M412_PN-250429-143001 --> M412_PN
+                subject_id = subject_id.split("_")[0]  # ex. M323 --> M323, M412_PN --> M412
                 session_date_str = outer_session_folder.name.split("-")[1]  # ex. M323-250120-142001 --> 250120
                 session_date = datetime.datetime.strptime(session_date_str, "%y%m%d").replace(tzinfo=pst)
                 if not outer_session_folder.is_dir():
@@ -218,7 +221,7 @@ if __name__ == "__main__":
     # Parameters for conversion
     data_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets")
     output_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/conversion_nwb/huang_2025_tdt")
-    max_workers = 3
+    max_workers = 7
     verbose = False
 
     if output_dir_path.exists():
