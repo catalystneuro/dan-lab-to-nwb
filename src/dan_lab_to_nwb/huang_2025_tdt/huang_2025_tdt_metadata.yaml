@@ -20,17 +20,11 @@ Ophys:
   FiberPhotometry:
     OpticalFiberModels:
     - name: optical_fiber_model_1
-      description: <description of optical fiber model 1>
-      manufacturer: <manufacturer of the optical fiber>
-      model_number: <model of the optical fiber>
-      numerical_aperture: -1.0
-      core_diameter_in_um: -1.0
-    - name: optical_fiber_model_2
-      description: <description of optical fiber model 2>
-      manufacturer: <manufacturer of the optical fiber>
-      model_number: <model of the optical fiber>
-      numerical_aperture: -1.0
-      core_diameter_in_um: -1.0
+      description: The Splitter Branching Fiber-optic Patch Cord evenly splits the light from a large core diameter connectorized optical fiber into 2 or more branches of smaller core diameter connectorized optical fibers. A 15 cm long large core optical fiber helps obtain uniform distribution of light before a launch into 2 or more optical fibers bundled inside the central tubing. A 2-branch Splitter Branching Fiber-optic Patch Cord typically outputs around 16 % of the input power.
+      manufacturer: Doric Lenses
+      model_number: SBP(2)_200/220/900-0.37_1m_FCM-2xFCM, Splitter Branching Patchcord type A
+      numerical_aperture: 0.37
+      core_diameter_in_um: 200.0
 
     OpticalFibers:
     - name: optical_fiber1
@@ -49,7 +43,7 @@ Ophys:
         insertion_angle_roll_in_deg: 0.0
     - name: optical_fiber2
       description: <description of the optical fiber>
-      model: optical_fiber_model_2
+      model: optical_fiber_model_1
       serial_number: "OF002"
       fiber_insertion:
         depth_in_mm: -1.0
@@ -63,50 +57,33 @@ Ophys:
         insertion_angle_roll_in_deg: 0.0
 
     ExcitationSourceModels:
-    - name: excitation_source_model_calcium
-      description: <description of the excitation source model for calcium signal>
-      manufacturer: <manufacturer of the excitation source>
-      model_number: <model of the excitation source>
+    - name: excitation_source_model
+      description: Our next-generation RZ10x Fiber Photometry Processors feature new integrated LUX LEDs and Photosensors that plug directly into its front panel. The RZ10x can drive up to six LED light sources and collect fiber photometry data from up to four photosensors simultaneously. This allows for independent control of three-LED imaging from up to two sites or subjects.
+      manufacturer: Tucker Davis Technologies
+      model_number: RZ10X
       source_type: LED
       excitation_mode: one-photon
-      wavelength_range_in_nm: [460, 470]
-    - name: excitation_source_model_isosbestic
-      description: <description of the excitation source model for isosbestic control>
-      manufacturer: <manufacturer of the excitation source>
-      model_number: <model of the excitation source>
-      source_type: LED
-      excitation_mode: one-photon
-      wavelength_range_in_nm: [400, 410]
+      wavelength_range_in_nm: [385, 940]
 
     ExcitationSources:
-    - name: excitation_source_calcium_signal
-      description: <description of the excitation source for the calcium signal (465nm)>
-      model: excitation_source_model_calcium
-      power_in_W: -1.0
-      intensity_in_W_per_m2: -1.0
-      exposure_time_in_s: -1.0
-    - name: excitation_source_isosbestic_control
-      description: <description of the excitation source for the isosbestic control (405nm)>
-      model: excitation_source_model_isosbestic
-      power_in_W: -1.0
-      intensity_in_W_per_m2: -1.0
-      exposure_time_in_s: -1.0
+    - name: excitation_source
+      description: Excitation source used for fiber photometry.
+      model: excitation_source_model
 
     PhotodetectorModels:
     - name: photodetector_model
-      description: <description of the photodetector model>
-      manufacturer: <manufacturer of the photodetector>
-      model_number: <model of the photodetector>
+      description: Our next-generation RZ10x Fiber Photometry Processors feature new integrated LUX LEDs and Photosensors that plug directly into its front panel. The RZ10x can drive up to six LED light sources and collect fiber photometry data from up to four photosensors simultaneously. This allows for independent control of three-LED imaging from up to two sites or subjects.
+      manufacturer: Tucker Davis Technologies
+      model_number: RZ10X
       detector_type: photodiode
-      wavelength_range_in_nm: [400, 700]
-      gain: -1.0
+      wavelength_range_in_nm: [320, 1100]
+      gain: 1e+10
       gain_unit: V/W
 
     Photodetectors:
     - name: photodetector
-      description: <description of the photodetector>
+      description: Photodetector used for fiber photometry.
       model: photodetector_model
-      serial_number: "PD001"
 
     BandOpticalFilterModels:
     - name: emission_filter_model
@@ -207,7 +184,7 @@ Ophys:
         emission_wavelength_in_nm: -1.0
         indicator: vta_indicator
         optical_fiber: optical_fiber1
-        excitation_source: excitation_source_calcium_signal
+        excitation_source: excitation_source
 
         photodetector: photodetector
         dichroic_mirror: dichroic_mirror
@@ -219,7 +196,7 @@ Ophys:
         emission_wavelength_in_nm: -1.0
         indicator: vta_indicator
         optical_fiber: optical_fiber1
-        excitation_source: excitation_source_isosbestic_control
+        excitation_source: excitation_source
 
         photodetector: photodetector
         dichroic_mirror: dichroic_mirror
@@ -285,10 +262,15 @@ Behavior:
     VideoCamera1:
       description: Video recorded by camera 1.
       unit: Frames
+      device:
+        name: Camera1
+        description: The B0205 is a new member of Arducam's USB camera family. Based on 1/2.7” OV2710, it's a 2MP, UVC-compliant, wide-angle USB 2.0 camera with a motorized IR-Cut filter and infrared LEDs. The motorized (switchable) IR-CUT filter and infrared LEDs can be triggered by the photoresistor according to the light environment to be ON/OFF to block or pass the infrared light. It can be widely used in wildlife photography, home security systems, baby cameras, etc.
+        manufacturer: ArduCam
+        model_name: 1080P Day & Night Vision USB Camera for Computer, 2MP Automatic IR-Cut Switching All-Day Image USB2.0 Webcam Board with IR LEDs for Windows, Linux, Android and Mac OS
 
 Optogenetics:
   stimulation_software: TDT Synapse
-  excitation_wavelength_in_nm: -1.0 # TODO: get excitation wavelength from Lindsay
+  excitation_wavelength_in_nm: 635.0
   OptogeneticViruses:
     - name: virus
       description: pAAV-Syn-FLEX-rc[ChrimsonR-tdTomato] (AAV5) viral vector was used for optogenetic experiments.
@@ -424,16 +406,16 @@ Optogenetics:
 Ecephys:
   Device:
     - name: DeviceEEG
-      description: EEG electrodes consist of 2 wires with X um diameter made of material Y wrapped around a metal screw inserted into the brain in location Z.
+      description: EEG electrodes consist of 2 wires with 0.002 inch diameter made of stainless steel wrapped around a metal screw inserted into the brain 2.5mm lateral to the midline, 3mm posterior to bregma.
       manufacturer: Dan Lab
     - name: DeviceEMG
-      description: EMG electrodes consist of 2 wires with X um diameter made of material Y inserted subcutaneously in the neck.
+      description: EMG electrodes consist of 2 wires with 0.002 inch diameter made of stainless steel inserted subcutaneously in the neck.
       manufacturer: Dan Lab
   ElectrodeGroup:
     - name: ElectrodeGroupEEG
       description: ElectrodeGroup for EEG channels.
       device: DeviceEEG
-      location: Brain Region Z
+      location: 2.5mm lateral to the midline, 3mm posterior to bregma.
     - name: ElectrodeGroupEMG
       description: ElectrodeGroup for EMG channels.
       device: DeviceEMG
