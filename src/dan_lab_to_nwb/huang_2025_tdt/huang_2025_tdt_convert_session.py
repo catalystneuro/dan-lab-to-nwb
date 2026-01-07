@@ -4,6 +4,7 @@ import shutil
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
+import pandas as pd
 from pydantic import DirectoryPath, FilePath
 from pymatreader import read_mat
 
@@ -18,6 +19,9 @@ def session_to_nwb(
     video_file_path: FilePath,
     tdt_fp_folder_path: DirectoryPath,
     tdt_ephys_folder_path: DirectoryPath,
+    subject_id: str,
+    sex: str,
+    dob: str,
     stub_test: bool = False,
     verbose: bool = True,
 ):
@@ -63,12 +67,13 @@ def session_to_nwb(
 
     info = read_mat(filename=info_file_path)["Info"]
     session_id = info["blockname"]
-    subject_id = info["Subject"]
     pst = ZoneInfo("US/Pacific")
     session_start_time = datetime.datetime.strptime(info["Start"], "%I:%M:%S%p %m/%d/%Y").replace(tzinfo=pst)
     nwbfile_path = output_dir_path / f"sub-{subject_id}_ses-{session_id}.nwb"
     metadata["NWBFile"]["session_id"] = session_id
     metadata["Subject"]["subject_id"] = subject_id
+    metadata["Subject"]["sex"] = sex
+    metadata["Subject"]["date_of_birth"] = dob
     metadata["NWBFile"]["session_start_time"] = session_start_time
 
     # Run conversion
@@ -233,6 +238,14 @@ def main():
     # )
 
     # Example Session from Setup - Bing
+    metadata_df = pd.read_excel(
+        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/behavioral sum/Dat-cre_mVTA_2min-20Hz-stim.xlsx"
+    )
+    subject_id = "M411"
+    row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
+    sex = "M" if row["M"] else "F"
+    pst = ZoneInfo("US/Pacific")
+    dob = row["DOB"].to_pydatetime().replace(tzinfo=pst)
     info_file_path = (
         data_dir_path
         / "Setup - Bing"
@@ -272,6 +285,9 @@ def main():
         tdt_fp_folder_path=tdt_fp_folder_path,
         tdt_ephys_folder_path=tdt_ephys_folder_path,
         output_dir_path=output_dir_path,
+        subject_id=subject_id,
+        sex=sex,
+        dob=dob,
         stub_test=stub_test,
     )
 

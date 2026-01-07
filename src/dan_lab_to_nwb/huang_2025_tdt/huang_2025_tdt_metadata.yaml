@@ -13,8 +13,6 @@ NWBFile:
 Subject:
   species: Mus musculus
   description: Mice were used for all experiments.
-  age: P0D/  # in ISO 8601, such as "P1W2D"
-  sex: U  # One of M, F, U, or O
 
 Ophys:
   FiberPhotometry:
