@@ -95,7 +95,7 @@ def get_nwbfile_name(*, session_to_nwb_kwargs: dict) -> str:
     info_file_path = session_to_nwb_kwargs["info_file_path"]
     info = read_mat(filename=info_file_path)["Info"]
     session_id = info["blockname"]
-    subject_id = info["Subject"]
+    subject_id = session_to_nwb_kwargs["subject_id"]
     nwbfile_name = f"sub-{subject_id}_ses-{session_id}.nwb"
     return nwbfile_name
 
@@ -168,6 +168,7 @@ def get_session_to_nwb_kwargs_per_session(
     session_to_nwb_kwargs_per_session = []
     dataset_folder_names = [
         "Setup - Bing",
+        "Setup - WS8",
     ]
     for folder_name in dataset_folder_names:
         dataset_folder = data_dir_path / folder_name
@@ -177,7 +178,7 @@ def get_session_to_nwb_kwargs_per_session(
             for outer_session_folder in sub_folder.iterdir():
                 subject_id = outer_session_folder.name.split("-")[
                     0
-                ]  # ex. M323-250120-142001 --> M323, M412_PN-250429-143001 --> M412_PN
+                ]  # ex. M323-250120-142001 --> M323, M412_PN-250429-143001 --> M412_PN  # noqa: E501
                 subject_id = subject_id.split("_")[0]  # ex. M323 --> M323, M412_PN --> M412
                 session_date_str = outer_session_folder.name.split("-")[1]  # ex. M323-250120-142001 --> 250120
                 session_date = datetime.datetime.strptime(session_date_str, "%y%m%d").replace(tzinfo=pst)
@@ -221,7 +222,7 @@ if __name__ == "__main__":
     # Parameters for conversion
     data_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets")
     output_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/conversion_nwb/huang_2025_tdt")
-    max_workers = 7
+    max_workers = 10
     verbose = False
 
     if output_dir_path.exists():
