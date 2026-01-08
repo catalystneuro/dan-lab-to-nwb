@@ -68,7 +68,13 @@ def session_to_nwb(
     info = read_mat(filename=info_file_path)["Info"]
     session_id = info["blockname"]
     pst = ZoneInfo("US/Pacific")
-    session_start_time = datetime.datetime.strptime(info["Start"], "%I:%M:%S%p %m/%d/%Y").replace(tzinfo=pst)
+    if "Start" in info:
+        session_start_time = datetime.datetime.strptime(info["Start"], "%I:%M:%S%p %m/%d/%Y").replace(tzinfo=pst)
+    else:
+        date = datetime.datetime.strptime(info["date"], "%Y-%b-%d").date()  # 2025-Apr-09
+        time = datetime.datetime.strptime(info["utcStartTime"], "%H:%M:%S").time()  # 14:10:06
+        session_start_time_utc = datetime.datetime.combine(date, time).replace(tzinfo=datetime.timezone.utc)
+        session_start_time = session_start_time_utc.astimezone(pst)
     nwbfile_path = output_dir_path / f"sub-{subject_id}_ses-{session_id}.nwb"
     metadata["NWBFile"]["session_id"] = session_id
     metadata["Subject"]["subject_id"] = subject_id
