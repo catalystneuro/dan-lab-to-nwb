@@ -119,8 +119,10 @@ def read_excel_metadata(*, metadata_folder_path: DirectoryPath):
     metadata_sub_folder_names = ["behavioral sum", "signal sum"]
     for sub_folder_name in metadata_sub_folder_names:
         metadata_sub_folder_path = metadata_folder_path / sub_folder_name
-        for excel_file in metadata_sub_folder_path.glob("*.xlsx"):
-            df = pd.read_excel(excel_file)
+        for excel_file in metadata_sub_folder_path.glob("*.csv"):
+            if excel_file.name.startswith("._"):
+                continue
+            df = pd.read_csv(excel_file)
             date_column_names = [name for name in df.columns if name.startswith("date")]
             setup_column_names = [name for name in df.columns if name.startswith("setup")]
             for _, row in df.iterrows():
@@ -129,15 +131,19 @@ def read_excel_metadata(*, metadata_folder_path: DirectoryPath):
                     subject_id_to_metadata[subject_id] = {}
                 metadata = subject_id_to_metadata[subject_id]
                 metadata["sex"] = "M" if row["M"] == 1 else "F"
-                metadata["dob"] = row["DOB"].to_pydatetime().replace(tzinfo=pst)
+                metadata["dob"] = datetime.datetime.strptime(row["DOB"], "%m/%d/%Y").replace(tzinfo=pst)
                 if "session_dates" not in metadata:
                     metadata["session_dates"] = []
                 for date_column_name in date_column_names:
-                    session_date = row[date_column_name].to_pydatetime().replace(tzinfo=pst)
+                    if pd.isna(row[date_column_name]):
+                        continue
+                    session_date = datetime.datetime.strptime(row[date_column_name], "%m/%d/%Y").replace(tzinfo=pst)
                     metadata["session_dates"].append(session_date)
                 if "session_setups" not in metadata:
                     metadata["session_setups"] = []
                 for setup_column_name in setup_column_names:
+                    if pd.isna(row[setup_column_name]):
+                        continue
                     session_setup = row[setup_column_name]
                     metadata["session_setups"].append(session_setup)
     return subject_id_to_metadata
