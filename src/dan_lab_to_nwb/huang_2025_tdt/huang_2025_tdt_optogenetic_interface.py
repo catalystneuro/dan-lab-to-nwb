@@ -44,6 +44,8 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
         file_pattern_to_epoc_names = {
             "pTra_con": ["St1_", "St2_", "Wi3_"],
             "opto1-Evoke12_2in1": ["St1_", "St2_", "LasT"],
+            "opto1_E_2": ["St1_", "St2_", "LasT"],
+            "opto1_E12_2in1": ["St1_", "St2_", "LasT"],
             "SBOX_R_evoke_2in1": ["St1_", "St2_"],
             "TDTb_R_evoke_2in1": ["St1_", "St2_"],
         }
