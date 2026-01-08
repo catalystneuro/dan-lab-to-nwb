@@ -5,7 +5,7 @@ from pydantic import FilePath
 
 def reorganize_data(data_dir_path: FilePath):
     data_dir_path = Path(data_dir_path)
-    dataset_folder_names = ["Setup - Bing", "Setup - WS8"]
+    dataset_folder_names = ["Setup - Bing", "Setup - WS8", "Setup - MollyFP"]
     for folder_name in dataset_folder_names:
         dataset_folder = data_dir_path / folder_name
         for sub_folder in dataset_folder.iterdir():

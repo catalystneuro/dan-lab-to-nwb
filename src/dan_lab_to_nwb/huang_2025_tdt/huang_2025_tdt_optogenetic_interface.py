@@ -46,6 +46,10 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
             "opto1-Evoke12_2in1": ["St1_", "St2_", "LasT"],
             "opto1_E_2": ["St1_", "St2_", "LasT"],
             "opto1_E12_2in1": ["St1_", "St2_", "LasT"],
+            "opto_E_2": ["St1_", "LasT"],
+            "TDTm_R_evoke": ["St1_"],
+            "TDTm_op1_pTra": ["St1_", "Wi3_"],
+            "TDTm_op1-E_pTra": ["St1_", "Wi3_"],
             "SBOX_R_evoke_2in1": ["St1_", "St2_"],
             "TDTb_R_evoke_2in1": ["St1_", "St2_"],
         }

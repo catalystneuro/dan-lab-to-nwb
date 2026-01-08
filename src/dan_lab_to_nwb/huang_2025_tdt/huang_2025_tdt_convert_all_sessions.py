@@ -169,6 +169,7 @@ def get_session_to_nwb_kwargs_per_session(
     dataset_folder_names = [
         "Setup - Bing",
         "Setup - WS8",
+        "Setup - MollyFP",
     ]
     for folder_name in dataset_folder_names:
         dataset_folder = data_dir_path / folder_name
