@@ -83,23 +83,6 @@ Ophys:
       description: Photodetector used for fiber photometry.
       model: photodetector_model
 
-    DichroicMirrorModels:
-    - name: dichroic_mirror_model
-      description: <description of the dichroic mirror model>
-      manufacturer: <manufacturer of the dichroic mirror>
-      model_number: <model of the dichroic mirror>
-      cut_on_wavelength_in_nm: -1.0
-      cut_off_wavelength_in_nm: -1.0
-      reflection_band_in_nm: [-1.0, -1.0]
-      transmission_band_in_nm: [-1.0, -1.0]
-      angle_of_incidence_in_degrees: -1.0
-
-    DichroicMirrors:
-    - name: dichroic_mirror
-      description: <description of the dichroic mirror>
-      model: dichroic_mirror_model
-      serial_number: "DM001"
-
     FiberPhotometryViruses:
     - name: vta_virus
       description: <description of the viral vector for VTA>
@@ -160,7 +143,6 @@ Ophys:
         optical_fiber: optical_fiber1
         excitation_source: excitation_source
         photodetector: photodetector
-        dichroic_mirror: dichroic_mirror
 
       - name: 1
         location: Ventral Tegmental Area (VTA)
@@ -170,7 +152,6 @@ Ophys:
         optical_fiber: optical_fiber1
         excitation_source: excitation_source
         photodetector: photodetector
-        dichroic_mirror: dichroic_mirror
 
       - name: 2
         location: Prefrontal Cortex (PFC)
@@ -180,7 +161,6 @@ Ophys:
         optical_fiber: optical_fiber2
         excitation_source: excitation_source
         photodetector: photodetector
-        dichroic_mirror: dichroic_mirror
 
       - name: 3
         location: Prefrontal Cortex (PFC)
@@ -190,7 +170,6 @@ Ophys:
         optical_fiber: optical_fiber2
         excitation_source: excitation_source
         photodetector: photodetector
-        dichroic_mirror: dichroic_mirror
 
     FiberPhotometryResponseSeries:
     - name: calcium_signalVTA
