@@ -197,7 +197,17 @@ def get_session_to_nwb_kwargs_per_session(
                 if outer_session_folder.name in sessions_to_skip:
                     continue
                 if subject_id not in subject_id_to_metadata:
-                    continue
+                    # Try alternative parsing for subject_id
+                    subject_id = outer_session_folder.name.split("-")[0]
+                    subject_id = subject_id.split("_")[1]  # ex. M342_M042 --> M042
+                    if subject_id.endswith("R") or subject_id.endswith("L"):
+                        subject_id = subject_id[:-1]  # ex. M267R --> M267, M267L --> M267
+                    if subject_id.startswith("BBB"):
+                        subject_id = subject_id.replace("BBB", "M00")  # ex. BBB8 --> M008
+
+                    # If still not found, skip this subject
+                    if subject_id not in subject_id_to_metadata:
+                        continue
                 subject_metadata = subject_id_to_metadata[subject_id]
                 if session_date not in subject_metadata["session_dates"]:
                     continue
