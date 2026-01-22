@@ -183,10 +183,11 @@ def get_session_to_nwb_kwargs_per_session(
             if not sub_folder.is_dir():
                 continue
             for outer_session_folder in sub_folder.iterdir():
-                subject_id = outer_session_folder.name.split("-")[
-                    0
-                ]  # ex. M323-250120-142001 --> M323, M412_PN-250429-143001 --> M412_PN  # noqa: E501
+                # ex. M323-250120-142001 --> M323, M412_PN-250429-143001 --> M412_PN
+                subject_id = outer_session_folder.name.split("-")[0]
                 subject_id = subject_id.split("_")[0]  # ex. M323 --> M323, M412_PN --> M412
+                if subject_id.endswith("R") or subject_id.endswith("L"):
+                    subject_id = subject_id[:-1]  # ex. M267R --> M267, M267L --> M267
                 session_date_str = outer_session_folder.name.split("-")[1]  # ex. M323-250120-142001 --> 250120
                 session_date = datetime.datetime.strptime(session_date_str, "%y%m%d").replace(tzinfo=pst)
                 if not outer_session_folder.is_dir():
