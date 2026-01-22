@@ -226,30 +226,30 @@ Optogenetics:
       description: Viral injection into the Ventral Tegmental Area (VTA).
       viral_vector: virus
       location: Ventral Tegmental Area (VTA)
-      hemisphere: right # TODO: get hemisphere from a subject-wise map
+      hemisphere: right
       reference: bregma at the cortical surface
       ap_in_mm: -3.8
-      ml_in_mm: 0.3 # TODO: get ML coordinate from a subject-wise map (depends on hemisphere)
+      ml_in_mm: 0.3
       dv_in_mm: -4.5
       volume_in_uL: 0.700
     - name: virus_injection_bf
       description: Viral injection into the Basal Forebrain (BF).
       viral_vector: virus
       location: Basal Forebrain (BF)
-      hemisphere: right # TODO: get hemisphere from a subject-wise map
+      hemisphere: right
       reference: bregma at the cortical surface
       ap_in_mm: 0.1
-      ml_in_mm: 1.5 # TODO: get ML coordinate from a subject-wise map (depends on hemisphere)
+      ml_in_mm: 1.5
       dv_in_mm: -5.3
       volume_in_uL: 0.700
     - name: virus_injection_lc
       description: Viral injection into the Locus Coeruleus (LC).
       viral_vector: virus
       location: Locus Coeruleus (LC)
-      hemisphere: right # TODO: get hemisphere from a subject-wise map
+      hemisphere: right
       reference: bregma at the cortical surface
       ap_in_mm: -5.5
-      ml_in_mm: 0.9 # TODO: get ML coordinate from a subject-wise map (depends on hemisphere)
+      ml_in_mm: 0.9
       dv_in_mm: -3.6
       volume_in_uL: 0.700
   OptogeneticEffectors:
