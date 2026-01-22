@@ -19,8 +19,6 @@ def reorganize_data(data_dir_path: FilePath):
                     )
                     continue
                 tsq_file = tsq_files[0]
-                if sub_sub_folder.name == "M364_M366-250808-072000x":
-                    sub_sub_folder = sub_sub_folder.rename(sub_sub_folder.parent / "M364_M366-250808-072000")
                 session_name = tsq_file.name.split(sub_sub_folder.name)[0].strip("_")
 
                 temp_path = sub_sub_folder.rename(dataset_folder / f"temp_{sub_sub_folder.name}")
