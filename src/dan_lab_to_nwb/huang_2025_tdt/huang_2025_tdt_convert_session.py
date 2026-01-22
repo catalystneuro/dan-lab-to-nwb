@@ -244,14 +244,14 @@ def main():
     # )
 
     # Example Session from Setup - Bing
-    metadata_df = pd.read_excel(
-        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/behavioral sum/Dat-cre_mVTA_2min-20Hz-stim.xlsx"
+    metadata_df = pd.read_csv(
+        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/behavioral sum/Dat-cre_mVTA_2min-20Hz-stim GoogleSheet.csv"
     )
     subject_id = "M411"
     row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
     sex = "M" if row["M"] == 1 else "F"
     pst = ZoneInfo("US/Pacific")
-    dob = row["DOB"].to_pydatetime().replace(tzinfo=pst)
+    dob = datetime.datetime.strptime(row["DOB"], "%m/%d/%Y").replace(tzinfo=pst)
     info_file_path = (
         data_dir_path
         / "Setup - Bing"
@@ -296,6 +296,7 @@ def main():
         dob=dob,
         stub_test=stub_test,
     )
+    return
 
     # Example Session X
     # '/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/Setup - MollyFP/MollyFP-202508/M364_M366-250808-114802/A_Lindsay_TDTm_op1_pTra_2min-250808-114703/M364_M366-250808-114802'
