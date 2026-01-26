@@ -34,6 +34,7 @@ def parse_session_path(path: str) -> Optional[Dict]:
     ----------
     path : str
         Path string like "Setup - Bing/Bing-202412/M412-250717-153001/..."
+        or nested pattern "Setup - WS8/202404/202409/M296-240915-072001"
 
     Returns
     -------
@@ -41,20 +42,32 @@ def parse_session_path(path: str) -> Optional[Dict]:
         Dictionary with parsed information or None if not a session path
         Keys: 'mouse_id', 'date', 'setup', 'full_path', 'session_name'
     """
-    # Pattern: Setup - [SetupName]/[SetupName-YYYYMM]/[MouseID]-YYMMDD-HHMMSS
-    # Match session folder pattern
-    session_pattern = r"^(Setup - ([^/]+))/([^/]+)/(([^-]+)-(\d{6})-\d+)"
-    match = re.match(session_pattern, path)
+    # Try nested month pattern first: Setup - [SetupName]/[YYYYMM]/[YYYYMM]/[MouseID]-YYMMDD-HHMMSS
+    nested_pattern = r"^(Setup - ([^/]+))/(\d{6})/(\d{6})/(([^-]+)-(\d{6})-\d+)"
+    nested_match = re.match(nested_pattern, path)
 
-    if not match:
-        return None
+    if nested_match:
+        setup_prefix = nested_match.group(1)  # "Setup - WS8"
+        setup_name = nested_match.group(2)  # "WS8"
+        outer_month_folder = nested_match.group(3)  # "202404"
+        inner_month_folder = nested_match.group(4)  # "202409"
+        session_name = nested_match.group(5)  # "M296-240915-072001"
+        mouse_id_raw = nested_match.group(6)  # "M296"
+        date_str = nested_match.group(7)  # "240915"
+    else:
+        # Standard pattern: Setup - [SetupName]/[SetupName-YYYYMM]/[MouseID]-YYMMDD-HHMMSS
+        standard_pattern = r"^(Setup - ([^/]+))/[^/]+-(\d{6})/(([^-]+)-(\d{6})-\d+)"
+        standard_match = re.match(standard_pattern, path)
 
-    setup_prefix = match.group(1)  # "Setup - Bing"
-    setup_name = match.group(2)  # "Bing"
-    month_folder = match.group(3)  # "Bing-202412"
-    session_name = match.group(4)  # "M412-250717-153001"
-    mouse_id_raw = match.group(5)  # "M412" or "M412_PN"
-    date_str = match.group(6)  # "250717"
+        if not standard_match:
+            return None
+
+        setup_prefix = standard_match.group(1)  # "Setup - Bing"
+        setup_name = standard_match.group(2)  # "Bing"
+        month_folder = standard_match.group(3)  # "202412"
+        session_name = standard_match.group(4)  # "M412-250717-153001"
+        mouse_id_raw = standard_match.group(5)  # "M412" or "M412_PN"
+        date_str = standard_match.group(6)  # "250717"
 
     # Extract primary mouse ID (handle M412_PN -> M412)
     mouse_id = mouse_id_raw.split("_")[0]
