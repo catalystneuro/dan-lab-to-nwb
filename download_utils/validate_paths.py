@@ -42,32 +42,39 @@ def parse_session_path(path: str) -> Optional[Dict]:
         Dictionary with parsed information or None if not a session path
         Keys: 'mouse_id', 'date', 'setup', 'full_path', 'session_name'
     """
-    # Try nested month pattern first: Setup - [SetupName]/[YYYYMM]/[YYYYMM]/[MouseID]-YYMMDD-HHMMSS
-    nested_pattern = r"^(Setup - ([^/]+))/(\d{6})/(\d{6})/(([^-]+)-(\d{6})-\d+)"
-    nested_match = re.match(nested_pattern, path)
+    # Define patterns and group indices up front
+    patterns = [
+        {
+            "name": "nested",
+            # Pattern: Setup - [SetupName]/[YYYYMM]/[YYYYMM]/[MouseID]-YYMMDD-HHMMSS
+            "regex": r"^(Setup - ([^/]+))/(\d{6})/(\d{6})/(([^-]+)-(\d{6})-\d+)",
+            "groups": {"setup_name": 2, "session_name": 5, "mouse_id_raw": 6, "date_str": 7},
+        },
+        {
+            "name": "standard",
+            # Pattern: Setup - [SetupName]/[SetupName-YYYYMM]/[MouseID]-YYMMDD-HHMMSS
+            "regex": r"^(Setup - ([^/]+))/[^/]+-(\d{6})/(([^-]+)-(\d{6})-\d+)",
+            "groups": {"setup_name": 2, "session_name": 4, "mouse_id_raw": 5, "date_str": 6},
+        },
+        {
+            "name": "alt",
+            # Pattern: Setup - [SetupName]/[YYYYMM...]/[MouseID]-YYMMDD-HHMMSS
+            "regex": r"^(Setup - ([^/]+))/(\d{6})[^/]*/(([^-]+)-(\d{6})-\d+)",
+            "groups": {"setup_name": 2, "session_name": 4, "mouse_id_raw": 5, "date_str": 6},
+        },
+    ]
 
-    if nested_match:
-        setup_prefix = nested_match.group(1)  # "Setup - WS8"
-        setup_name = nested_match.group(2)  # "WS8"
-        outer_month_folder = nested_match.group(3)  # "202404"
-        inner_month_folder = nested_match.group(4)  # "202409"
-        session_name = nested_match.group(5)  # "M296-240915-072001"
-        mouse_id_raw = nested_match.group(6)  # "M296"
-        date_str = nested_match.group(7)  # "240915"
+    for pattern in patterns:
+        match = re.match(pattern["regex"], path)
+        if match:
+            # Extract fields from the matched pattern groups
+            setup_name = match.group(pattern["groups"]["setup_name"])  # ex. "WS8", "Bing"
+            session_name = match.group(pattern["groups"]["session_name"])  # ex. "M296-240915-072001"
+            mouse_id_raw = match.group(pattern["groups"]["mouse_id_raw"])  # ex. "M296" or "M412_PN"
+            date_str = match.group(pattern["groups"]["date_str"])  # ex. "240915"
+            break
     else:
-        # Standard pattern: Setup - [SetupName]/[SetupName-YYYYMM]/[MouseID]-YYMMDD-HHMMSS
-        standard_pattern = r"^(Setup - ([^/]+))/[^/]+-(\d{6})/(([^-]+)-(\d{6})-\d+)"
-        standard_match = re.match(standard_pattern, path)
-
-        if not standard_match:
-            return None
-
-        setup_prefix = standard_match.group(1)  # "Setup - Bing"
-        setup_name = standard_match.group(2)  # "Bing"
-        month_folder = standard_match.group(3)  # "202412"
-        session_name = standard_match.group(4)  # "M412-250717-153001"
-        mouse_id_raw = standard_match.group(5)  # "M412" or "M412_PN"
-        date_str = standard_match.group(6)  # "250717"
+        return None
 
     # Extract primary mouse ID (handle M412_PN -> M412)
     mouse_id = mouse_id_raw.split("_")[0]

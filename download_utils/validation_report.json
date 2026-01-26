@@ -1,11 +1,17 @@
 {
   "summary": {
-    "total_session_paths": 956,
-    "valid": 139,
-    "extra": 817,
-    "missing": 16
+    "total_session_paths": 1044,
+    "valid": 155,
+    "extra": 889,
+    "missing": 0
   },
   "valid_sessions": [
+    "Setup - Bing/202408-old setting/M008-240819-071001",
+    "Setup - Bing/202408-old setting/M008-240821-132001",
+    "Setup - Bing/202408-old setting/M008-240826-160001",
+    "Setup - Bing/202408-old setting/M008-240830-162001",
+    "Setup - Bing/202408-old setting/M008-240831-072001",
+    "Setup - Bing/202409-old setting/BBB8-240901-072001",
     "Setup - WS8/WS8-202504/M303_M042-250430-082001",
     "Setup - WS8/WS8-202505/M342_M042-250519-142501",
     "Setup - WS8/WS8-202505/M342_M042-250519-142501/Box2-M304",
@@ -14,6 +20,9 @@
     "Setup - WS8/WS8-202506/M042_M337-250616-082001",
     "Setup - WS8/WS8-202506/M042_M337-250622-082001",
     "Setup - WS8/WS8-202506/M042_M337-250623-082001",
+    "Setup - WS8/202404/M267-240409-150941",
+    "Setup - WS8/202404/M267R-240416-070001",
+    "Setup - WS8/202404/M267L-240417-070001",
     "Setup - WS8/202404/202409/M296-240915-072001",
     "Setup - WS8/202404/202409/M296-240920-072001",
     "Setup - WS8/202404/202410/M296-241018-072001",
@@ -27,10 +36,17 @@
     "Setup - WS8/202404/202411/M298-241103-072001",
     "Setup - WS8/202404/202411/M298-241114-072001",
     "Setup - WS8/202404/202411/M298-241120-072001",
+    "Setup - Bing/202409-old setting/M301-240904-072001",
+    "Setup - Bing/202409-old setting/M301-240913-072001",
     "Setup - Bing/Bing-202410/M301-241029-072001",
     "Setup - WS8/202404/202411/M301-241115-072001",
     "Setup - WS8/202404/202411/M301-241121-072001",
     "Setup - WS8/202404/202411/M301-241126-072001",
+    "Setup - Bing/202409-old setting/M304-240908-145001",
+    "Setup - Bing/202409-old setting/M304-240911-153001",
+    "Setup - Bing/202409-old setting/M304-240916-151001",
+    "Setup - Bing/202410-old setting/M304-241011-152001",
+    "Setup - Bing/202410-old setting/M304-241016-152001",
     "Setup - Bing/Bing-202410/M304-241018-133451",
     "Setup - Bing/Bing-202411/M305-241106-062001",
     "Setup - WS8/202404/202411/M305-241117-072001",
@@ -155,10 +171,30 @@
     "Setup - Bing/Bing-202410/(M322)_M323-241021-072001/Box1-M322-mostly noisy, no use",
     "Setup - WS8/WS8-202504/(M404)_M409-250405-081801(M404 no cable)",
     "Setup - WS8/WS8-202504/(M404)_M409-250406-080101(M404 no cable)",
+    "Setup - Bing/202409-old setting/BF9-240905-153001",
+    "Setup - Bing/202409-old setting/BF9-240906-072001(bad EMG)",
     "Setup - Bing/Bing-202411/Forgot to turn on laser/M306-241108-072001",
     "Setup - Bing/Bing-202411/Forgot to turn on laser/M308-241108-133001",
     "Setup - Bing/Bing-202411/Forgot to turn on laser/M308-241109-072001",
     "Setup - Bing/Bing-202411/Forgot to turn on laser/M308-241110-072001",
+    "Setup - Bing/202408-old setting/BBB10-240819-133001",
+    "Setup - Bing/202408-old setting/BBB10-240820-073001",
+    "Setup - Bing/202408-old setting/BBB10-240823-145001",
+    "Setup - Bing/202408-old setting/BBB10-240824-072001",
+    "Setup - Bing/202408-old setting/BBB10-240825-072001",
+    "Setup - Bing/202408-old setting/BBB10-240826-072001",
+    "Setup - Bing/202408-old setting/BBB10-240829-150001",
+    "Setup - Bing/202408-old setting/BBB10-240830-072001",
+    "Setup - Bing/202409-old setting/BBB10-240901-134001",
+    "Setup - Bing/202409-old setting/BBB10-240902-134001",
+    "Setup - Bing/202409-old setting/BBB10-240902-074001",
+    "Setup - Bing/202409-old setting/BBB10-240903-072001",
+    "Setup - Bing/202408-old setting/M008-240816-082814",
+    "Setup - Bing/202408-old setting/M008-240817-073001",
+    "Setup - Bing/202408-old setting/M008-240818-073001",
+    "Setup - Bing/202408-old setting/M008-240822-073001",
+    "Setup - Bing/202408-old setting/M008-240823-072001",
+    "Setup - Bing/202408-old setting/M008-240827-072001",
     "Setup - WS8/202404/202409/BBB9-240901-161001",
     "Setup - WS8/202404/202409/BBB9-240902-071001",
     "Setup - WS8/202404/202409/BBB9-240903-153001",
@@ -230,6 +266,13 @@
     "Setup - WS8/202404/202409/M259_M260-240907-090001/Box2-M260",
     "Setup - WS8/202404/202409/M259-240908-073001",
     "Setup - WS8/202404/202409/M259-240908-073001/Box1-M259",
+    "Setup - Bing/202409-old setting/M280-240918-155001",
+    "Setup - Bing/202409-old setting/M280-240919-072001",
+    "Setup - Bing/202409-old setting/M281-240920-183821",
+    "Setup - Bing/202409-old setting/M281-240921-082001",
+    "Setup - Bing/202408-old setting/M290-240820-152001",
+    "Setup - Bing/202408-old setting/M290-240821-072001",
+    "Setup - Bing/202408-old setting/M290-240822-145001",
     "Setup - WS8/202404/202409/M291-240906-152001",
     "Setup - WS8/202404/202409/M291-240916-161353",
     "Setup - WS8/202404/202409/M291-240917-072001",
@@ -292,6 +335,14 @@
     "Setup - WS8/202404/202411/M299-241105-072001-dts/Box1-M299snc",
     "Setup - WS8/202404/202411/M299-241105-072001-dts/Box2-M299str",
     "Setup - WS8/202404/202411/M299-241106-062001",
+    "Setup - Bing/202408-old setting/M300-240827-150001",
+    "Setup - Bing/202408-old setting/M300-240828-072001",
+    "Setup - Bing/202409-old setting/M300-240910-072001",
+    "Setup - Bing/202409-old setting/M300-240914-162001",
+    "Setup - Bing/202409-old setting/M300-240915-072001",
+    "Setup - Bing/202409-old setting/M300-240921-160001",
+    "Setup - Bing/202409-old setting/M300-240922-072001",
+    "Setup - Bing/202410-old setting/M300-241014-072001",
     "Setup - Bing/Bing-202410/M300-241026-072001",
     "Setup - Bing/Bing-202410/M300-241027-072001",
     "Setup - Bing/Bing-202410/M300-241028-072001",
@@ -300,11 +351,25 @@
     "Setup - WS8/202404/202411/M300-241119-072001",
     "Setup - WS8/202404/202412/M300-241210-072001",
     "Setup - WS8/202404/202412/M300-241213-142119",
+    "Setup - Bing/202408-old setting/M301-240828-151001",
+    "Setup - Bing/202409-old setting/M301-240903-152001",
+    "Setup - Bing/202409-old setting/M301-240912-152001",
+    "Setup - Bing/202409-old setting/M301-240917-163001",
+    "Setup - Bing/202409-old setting/M301-240918-072001",
     "Setup - Bing/Bing-202410/M301-241024-072001",
     "Setup - WS8/202404/202411/M301-241108-072001",
     "Setup - WS8/202404/202412/M301-241204-151501",
     "Setup - WS8/WS8-202501/M301-250114-153001",
     "Setup - WS8/WS8-202502/M301-250206-104501",
+    "Setup - Bing/202409-old setting/M302-240904-162001",
+    "Setup - Bing/202409-old setting/M302-240905-072001",
+    "Setup - Bing/202409-old setting/M302-240910-155001",
+    "Setup - Bing/202409-old setting/M302-240911-072001",
+    "Setup - Bing/202409-old setting/M302-240915-150001",
+    "Setup - Bing/202409-old setting/M302-240916-072001",
+    "Setup - Bing/202410-old setting/M302-241014-184708",
+    "Setup - Bing/202410-old setting/M302-241014-160001",
+    "Setup - Bing/202410-old setting/M302-241015-072001",
     "Setup - WS8/202404/202410/M302-241019-072001",
     "Setup - WS8/202404/202410/M302-241020-072001",
     "Setup - WS8/202404/202410/M302-241021-072001",
@@ -313,6 +378,16 @@
     "Setup - WS8/202404/202412/M302-241219-133001",
     "Setup - WS8/WS8-202501/M302-250115-112507",
     "Setup - WS8/WS8-202502/M302-250206-140633(nrememm)",
+    "Setup - Bing/202409-old setting/M303-240906-155511",
+    "Setup - Bing/202409-old setting/M303-240907-072001",
+    "Setup - Bing/202409-old setting/M303-240908-072001",
+    "Setup - Bing/202409-old setting/M303-240913-152001",
+    "Setup - Bing/202409-old setting/M303-240914-072001",
+    "Setup - Bing/202410-old setting/M303-241001-072001",
+    "Setup - Bing/202410-old setting/M303-241010-135001",
+    "Setup - Bing/202410-old setting/M303-241011-072001",
+    "Setup - Bing/202410-old setting/M303-241015-154501",
+    "Setup - Bing/202410-old setting/M303-241016-072001",
     "Setup - Bing/Bing-202410/M303-241021-161001",
     "Setup - Bing/Bing-202410/M303-241022-072001",
     "Setup - Bing/Bing-202410/M303-241022-072001/Wrong TTL trigger",
@@ -321,6 +396,12 @@
     "Setup - Bing/Bing-202410/M303-241022-072001/Wrong TTL trigger/pTrain1 actually no optical stim (pTrain1 evoked by c4, go through fiber 2)/same, to box2",
     "Setup - Bing/Bing-202410/M303-241023-072001",
     "Setup - WS8/WS8-202505/M303_M042-250501-082001",
+    "Setup - Bing/202409-old setting/M304-240909-072001",
+    "Setup - Bing/202409-old setting/M304-240912-072001",
+    "Setup - Bing/202409-old setting/M304-240917-072001",
+    "Setup - Bing/202410-old setting/M304-241012-072001",
+    "Setup - Bing/202410-old setting/M304-241013-072001",
+    "Setup - Bing/202410-old setting/M304-241017-072001",
     "Setup - Bing/Bing-202410/M304-241025-072001",
     "Setup - WS8/202404/202411/M304-241127-072001",
     "Setup - Bing/Bing-202411/M305-241105-162001",
@@ -399,6 +480,8 @@
     "Setup - WS8/WS8-202502/M311-250227-072001(noisy signals)",
     "Setup - WS8/WS8-202503/M311-250305-162001",
     "Setup - WS8/WS8-202503/M311-250306-072001",
+    "Setup - Bing/202410-old setting/M313-241001-160001",
+    "Setup - Bing/202410-old setting/M313-241002-072001",
     "Setup - Bing/Bing-202410/M314-241029-160001",
     "Setup - Bing/Bing-202411/M314-241118-153001",
     "Setup - Bing/Bing-202412/M314-241202-151501",
@@ -435,6 +518,7 @@
     "Setup - WS8/WS8-202504/M315_(M346)-250428-155008",
     "Setup - WS8/WS8-202504/M315_M346-250428-164041(M346 video analysis)",
     "Setup - WS8/WS8-202504/M315_M346-250428-164041",
+    "Setup - Bing/202409-old setting/M317-240930-151134",
     "Setup - WS8/202404/202410/M317-241002-151001",
     "Setup - WS8/202404/202410/M317-241010-133001",
     "Setup - WS8/202404/202410/M317-241017-145001",
@@ -451,11 +535,15 @@
     "Setup - Bing/Bing-202503/M321-250331-082001",
     "Setup - Bing/Bing-202504/M321-250403-081001",
     "Setup - Bing/Bing-202504/M321-250404-122906",
+    "Setup - Bing/202410-old setting/M322-241002-165301",
+    "Setup - Bing/202410-old setting/M322-241003-072001",
+    "Setup - Bing/202410-old setting/M322-241018-064001",
     "Setup - Bing/Bing-202412/M322_M323-241214-072001",
     "Setup - Bing/Bing-202412/M322_M323-241215-072001",
     "Setup - Bing/Bing-202412/M322_M323-241216-072001",
     "Setup - Bing/Bing-202501/M322-250115-072001",
     "Setup - Bing/Bing-202501/M322-250115-113059",
+    "Setup - Bing/202410-old setting/M323-241017-144001",
     "Setup - Bing/Bing-202411/M323_M322-241103-072001",
     "Setup - Bing/Bing-202411/M323_M322-241104-162001",
     "Setup - Bing/Bing-202411/M323_M322-241105-072001-dts",
@@ -965,122 +1053,8 @@
     "Setup - MollyFP/MollyFP-202507/TP2_NT3-250703-113116",
     "Setup - MollyFP/MollyFP-202507/TP2_NT3-250705-161441"
   ],
-  "missing_sessions_concise": [
-    "M008 - 2024-08-19 - Bing",
-    "M008 - 2024-08-21 - Bing",
-    "M008 - 2024-08-26 - Bing",
-    "M008 - 2024-08-30 - Bing",
-    "M008 - 2024-08-31 - Bing",
-    "M008 - 2024-09-01 - Bing",
-    "M267 - 2024-04-09 - WS8",
-    "M267 - 2024-04-16 - WS8",
-    "M267 - 2024-04-17 - WS8",
-    "M301 - 2024-09-04 - Bing",
-    "M301 - 2024-09-13 - Bing",
-    "M304 - 2024-09-08 - Bing",
-    "M304 - 2024-09-11 - Bing",
-    "M304 - 2024-09-16 - Bing",
-    "M304 - 2024-10-11 - Bing",
-    "M304 - 2024-10-16 - Bing"
-  ],
-  "missing_sessions": [
-    {
-      "mouse_id": "M008",
-      "date": "2024-08-19",
-      "setup": "Bing",
-      "csv_file": "ChAT-cre_BF_2min-20Hz-stim - GS - Sheet1.csv"
-    },
-    {
-      "mouse_id": "M008",
-      "date": "2024-08-21",
-      "setup": "Bing",
-      "csv_file": "ChAT-cre_BF_2min-20Hz-stim - GS - Sheet1.csv"
-    },
-    {
-      "mouse_id": "M008",
-      "date": "2024-08-26",
-      "setup": "Bing",
-      "csv_file": "ChAT-cre_BF_2min-20Hz-stim - GS - Sheet1.csv"
-    },
-    {
-      "mouse_id": "M008",
-      "date": "2024-08-30",
-      "setup": "Bing",
-      "csv_file": "ChAT-cre_BF_2min-pTra-stim - GS - Sheet1.csv"
-    },
-    {
-      "mouse_id": "M008",
-      "date": "2024-08-31",
-      "setup": "Bing",
-      "csv_file": "ChAT-cre_BF_2min-pTra-stim - GS - Sheet1.csv"
-    },
-    {
-      "mouse_id": "M008",
-      "date": "2024-09-01",
-      "setup": "Bing",
-      "csv_file": "ChAT-cre_BF_2min-pTra-stim - GS - Sheet1.csv"
-    },
-    {
-      "mouse_id": "M267",
-      "date": "2024-04-09",
-      "setup": "WS8",
-      "csv_file": "Dat-cre_mVTA_2min-20Hz-stim - GS - Sheet1.csv"
-    },
-    {
-      "mouse_id": "M267",
-      "date": "2024-04-16",
-      "setup": "WS8",
-      "csv_file": "Dat-cre_mVTA_2min-20Hz-stim - GS - Sheet1.csv"
-    },
-    {
-      "mouse_id": "M267",
-      "date": "2024-04-17",
-      "setup": "WS8",
-      "csv_file": "Dat-cre_mVTA_2min-20Hz-stim - GS - Sheet1.csv"
-    },
-    {
-      "mouse_id": "M301",
-      "date": "2024-09-04",
-      "setup": "Bing",
-      "csv_file": "Dat-cre_mVTA_3h-stim_low virus - Sheet1.csv"
-    },
-    {
-      "mouse_id": "M301",
-      "date": "2024-09-13",
-      "setup": "Bing",
-      "csv_file": "Dat-cre_mVTA_3h-stim_low virus - Sheet1.csv"
-    },
-    {
-      "mouse_id": "M304",
-      "date": "2024-09-08",
-      "setup": "Bing",
-      "csv_file": "ChAT-cre_BF_2min-20Hz-stim - GS - Sheet1.csv"
-    },
-    {
-      "mouse_id": "M304",
-      "date": "2024-09-11",
-      "setup": "Bing",
-      "csv_file": "ChAT-cre_BF_2min-20Hz-stim - GS - Sheet1.csv"
-    },
-    {
-      "mouse_id": "M304",
-      "date": "2024-09-16",
-      "setup": "Bing",
-      "csv_file": "ChAT-cre_BF_2min-pTra-stim - GS - Sheet1.csv"
-    },
-    {
-      "mouse_id": "M304",
-      "date": "2024-10-11",
-      "setup": "Bing",
-      "csv_file": "ChAT-cre_BF_2min-20Hz-stim - GS - Sheet1.csv"
-    },
-    {
-      "mouse_id": "M304",
-      "date": "2024-10-16",
-      "setup": "Bing",
-      "csv_file": "ChAT-cre_BF_2min-pTra-stim - GS - Sheet1.csv"
-    }
-  ],
+  "missing_sessions_concise": [],
+  "missing_sessions": [],
   "extra_sessions": [
     {
       "path": "Setup - Bing/Bing-202410/(M322)_M323-241019-072001",
@@ -1147,6 +1121,22 @@
       "reason": "Mouse ID not in metadata"
     },
     {
+      "path": "Setup - Bing/202409-old setting/BF9-240905-153001",
+      "mouse_id": "BF9",
+      "alt_mouse_id": "BF9",
+      "date": "2024-09-05",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202409-old setting/BF9-240906-072001(bad EMG)",
+      "mouse_id": "BF9",
+      "alt_mouse_id": "BF9",
+      "date": "2024-09-06",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
       "path": "Setup - Bing/Bing-202411/Forgot to turn on laser/M306-241108-072001",
       "mouse_id": "Forgot to turn on laser/M306",
       "alt_mouse_id": "Forgot to turn on laser/M306",
@@ -1177,6 +1167,150 @@
       "date": "2024-11-10",
       "setup": "Bing",
       "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202408-old setting/BBB10-240819-133001",
+      "mouse_id": "M0010",
+      "alt_mouse_id": "M0010",
+      "date": "2024-08-19",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202408-old setting/BBB10-240820-073001",
+      "mouse_id": "M0010",
+      "alt_mouse_id": "M0010",
+      "date": "2024-08-20",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202408-old setting/BBB10-240823-145001",
+      "mouse_id": "M0010",
+      "alt_mouse_id": "M0010",
+      "date": "2024-08-23",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202408-old setting/BBB10-240824-072001",
+      "mouse_id": "M0010",
+      "alt_mouse_id": "M0010",
+      "date": "2024-08-24",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202408-old setting/BBB10-240825-072001",
+      "mouse_id": "M0010",
+      "alt_mouse_id": "M0010",
+      "date": "2024-08-25",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202408-old setting/BBB10-240826-072001",
+      "mouse_id": "M0010",
+      "alt_mouse_id": "M0010",
+      "date": "2024-08-26",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202408-old setting/BBB10-240829-150001",
+      "mouse_id": "M0010",
+      "alt_mouse_id": "M0010",
+      "date": "2024-08-29",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202408-old setting/BBB10-240830-072001",
+      "mouse_id": "M0010",
+      "alt_mouse_id": "M0010",
+      "date": "2024-08-30",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202409-old setting/BBB10-240901-134001",
+      "mouse_id": "M0010",
+      "alt_mouse_id": "M0010",
+      "date": "2024-09-01",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202409-old setting/BBB10-240902-134001",
+      "mouse_id": "M0010",
+      "alt_mouse_id": "M0010",
+      "date": "2024-09-02",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202409-old setting/BBB10-240902-074001",
+      "mouse_id": "M0010",
+      "alt_mouse_id": "M0010",
+      "date": "2024-09-02",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202409-old setting/BBB10-240903-072001",
+      "mouse_id": "M0010",
+      "alt_mouse_id": "M0010",
+      "date": "2024-09-03",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202408-old setting/M008-240816-082814",
+      "mouse_id": "M008",
+      "alt_mouse_id": "M008",
+      "date": "2024-08-16",
+      "setup": "Bing",
+      "reason": "Date not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202408-old setting/M008-240817-073001",
+      "mouse_id": "M008",
+      "alt_mouse_id": "M008",
+      "date": "2024-08-17",
+      "setup": "Bing",
+      "reason": "Date not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202408-old setting/M008-240818-073001",
+      "mouse_id": "M008",
+      "alt_mouse_id": "M008",
+      "date": "2024-08-18",
+      "setup": "Bing",
+      "reason": "Date not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202408-old setting/M008-240822-073001",
+      "mouse_id": "M008",
+      "alt_mouse_id": "M008",
+      "date": "2024-08-22",
+      "setup": "Bing",
+      "reason": "Date not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202408-old setting/M008-240823-072001",
+      "mouse_id": "M008",
+      "alt_mouse_id": "M008",
+      "date": "2024-08-23",
+      "setup": "Bing",
+      "reason": "Date not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202408-old setting/M008-240827-072001",
+      "mouse_id": "M008",
+      "alt_mouse_id": "M008",
+      "date": "2024-08-27",
+      "setup": "Bing",
+      "reason": "Date not in metadata"
     },
     {
       "path": "Setup - WS8/202404/202409/BBB9-240901-161001",
@@ -1747,6 +1881,62 @@
       "reason": "Mouse ID not in metadata"
     },
     {
+      "path": "Setup - Bing/202409-old setting/M280-240918-155001",
+      "mouse_id": "M280",
+      "alt_mouse_id": "M280",
+      "date": "2024-09-18",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202409-old setting/M280-240919-072001",
+      "mouse_id": "M280",
+      "alt_mouse_id": "M280",
+      "date": "2024-09-19",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202409-old setting/M281-240920-183821",
+      "mouse_id": "M281",
+      "alt_mouse_id": "M281",
+      "date": "2024-09-20",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202409-old setting/M281-240921-082001",
+      "mouse_id": "M281",
+      "alt_mouse_id": "M281",
+      "date": "2024-09-21",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202408-old setting/M290-240820-152001",
+      "mouse_id": "M290",
+      "alt_mouse_id": "M290",
+      "date": "2024-08-20",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202408-old setting/M290-240821-072001",
+      "mouse_id": "M290",
+      "alt_mouse_id": "M290",
+      "date": "2024-08-21",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202408-old setting/M290-240822-145001",
+      "mouse_id": "M290",
+      "alt_mouse_id": "M290",
+      "date": "2024-08-22",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
       "path": "Setup - WS8/202404/202409/M291-240906-152001",
       "mouse_id": "M291",
       "alt_mouse_id": "M291",
@@ -2243,6 +2433,70 @@
       "reason": "Mouse ID not in metadata"
     },
     {
+      "path": "Setup - Bing/202408-old setting/M300-240827-150001",
+      "mouse_id": "M300",
+      "alt_mouse_id": "M300",
+      "date": "2024-08-27",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202408-old setting/M300-240828-072001",
+      "mouse_id": "M300",
+      "alt_mouse_id": "M300",
+      "date": "2024-08-28",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202409-old setting/M300-240910-072001",
+      "mouse_id": "M300",
+      "alt_mouse_id": "M300",
+      "date": "2024-09-10",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202409-old setting/M300-240914-162001",
+      "mouse_id": "M300",
+      "alt_mouse_id": "M300",
+      "date": "2024-09-14",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202409-old setting/M300-240915-072001",
+      "mouse_id": "M300",
+      "alt_mouse_id": "M300",
+      "date": "2024-09-15",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202409-old setting/M300-240921-160001",
+      "mouse_id": "M300",
+      "alt_mouse_id": "M300",
+      "date": "2024-09-21",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202409-old setting/M300-240922-072001",
+      "mouse_id": "M300",
+      "alt_mouse_id": "M300",
+      "date": "2024-09-22",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202410-old setting/M300-241014-072001",
+      "mouse_id": "M300",
+      "alt_mouse_id": "M300",
+      "date": "2024-10-14",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
       "path": "Setup - Bing/Bing-202410/M300-241026-072001",
       "mouse_id": "M300",
       "alt_mouse_id": "M300",
@@ -2307,6 +2561,46 @@
       "reason": "Mouse ID not in metadata"
     },
     {
+      "path": "Setup - Bing/202408-old setting/M301-240828-151001",
+      "mouse_id": "M301",
+      "alt_mouse_id": "M301",
+      "date": "2024-08-28",
+      "setup": "Bing",
+      "reason": "Date not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202409-old setting/M301-240903-152001",
+      "mouse_id": "M301",
+      "alt_mouse_id": "M301",
+      "date": "2024-09-03",
+      "setup": "Bing",
+      "reason": "Date not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202409-old setting/M301-240912-152001",
+      "mouse_id": "M301",
+      "alt_mouse_id": "M301",
+      "date": "2024-09-12",
+      "setup": "Bing",
+      "reason": "Date not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202409-old setting/M301-240917-163001",
+      "mouse_id": "M301",
+      "alt_mouse_id": "M301",
+      "date": "2024-09-17",
+      "setup": "Bing",
+      "reason": "Date not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202409-old setting/M301-240918-072001",
+      "mouse_id": "M301",
+      "alt_mouse_id": "M301",
+      "date": "2024-09-18",
+      "setup": "Bing",
+      "reason": "Date not in metadata"
+    },
+    {
       "path": "Setup - Bing/Bing-202410/M301-241024-072001",
       "mouse_id": "M301",
       "alt_mouse_id": "M301",
@@ -2345,6 +2639,78 @@
       "date": "2025-02-06",
       "setup": "WS8",
       "reason": "Date not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202409-old setting/M302-240904-162001",
+      "mouse_id": "M302",
+      "alt_mouse_id": "M302",
+      "date": "2024-09-04",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202409-old setting/M302-240905-072001",
+      "mouse_id": "M302",
+      "alt_mouse_id": "M302",
+      "date": "2024-09-05",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202409-old setting/M302-240910-155001",
+      "mouse_id": "M302",
+      "alt_mouse_id": "M302",
+      "date": "2024-09-10",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202409-old setting/M302-240911-072001",
+      "mouse_id": "M302",
+      "alt_mouse_id": "M302",
+      "date": "2024-09-11",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202409-old setting/M302-240915-150001",
+      "mouse_id": "M302",
+      "alt_mouse_id": "M302",
+      "date": "2024-09-15",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202409-old setting/M302-240916-072001",
+      "mouse_id": "M302",
+      "alt_mouse_id": "M302",
+      "date": "2024-09-16",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202410-old setting/M302-241014-184708",
+      "mouse_id": "M302",
+      "alt_mouse_id": "M302",
+      "date": "2024-10-14",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202410-old setting/M302-241014-160001",
+      "mouse_id": "M302",
+      "alt_mouse_id": "M302",
+      "date": "2024-10-14",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202410-old setting/M302-241015-072001",
+      "mouse_id": "M302",
+      "alt_mouse_id": "M302",
+      "date": "2024-10-15",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
     },
     {
       "path": "Setup - WS8/202404/202410/M302-241019-072001",
@@ -2411,6 +2777,86 @@
       "reason": "Mouse ID not in metadata"
     },
     {
+      "path": "Setup - Bing/202409-old setting/M303-240906-155511",
+      "mouse_id": "M303",
+      "alt_mouse_id": "M303",
+      "date": "2024-09-06",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202409-old setting/M303-240907-072001",
+      "mouse_id": "M303",
+      "alt_mouse_id": "M303",
+      "date": "2024-09-07",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202409-old setting/M303-240908-072001",
+      "mouse_id": "M303",
+      "alt_mouse_id": "M303",
+      "date": "2024-09-08",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202409-old setting/M303-240913-152001",
+      "mouse_id": "M303",
+      "alt_mouse_id": "M303",
+      "date": "2024-09-13",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202409-old setting/M303-240914-072001",
+      "mouse_id": "M303",
+      "alt_mouse_id": "M303",
+      "date": "2024-09-14",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202410-old setting/M303-241001-072001",
+      "mouse_id": "M303",
+      "alt_mouse_id": "M303",
+      "date": "2024-10-01",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202410-old setting/M303-241010-135001",
+      "mouse_id": "M303",
+      "alt_mouse_id": "M303",
+      "date": "2024-10-10",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202410-old setting/M303-241011-072001",
+      "mouse_id": "M303",
+      "alt_mouse_id": "M303",
+      "date": "2024-10-11",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202410-old setting/M303-241015-154501",
+      "mouse_id": "M303",
+      "alt_mouse_id": "M303",
+      "date": "2024-10-15",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202410-old setting/M303-241016-072001",
+      "mouse_id": "M303",
+      "alt_mouse_id": "M303",
+      "date": "2024-10-16",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
       "path": "Setup - Bing/Bing-202410/M303-241021-161001",
       "mouse_id": "M303",
       "alt_mouse_id": "M303",
@@ -2472,6 +2918,54 @@
       "alt_mouse_id": "M042",
       "date": "2025-05-01",
       "setup": "WS8",
+      "reason": "Date not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202409-old setting/M304-240909-072001",
+      "mouse_id": "M304",
+      "alt_mouse_id": "M304",
+      "date": "2024-09-09",
+      "setup": "Bing",
+      "reason": "Date not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202409-old setting/M304-240912-072001",
+      "mouse_id": "M304",
+      "alt_mouse_id": "M304",
+      "date": "2024-09-12",
+      "setup": "Bing",
+      "reason": "Date not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202409-old setting/M304-240917-072001",
+      "mouse_id": "M304",
+      "alt_mouse_id": "M304",
+      "date": "2024-09-17",
+      "setup": "Bing",
+      "reason": "Date not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202410-old setting/M304-241012-072001",
+      "mouse_id": "M304",
+      "alt_mouse_id": "M304",
+      "date": "2024-10-12",
+      "setup": "Bing",
+      "reason": "Date not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202410-old setting/M304-241013-072001",
+      "mouse_id": "M304",
+      "alt_mouse_id": "M304",
+      "date": "2024-10-13",
+      "setup": "Bing",
+      "reason": "Date not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202410-old setting/M304-241017-072001",
+      "mouse_id": "M304",
+      "alt_mouse_id": "M304",
+      "date": "2024-10-17",
+      "setup": "Bing",
       "reason": "Date not in metadata"
     },
     {
@@ -3099,6 +3593,22 @@
       "reason": "Mouse ID not in metadata"
     },
     {
+      "path": "Setup - Bing/202410-old setting/M313-241001-160001",
+      "mouse_id": "M313",
+      "alt_mouse_id": "M313",
+      "date": "2024-10-01",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202410-old setting/M313-241002-072001",
+      "mouse_id": "M313",
+      "alt_mouse_id": "M313",
+      "date": "2024-10-02",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
       "path": "Setup - Bing/Bing-202410/M314-241029-160001",
       "mouse_id": "M314",
       "alt_mouse_id": "M314",
@@ -3387,6 +3897,14 @@
       "reason": "Mouse ID not in metadata"
     },
     {
+      "path": "Setup - Bing/202409-old setting/M317-240930-151134",
+      "mouse_id": "M317",
+      "alt_mouse_id": "M317",
+      "date": "2024-09-30",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
       "path": "Setup - WS8/202404/202410/M317-241002-151001",
       "mouse_id": "M317",
       "alt_mouse_id": "M317",
@@ -3515,6 +4033,30 @@
       "reason": "Mouse ID not in metadata"
     },
     {
+      "path": "Setup - Bing/202410-old setting/M322-241002-165301",
+      "mouse_id": "M322",
+      "alt_mouse_id": "M322",
+      "date": "2024-10-02",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202410-old setting/M322-241003-072001",
+      "mouse_id": "M322",
+      "alt_mouse_id": "M322",
+      "date": "2024-10-03",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202410-old setting/M322-241018-064001",
+      "mouse_id": "M322",
+      "alt_mouse_id": "M322",
+      "date": "2024-10-18",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
       "path": "Setup - Bing/Bing-202412/M322_M323-241214-072001",
       "mouse_id": "M322",
       "alt_mouse_id": "M323",
@@ -3551,6 +4093,14 @@
       "mouse_id": "M322",
       "alt_mouse_id": "M322",
       "date": "2025-01-15",
+      "setup": "Bing",
+      "reason": "Mouse ID not in metadata"
+    },
+    {
+      "path": "Setup - Bing/202410-old setting/M323-241017-144001",
+      "mouse_id": "M323",
+      "alt_mouse_id": "M323",
+      "date": "2024-10-17",
       "setup": "Bing",
       "reason": "Mouse ID not in metadata"
     },
