@@ -296,62 +296,6 @@ def main():
         dob=dob,
         stub_test=stub_test,
     )
-    return
-
-    # Example Session X
-    # '/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/Setup - MollyFP/MollyFP-202508/M364_M366-250808-114802/A_Lindsay_TDTm_op1_pTra_2min-250808-114703/M364_M366-250808-114802'
-    metadata_df = pd.read_excel(
-        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/behavioral sum/Sert-cre_DRN_2min-pTra-stim.xlsx"
-    )
-    subject_id = "M364"
-    row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
-    sex = "M" if row["M"] == 1 else "F"
-    pst = ZoneInfo("US/Pacific")
-    dob = row["DOB"].to_pydatetime().replace(tzinfo=pst)
-    info_file_path = (
-        data_dir_path
-        / "Setup - MollyFP"
-        / "MollyFP-202508"
-        / "M364_M366-250808-114802"
-        / "A_Lindsay_TDTm_op1_pTra_2min-250808-114703"
-        / "M364_M366-250808-114802"
-        / "Info.mat"
-    )
-    video_file_path = (
-        data_dir_path
-        / "Setup - MollyFP"
-        / "MollyFP-202508"
-        / "M364_M366-250808-114802"
-        / "A_Lindsay_TDTm_op1_pTra_2min-250808-114703"
-        / "M364_M366-250808-114802"
-        / "A_Lindsay_TDTm_op1_pTra_2min-250808-114703_M364_M366-250808-114802_Cam1.avi"
-    )
-    tdt_fp_folder_path = (
-        data_dir_path
-        / "Setup - MollyFP"
-        / "MollyFP-202508"
-        / "M364_M366-250808-114802"
-        / "A_Lindsay_TDTm_op1_pTra_2min-250808-114703"
-        / "M364_M366-250808-114802"
-    )
-    tdt_ephys_folder_path = (
-        data_dir_path
-        / "Setup - MollyFP"
-        / "MollyFP-202508"
-        / "M364_M366-250808-114802"
-        / "A_Lindsay_TDTm_op1_pTra_2min-250808-114703"
-    )
-    session_to_nwb(
-        info_file_path=info_file_path,
-        video_file_path=video_file_path,
-        tdt_fp_folder_path=tdt_fp_folder_path,
-        tdt_ephys_folder_path=tdt_ephys_folder_path,
-        output_dir_path=output_dir_path,
-        subject_id=subject_id,
-        sex=sex,
-        dob=dob,
-        stub_test=stub_test,
-    )
 
 
 if __name__ == "__main__":
