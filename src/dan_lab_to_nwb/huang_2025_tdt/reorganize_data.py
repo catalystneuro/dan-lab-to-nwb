@@ -138,8 +138,8 @@ def make_neo_compatible(tdt_folder: Path, parent_folder: Path):
     if tdt_folder.name.startswith("._"):
         return
 
-    # Find .tsq file to extract session name
-    tsq_files = list(tdt_folder.glob("*.tsq"))
+    # Find .tsq file to extract session name (exclude Mac hidden files)
+    tsq_files = [f for f in tdt_folder.glob("*.tsq") if not f.name.startswith("._")]
 
     if len(tsq_files) == 0:
         print(f"Warning: No .tsq files found in {tdt_folder.name}")
