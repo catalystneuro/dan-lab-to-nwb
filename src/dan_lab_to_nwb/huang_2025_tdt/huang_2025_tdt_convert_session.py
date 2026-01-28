@@ -176,7 +176,6 @@ def main():
         stub_test=stub_test,
         stream_name="LFP1",
     )
-    return
 
     # Setup - WS8
     # /Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/Setup - WS8/202404/202410/M296-241018-072001/Lindsay_SBO_op1-E_2in1_pTra_con-241017-190451/M296-241018-072001
@@ -188,6 +187,13 @@ def main():
     sex = "M" if row["M"] == 1 else "F"
     pst = ZoneInfo("US/Pacific")
     dob = datetime.datetime.strptime(row["DOB"], "%m/%d/%Y").replace(tzinfo=pst)
+    optogenetic_site_name = row["Stim region"]
+    date_column_names = [name for name in metadata_df.columns if name.startswith("date")]
+    record_fiber_column_names = [name for name in metadata_df.columns if name.startswith("Record fiber")]
+    session_index = 0
+    date_column_name = date_column_names[session_index]
+    record_fiber_column_name = record_fiber_column_names[session_index]
+    record_fiber = int(row[record_fiber_column_name])
     info_file_path = (
         data_dir_path
         / "Setup - WS8"
@@ -229,15 +235,18 @@ def main():
         info_file_path=info_file_path,
         video_file_path=video_file_path,
         tdt_fp_folder_path=tdt_fp_folder_path,
+        record_fiber=record_fiber,
         tdt_ephys_folder_path=tdt_ephys_folder_path,
         stream_name="LFP1",
         output_dir_path=output_dir_path,
         subject_id=subject_id,
         sex=sex,
         dob=dob,
+        optogenetic_site_name=optogenetic_site_name,
         stub_test=stub_test,
     )
 
+    return
     # Setup - MollyFP first subject
     # Note: this example session actually contains data from two subjects, but only one is included in the NWB file.
     # /Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/Setup - MollyFP/MollyFP-202508/M363_M366-250822-153604/A_Lindsay_TDTm_op1_pTra_2min-250822-153604/M363_M366-250822-153604
