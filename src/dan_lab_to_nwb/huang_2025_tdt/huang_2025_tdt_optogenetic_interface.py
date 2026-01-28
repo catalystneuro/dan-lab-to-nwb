@@ -37,21 +37,33 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
 
     keywords = ["optogenetics"]
 
-    def __init__(self, folder_path: DirectoryPath, optogenetic_site_name: str):
+    def __init__(self, folder_path: DirectoryPath, optogenetic_site_name: str, record_fiber: int):
         super().__init__(folder_path=folder_path, optogenetic_site_name=optogenetic_site_name)
 
         folder_path = Path(folder_path)
-        file_pattern_to_epoc_names = {
-            "pTra_con": ["St1_", "St2_", "Wi3_"],
-            "opto1-Evoke12_2in1": ["St1_", "St2_", "LasT"],
-            "opto1_E_2": ["St1_", "St2_", "LasT"],
-            "opto1_E12_2in1": ["St1_", "St2_", "LasT"],
-            "opto_E_2": ["St1_", "LasT"],
-            "TDTm_R_evoke": ["St1_"],
-            "TDTm_op1_pTra": ["St1_", "Wi3_"],
-            "TDTm_op1-E_pTra": ["St1_", "Wi3_"],
-            "SBOX_R_evoke_2in1": ["St1_", "St2_"],
-            "TDTb_R_evoke_2in1": ["St1_", "St2_"],
+        # file_pattern_to_epoc_names = {
+        #     "pTra_con": ["St1_", "St2_", "Wi3_"],
+        #     "opto1-Evoke12_2in1": ["St1_", "St2_", "LasT"],
+        #     "opto1_E_2": ["St1_", "St2_", "LasT"],
+        #     "opto1_E12_2in1": ["St1_", "St2_", "LasT"],
+        #     "opto_E_2": ["St1_", "LasT"],
+        #     "TDTm_R_evoke": ["St1_"],
+        #     "TDTm_op1_pTra": ["St1_", "Wi3_"],
+        #     "TDTm_op1-E_pTra": ["St1_", "Wi3_"],
+        #     "SBOX_R_evoke_2in1": ["St1_", "St2_"],
+        #     "TDTb_R_evoke_2in1": ["St1_", "St2_"],
+        # }
+        file_pattern_to_stim_epoc_name = {
+            "pTra_con": "Wi3_",
+            "opto1-Evoke12_2in1": "LasT",
+            "opto1_E_2": "LasT",
+            "opto1_E12_2in1": "LasT",
+            "opto_E_2": "LasT",
+            "TDTm_R_evoke": None,
+            "TDTm_op1_pTra": "Wi3_",
+            "TDTm_op1-E_pTra": "Wi3_",
+            "SBOX_R_evoke_2in1": None,
+            "TDTb_R_evoke_2in1": None,
         }
         self.epoc_name_to_stimulus_type = {
             "St1_": "test_pulse",
@@ -59,12 +71,21 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
             "Wi3_": "intense_stimulation",
             "LasT": "intense_stimulation",
         }
-        for file_pattern, epoc_names in file_pattern_to_epoc_names.items():
+        self.epoc_names = []
+        if record_fiber == 1:
+            self.epoc_names.append("St1_")
+        elif record_fiber == 2:
+            self.epoc_names.append("St2_")
+        else:
+            raise ValueError(f"record_fiber must be 1 or 2, got {record_fiber}")
+        for file_pattern, epoc_name in file_pattern_to_stim_epoc_name.items():
+            if epoc_name is None:
+                continue
             if file_pattern in folder_path.parent.name:
-                self.epoc_names = epoc_names
+                self.epoc_names.append(epoc_name)
                 return
         raise ValueError(
-            f"No matching file pattern found in {folder_path.parent}. Expected one of: {list(file_pattern_to_epoc_names.keys())}"
+            f"No matching file pattern found in {folder_path.parent}. Expected one of: {list(file_pattern_to_stim_epoc_name.keys())}"
         )
 
     def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict):

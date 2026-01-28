@@ -18,6 +18,7 @@ def session_to_nwb(
     output_dir_path: DirectoryPath,
     video_file_path: FilePath,
     tdt_fp_folder_path: DirectoryPath,
+    record_fiber: int,
     tdt_ephys_folder_path: DirectoryPath,
     stream_name: str,
     subject_id: str,
@@ -60,7 +61,9 @@ def session_to_nwb(
     conversion_options["Video"] = dict()
 
     # Add Optogenetics
-    source_data["Optogenetics"] = dict(folder_path=tdt_fp_folder_path, optogenetic_site_name=optogenetic_site_name)
+    source_data["Optogenetics"] = dict(
+        folder_path=tdt_fp_folder_path, optogenetic_site_name=optogenetic_site_name, record_fiber=record_fiber
+    )
     conversion_options["Optogenetics"] = dict()
 
     converter = Huang2025NWBConverter(source_data=source_data, verbose=verbose)
@@ -119,6 +122,13 @@ def main():
     pst = ZoneInfo("US/Pacific")
     dob = datetime.datetime.strptime(row["DOB"], "%m/%d/%Y").replace(tzinfo=pst)
     optogenetic_site_name = row["Stim region"]
+    date_column_names = [name for name in metadata_df.columns if name.startswith("date")]
+    record_fiber_column_names = [name for name in metadata_df.columns if name.startswith("Record fiber")]
+    session_index = 0
+    date_column_name = date_column_names[session_index]
+    record_fiber_column_name = record_fiber_column_names[session_index]
+    record_fiber = int(row[record_fiber_column_name])
+
     info_file_path = (
         data_dir_path
         / "Setup - Bing"
@@ -156,6 +166,7 @@ def main():
         info_file_path=info_file_path,
         video_file_path=video_file_path,
         tdt_fp_folder_path=tdt_fp_folder_path,
+        record_fiber=record_fiber,
         tdt_ephys_folder_path=tdt_ephys_folder_path,
         output_dir_path=output_dir_path,
         subject_id=subject_id,
