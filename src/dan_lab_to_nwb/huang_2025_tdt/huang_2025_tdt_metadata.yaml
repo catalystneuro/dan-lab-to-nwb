@@ -38,6 +38,19 @@ Ophys:
         insertion_angle_pitch_in_deg: 0.0
         insertion_angle_yaw_in_deg: 0.0
         insertion_angle_roll_in_deg: 0.0
+    - name: optical_fiber_BF
+      description: Optical fiber used for fiber photometry recordings in the Basal Forebrain (BF).
+      model: optical_fiber_model_fiber_photometry
+      fiber_insertion:
+        depth_in_mm: -1.0 # TODO: add depth in mm
+        insertion_position_ap_in_mm: -1.0 # TODO: add AP coordinate
+        insertion_position_ml_in_mm: -1.0 # TODO: add ML coordinate
+        insertion_position_dv_in_mm: -1.0 # TODO: add DV coordinate
+        position_reference: bregma
+        hemisphere: right
+        insertion_angle_pitch_in_deg: 0.0
+        insertion_angle_yaw_in_deg: 0.0
+        insertion_angle_roll_in_deg: 0.0
 
     ExcitationSourceModels:
     - name: excitation_source_model
@@ -74,11 +87,11 @@ Ophys:
       manufacturer: Addgene
       construct_name: pAAV-hsyn-GRAB_DA2h
       titer_in_vg_per_ml: 2.0e+13
-    - name: pfc_virus
-      description: <description of the viral vector for PFC>
-      manufacturer: <manufacturer of the viral vector>
-      construct_name: <construct name>
-      titer_in_vg_per_ml: -1.0
+    - name: virus_5HT_BF
+      description: Expresses GRAB-5HT sensor in neurons.
+      manufacturer: WZ Biosciences
+      construct_name: AAV9-hSyn-5HT3.0(5HT3.6)
+      titer_in_vg_per_ml: 2.0e+13
 
     FiberPhotometryVirusInjections:
     - name: virus_injection_da_NAc
@@ -91,16 +104,16 @@ Ophys:
       ml_in_mm: -1.0 # TODO: Add ML coordinate
       dv_in_mm: -1.0 # TODO: Add DV coordinate
       volume_in_uL: 0.300
-    - name: pfc_virus_injection
-      description: <description of viral injection for PFC>
-      viral_vector: pfc_virus
-      location: <injection location>
-      hemisphere: <hemisphere>
+    - name: virus_injection_5HT_BF
+      description: Viral injection of virus_5HT_BF into the Basal Forebrain (BF).
+      viral_vector: virus_5HT_BF
+      location: Basal Forebrain (BF)
+      hemisphere: right
       reference: bregma at the cortical surface
-      ap_in_mm: -1.0
-      ml_in_mm: -1.0
-      dv_in_mm: -1.0
-      volume_in_uL: -1.0
+      ap_in_mm: -1.0 # TODO: Add AP coordinate
+      ml_in_mm: -1.0 # TODO: Add ML coordinate
+      dv_in_mm: -1.0 # TODO: Add DV coordinate
+      volume_in_uL: 0.300
 
     FiberPhotometryIndicators:
     - name: indicator_da_NAc
@@ -108,11 +121,11 @@ Ophys:
       manufacturer: Addgene
       label: GRAB-DA2h
       viral_vector_injection: virus_injection_da_NAc
-    - name: pfc_indicator
-      description: <description of the indicator for PFC>
-      manufacturer: <manufacturer of the indicator>
-      label: <label of the indicator>
-      viral_vector_injection: pfc_virus_injection
+    - name: indicator_5HT_BF
+      description: Indicator for detecting serotonin levels in the Basal Forebrain (BF).
+      manufacturer: WZ Biosciences
+      label: GRAB-5HT
+      viral_vector_injection: virus_injection_5HT_BF
 
 
 
@@ -128,7 +141,6 @@ Ophys:
         optical_fiber: optical_fiber_NAc
         excitation_source: excitation_source
         photodetector: photodetector
-
       - name: 1
         location: Nucleus Accumbens (NAc)
         excitation_wavelength_in_nm: 405.0
@@ -138,6 +150,24 @@ Ophys:
         excitation_source: excitation_source
         photodetector: photodetector
 
+      - name: 2
+        location: Basal Forebrain (BF)
+        excitation_wavelength_in_nm: 465.0
+        emission_wavelength_in_nm: 525.0
+        indicator: indicator_5HT_BF
+        optical_fiber: optical_fiber_BF
+        excitation_source: excitation_source
+        photodetector: photodetector
+      - name: 3
+        location: Basal Forebrain (BF)
+        excitation_wavelength_in_nm: 405.0
+        emission_wavelength_in_nm: 525.0
+        indicator: indicator_5HT_BF
+        optical_fiber: optical_fiber_BF
+        excitation_source: excitation_source
+        photodetector: photodetector
+
+
     FiberPhotometryResponseSeries:
     - name: calcium_signal_NAc
       description: The fluorescence from the calcium signal from NAc.
@@ -146,7 +176,6 @@ Ophys:
       unit: a.u.
       fiber_photometry_table_region: [0]
       fiber_photometry_table_region_description: The region of the FiberPhotometryTable corresponding to the calcium signal of NAc.
-
     - name: isosbestic_control_NAc
       description: The fluorescence from the isosbestic control from NAc.
       stream_name: _405B
@@ -154,6 +183,21 @@ Ophys:
       unit: a.u.
       fiber_photometry_table_region: [1]
       fiber_photometry_table_region_description: The region of the FiberPhotometryTable corresponding to the isosbestic control of NAc.
+
+    - name: calcium_signal_BF
+      description: The fluorescence from the calcium signal from BF.
+      stream_name: _465B
+      stream_indices: null
+      unit: a.u.
+      fiber_photometry_table_region: [2]
+      fiber_photometry_table_region_description: The region of the FiberPhotometryTable corresponding to the calcium signal of BF.
+    - name: isosbestic_control_BF
+      description: The fluorescence from the isosbestic control from BF.
+      stream_name: _405B
+      stream_indices: null
+      unit: a.u.
+      fiber_photometry_table_region: [3]
+      fiber_photometry_table_region_description: The region of the FiberPhotometryTable corresponding to the isosbestic control of BF.
 
 Behavior:
   ExternalVideos:

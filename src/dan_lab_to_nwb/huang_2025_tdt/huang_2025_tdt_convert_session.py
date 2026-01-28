@@ -123,16 +123,20 @@ def session_to_nwb(
         for series_meta in filtered_fp_metadata["FiberPhotometryResponseSeries"]:
             if "calcium_signal" in series_meta["name"]:
                 series_meta["stream_name"] = "_465B"
+                series_meta["fiber_photometry_table_region"] = [0]
             elif "isosbestic_control" in series_meta["name"]:
                 series_meta["stream_name"] = "_405B"
+                series_meta["fiber_photometry_table_region"] = [1]
             else:
                 raise ValueError(f"Unrecognized Fiber Photometry series name: {series_meta['name']}")
     elif record_fiber == 2:
         for series_meta in filtered_fp_metadata["FiberPhotometryResponseSeries"]:
             if "calcium_signal" in series_meta["name"]:
                 series_meta["stream_name"] = "_465C"
+                series_meta["fiber_photometry_table_region"] = [0]
             elif "isosbestic_control" in series_meta["name"]:
                 series_meta["stream_name"] = "_405C"
+                series_meta["fiber_photometry_table_region"] = [1]
             else:
                 raise ValueError(f"Unrecognized Fiber Photometry series name: {series_meta['name']}")
     else:
