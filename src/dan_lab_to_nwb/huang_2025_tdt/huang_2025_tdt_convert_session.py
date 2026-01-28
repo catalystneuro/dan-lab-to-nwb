@@ -1,4 +1,5 @@
 """Primary script to run to convert an entire session for of data using the NWBConverter."""
+import copy
 import datetime
 import shutil
 from pathlib import Path
@@ -25,6 +26,7 @@ def session_to_nwb(
     sex: str,
     dob: str,
     optogenetic_site_name: str,
+    fiber_photometry_site_name: str,
     shared_test_pulse: bool = False,
     stub_test: bool = False,
     verbose: bool = True,
@@ -95,6 +97,48 @@ def session_to_nwb(
     metadata["Subject"]["date_of_birth"] = dob
     metadata["NWBFile"]["session_start_time"] = session_start_time
 
+    # Update metadata with session-specific details for Fiber Photometry
+    fp_metadata = metadata["Ophys"]["FiberPhotometry"]
+    filtered_fp_metadata = copy.deepcopy(fp_metadata)
+    filtered_fp_metadata["OpticalFibers"] = [
+        fiber for fiber in fp_metadata["OpticalFibers"] if fiber_photometry_site_name in fiber["name"]
+    ]
+    filtered_fp_metadata["FiberPhotometryViruses"] = [
+        virus for virus in fp_metadata["FiberPhotometryViruses"] if fiber_photometry_site_name in virus["name"]
+    ]
+    filtered_fp_metadata["FiberPhotometryVirusInjections"] = [
+        injection
+        for injection in fp_metadata["FiberPhotometryVirusInjections"]
+        if fiber_photometry_site_name in injection["name"]
+    ]
+    filtered_fp_metadata["FiberPhotometryIndicators"] = [
+        indicator
+        for indicator in fp_metadata["FiberPhotometryIndicators"]
+        if fiber_photometry_site_name in indicator["name"]
+    ]
+    filtered_fp_metadata["FiberPhotometryTable"]["rows"] = [
+        row for row in fp_metadata["FiberPhotometryTable"]["rows"] if fiber_photometry_site_name in row["location"]
+    ]
+    if record_fiber == 1:
+        for series_meta in filtered_fp_metadata["FiberPhotometryResponseSeries"]:
+            if "calcium_signal" in series_meta["name"]:
+                series_meta["stream_name"] = "_465B"
+            elif "isosbestic_control" in series_meta["name"]:
+                series_meta["stream_name"] = "_405B"
+            else:
+                raise ValueError(f"Unrecognized Fiber Photometry series name: {series_meta['name']}")
+    elif record_fiber == 2:
+        for series_meta in filtered_fp_metadata["FiberPhotometryResponseSeries"]:
+            if "calcium_signal" in series_meta["name"]:
+                series_meta["stream_name"] = "_465C"
+            elif "isosbestic_control" in series_meta["name"]:
+                series_meta["stream_name"] = "_405C"
+            else:
+                raise ValueError(f"Unrecognized Fiber Photometry series name: {series_meta['name']}")
+    else:
+        raise ValueError(f"Unrecognized record_fiber value: {record_fiber}")
+    metadata["Ophys"]["FiberPhotometry"] = filtered_fp_metadata
+
     # Run conversion
     converter.run_conversion(metadata=metadata, nwbfile_path=nwbfile_path, conversion_options=conversion_options)
 
@@ -132,6 +176,7 @@ def main():
     date_column_name = date_column_names[session_index]
     record_fiber_column_name = record_fiber_column_names[session_index]
     record_fiber = int(row[record_fiber_column_name])
+    fiber_photometry_site_name = row["Record region"]
 
     info_file_path = (
         data_dir_path
@@ -177,6 +222,7 @@ def main():
         sex=sex,
         dob=dob,
         optogenetic_site_name=optogenetic_site_name,
+        fiber_photometry_site_name=fiber_photometry_site_name,
         stub_test=stub_test,
         stream_name="LFP1",
     )
@@ -198,6 +244,7 @@ def main():
     date_column_name = date_column_names[session_index]
     record_fiber_column_name = record_fiber_column_names[session_index]
     record_fiber = int(row[record_fiber_column_name])
+    fiber_photometry_site_name = row["Record region"]
     info_file_path = (
         data_dir_path
         / "Setup - WS8"
@@ -247,6 +294,7 @@ def main():
         sex=sex,
         dob=dob,
         optogenetic_site_name=optogenetic_site_name,
+        fiber_photometry_site_name=fiber_photometry_site_name,
         stub_test=stub_test,
     )
 
@@ -262,6 +310,7 @@ def main():
     pst = ZoneInfo("US/Pacific")
     dob = datetime.datetime.strptime(row["DOB"], "%m/%d/%Y").replace(tzinfo=pst)
     optogenetic_site_name = row["Stim region"]
+    fiber_photometry_site_name = row["Record region"]
     record_fiber = 1
     shared_test_pulse = True
     info_file_path = (
@@ -308,6 +357,7 @@ def main():
         sex=sex,
         dob=dob,
         optogenetic_site_name=optogenetic_site_name,
+        fiber_photometry_site_name=fiber_photometry_site_name,
         record_fiber=record_fiber,
         shared_test_pulse=shared_test_pulse,
         stub_test=stub_test,
@@ -325,6 +375,7 @@ def main():
     pst = ZoneInfo("US/Pacific")
     dob = datetime.datetime.strptime(row["DOB"], "%m/%d/%Y").replace(tzinfo=pst)
     optogenetic_site_name = row["Stim region"]
+    fiber_photometry_site_name = row["Record region"]
     record_fiber = 2
     shared_test_pulse = True
     info_file_path = (
@@ -371,6 +422,7 @@ def main():
         sex=sex,
         dob=dob,
         optogenetic_site_name=optogenetic_site_name,
+        fiber_photometry_site_name=fiber_photometry_site_name,
         record_fiber=record_fiber,
         shared_test_pulse=shared_test_pulse,
         stub_test=stub_test,
