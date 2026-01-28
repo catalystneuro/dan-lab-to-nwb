@@ -37,7 +37,9 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
 
     keywords = ["optogenetics"]
 
-    def __init__(self, folder_path: DirectoryPath, optogenetic_site_name: str, record_fiber: int):
+    def __init__(
+        self, folder_path: DirectoryPath, optogenetic_site_name: str, record_fiber: int, shared_test_pulse: bool = False
+    ):
         super().__init__(folder_path=folder_path, optogenetic_site_name=optogenetic_site_name)
 
         folder_path = Path(folder_path)
@@ -72,12 +74,15 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
             "LasT": "intense_stimulation",
         }
         self.epoc_names = []
-        if record_fiber == 1:
+        if shared_test_pulse:
             self.epoc_names.append("St1_")
-        elif record_fiber == 2:
-            self.epoc_names.append("St2_")
         else:
-            raise ValueError(f"record_fiber must be 1 or 2, got {record_fiber}")
+            if record_fiber == 1:
+                self.epoc_names.append("St1_")
+            elif record_fiber == 2:
+                self.epoc_names.append("St2_")
+            else:
+                raise ValueError(f"record_fiber must be 1 or 2, got {record_fiber}")
         for file_pattern, epoc_name in file_pattern_to_stim_epoc_name.items():
             if epoc_name is None:
                 continue

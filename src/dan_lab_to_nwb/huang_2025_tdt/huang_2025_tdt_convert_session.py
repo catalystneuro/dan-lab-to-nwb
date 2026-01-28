@@ -25,6 +25,7 @@ def session_to_nwb(
     sex: str,
     dob: str,
     optogenetic_site_name: str,
+    shared_test_pulse: bool = False,
     stub_test: bool = False,
     verbose: bool = True,
 ):
@@ -62,7 +63,10 @@ def session_to_nwb(
 
     # Add Optogenetics
     source_data["Optogenetics"] = dict(
-        folder_path=tdt_fp_folder_path, optogenetic_site_name=optogenetic_site_name, record_fiber=record_fiber
+        folder_path=tdt_fp_folder_path,
+        optogenetic_site_name=optogenetic_site_name,
+        record_fiber=record_fiber,
+        shared_test_pulse=shared_test_pulse,
     )
     conversion_options["Optogenetics"] = dict()
 
@@ -246,7 +250,6 @@ def main():
         stub_test=stub_test,
     )
 
-    return
     # Setup - MollyFP first subject
     # Note: this example session actually contains data from two subjects, but only one is included in the NWB file.
     # /Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/Setup - MollyFP/MollyFP-202508/M363_M366-250822-153604/A_Lindsay_TDTm_op1_pTra_2min-250822-153604/M363_M366-250822-153604
@@ -258,6 +261,9 @@ def main():
     sex = "M" if row["M"] == 1 else "F"
     pst = ZoneInfo("US/Pacific")
     dob = datetime.datetime.strptime(row["DOB"], "%m/%d/%Y").replace(tzinfo=pst)
+    optogenetic_site_name = row["Stim region"]
+    record_fiber = 1
+    shared_test_pulse = True
     info_file_path = (
         data_dir_path
         / "Setup - MollyFP"
@@ -301,6 +307,9 @@ def main():
         subject_id=subject_id,
         sex=sex,
         dob=dob,
+        optogenetic_site_name=optogenetic_site_name,
+        record_fiber=record_fiber,
+        shared_test_pulse=shared_test_pulse,
         stub_test=stub_test,
     )
 
@@ -315,6 +324,9 @@ def main():
     sex = "M" if row["M"] == 1 else "F"
     pst = ZoneInfo("US/Pacific")
     dob = datetime.datetime.strptime(row["DOB"], "%m/%d/%Y").replace(tzinfo=pst)
+    optogenetic_site_name = row["Stim region"]
+    record_fiber = 2
+    shared_test_pulse = True
     info_file_path = (
         data_dir_path
         / "Setup - MollyFP"
@@ -358,6 +370,9 @@ def main():
         subject_id=subject_id,
         sex=sex,
         dob=dob,
+        optogenetic_site_name=optogenetic_site_name,
+        record_fiber=record_fiber,
+        shared_test_pulse=shared_test_pulse,
         stub_test=stub_test,
     )
 
