@@ -219,8 +219,12 @@ def main():
     # Setup - MollyFP
     # Note: this example session actually contains data from two subjects, but only one is included in the NWB file.
     # /Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/Setup - MollyFP/MollyFP-202508/M363_M366-250822-153604/A_Lindsay_TDTm_op1_pTra_2min-250822-153604/M363_M366-250822-153604
+    metadata_df = pd.read_csv(
+        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets disorganized/metadata/opto-signal sum/Sert-cre_DRN_2min-pTra-stim - GS - Sheet1.csv"
+    )
     subject_id = "M363"
-    sex = "M"
+    row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
+    sex = "M" if row["M"] == 1 else "F"
     pst = ZoneInfo("US/Pacific")
     dob = datetime.datetime.strptime(row["DOB"], "%m/%d/%Y").replace(tzinfo=pst)
     info_file_path = (
@@ -255,7 +259,6 @@ def main():
         / "MollyFP-202508"
         / "M363_M366-250822-153604"
         / "A_Lindsay_TDTm_op1_pTra_2min-250822-153604"
-        / "M363_M366-250822-153604"
     )
     session_to_nwb(
         info_file_path=info_file_path,
