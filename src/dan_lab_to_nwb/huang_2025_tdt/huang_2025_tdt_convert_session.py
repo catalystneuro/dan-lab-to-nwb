@@ -19,6 +19,7 @@ def session_to_nwb(
     video_file_path: FilePath,
     tdt_fp_folder_path: DirectoryPath,
     tdt_ephys_folder_path: DirectoryPath,
+    stream_name: str,
     subject_id: str,
     sex: str,
     dob: str,
@@ -36,9 +37,13 @@ def session_to_nwb(
     conversion_options = dict()
 
     # Add TDT EEG and EMG
-    source_data["EEG"] = dict(folder_path=tdt_ephys_folder_path, gain=1.0, stream_id="4", es_key="ElectricalSeriesEEG")
+    source_data["EEG"] = dict(
+        folder_path=tdt_ephys_folder_path, gain=1.0, stream_name=stream_name, es_key="ElectricalSeriesEEG"
+    )
     conversion_options["EEG"] = dict(stub_test=stub_test, group_names=["ElectrodeGroupEEG"])
-    source_data["EMG"] = dict(folder_path=tdt_ephys_folder_path, gain=1.0, stream_id="4", es_key="ElectricalSeriesEMG")
+    source_data["EMG"] = dict(
+        folder_path=tdt_ephys_folder_path, gain=1.0, stream_name=stream_name, es_key="ElectricalSeriesEMG"
+    )
     conversion_options["EMG"] = dict(stub_test=stub_test, group_names=["ElectrodeGroupEMG"])
 
     # Add Fiber Photometry
@@ -155,6 +160,7 @@ def main():
         sex=sex,
         dob=dob,
         stub_test=stub_test,
+        stream_name="LFP1",
     )
 
     # Setup - WS8
@@ -209,6 +215,7 @@ def main():
         video_file_path=video_file_path,
         tdt_fp_folder_path=tdt_fp_folder_path,
         tdt_ephys_folder_path=tdt_ephys_folder_path,
+        stream_name="LFP1",
         output_dir_path=output_dir_path,
         subject_id=subject_id,
         sex=sex,
@@ -265,6 +272,7 @@ def main():
         video_file_path=video_file_path,
         tdt_fp_folder_path=tdt_fp_folder_path,
         tdt_ephys_folder_path=tdt_ephys_folder_path,
+        stream_name="LFP1",
         output_dir_path=output_dir_path,
         subject_id=subject_id,
         sex=sex,
