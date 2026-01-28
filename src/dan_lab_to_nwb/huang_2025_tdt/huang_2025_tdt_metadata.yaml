@@ -252,7 +252,7 @@ Optogenetics:
       ml_in_mm: 1.5
       dv_in_mm: -5.3
       volume_in_uL: 0.700
-    - name: virus_injection_lc
+    - name: virus_injection_LC
       description: Viral injection into the Locus Coeruleus (LC).
       viral_vector: virus
       location: Locus Coeruleus (LC)
@@ -278,11 +278,11 @@ Optogenetics:
       manufacturer: Addgene
       label: ChrimsonR
       viral_vector_injection: virus_injection_BF
-    - name: chrimsonR_lc
+    - name: chrimsonR_LC
       description: ChrimsonR opsin used for optogenetic stimulation injected into the LC.
       manufacturer: Addgene
       label: ChrimsonR
-      viral_vector_injection: virus_injection_lc
+      viral_vector_injection: virus_injection_LC
   ExcitationSourceModels:
     - name: optogenetic_excitation_source_model
       description: An LED device used for optogenetic stimulation.
@@ -345,7 +345,7 @@ Optogenetics:
         insertion_angle_pitch_in_deg: 0.0 # TODO: add pitch angle
         insertion_angle_yaw_in_deg: 0.0 # TODO: add yaw angle
         insertion_angle_roll_in_deg: 0.0 # TODO: add roll angle
-    - name: optical_fiberLC
+    - name: optical_fiber_LC
       description: Optical fiber used for optogenetic stimulation in the LC.
       model: optical_fiber_model
       fiber_insertion:
@@ -376,8 +376,8 @@ Optogenetics:
         effector: chrimsonR_BF
       - name: LC
         excitation_source: optogenetic_excitation_source
-        optical_fiber: optical_fiberLC
-        effector: chrimsonR_lc
+        optical_fiber: optical_fiber_LC
+        effector: chrimsonR_LC
 
 Ecephys:
   Device:
