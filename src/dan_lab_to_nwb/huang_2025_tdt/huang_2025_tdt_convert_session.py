@@ -23,6 +23,7 @@ def session_to_nwb(
     subject_id: str,
     sex: str,
     dob: str,
+    optogenetic_site_name: str,
     stub_test: bool = False,
     verbose: bool = True,
 ):
@@ -59,7 +60,7 @@ def session_to_nwb(
     conversion_options["Video"] = dict()
 
     # Add Optogenetics
-    source_data["Optogenetics"] = dict(folder_path=tdt_fp_folder_path)
+    source_data["Optogenetics"] = dict(folder_path=tdt_fp_folder_path, optogenetic_site_name=optogenetic_site_name)
     conversion_options["Optogenetics"] = dict()
 
     converter = Huang2025NWBConverter(source_data=source_data, verbose=verbose)
@@ -117,6 +118,7 @@ def main():
     sex = "M" if row["M"] == 1 else "F"
     pst = ZoneInfo("US/Pacific")
     dob = datetime.datetime.strptime(row["DOB"], "%m/%d/%Y").replace(tzinfo=pst)
+    optogenetic_site_name = row["Stim region"]
     info_file_path = (
         data_dir_path
         / "Setup - Bing"
@@ -159,9 +161,11 @@ def main():
         subject_id=subject_id,
         sex=sex,
         dob=dob,
+        optogenetic_site_name=optogenetic_site_name,
         stub_test=stub_test,
         stream_name="LFP1",
     )
+    return
 
     # Setup - WS8
     # /Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/Setup - WS8/202404/202410/M296-241018-072001/Lindsay_SBO_op1-E_2in1_pTra_con-241017-190451/M296-241018-072001

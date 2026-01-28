@@ -37,8 +37,8 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
 
     keywords = ["optogenetics"]
 
-    def __init__(self, folder_path: DirectoryPath):
-        super().__init__(folder_path=folder_path)
+    def __init__(self, folder_path: DirectoryPath, optogenetic_site_name: str):
+        super().__init__(folder_path=folder_path, optogenetic_site_name=optogenetic_site_name)
 
         folder_path = Path(folder_path)
         file_pattern_to_epoc_names = {
@@ -59,12 +59,6 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
             "Wi3_": "intense_stimulation",
             "LasT": "intense_stimulation",
         }
-        self.epoc_name_to_optogenetic_sites_table_row = {
-            "St1_": 0,
-            "St2_": 1,
-            "Wi3_": 0,
-            "LasT": 0,
-        }
         for file_pattern, epoc_names in file_pattern_to_epoc_names.items():
             if file_pattern in folder_path.parent.name:
                 self.epoc_names = epoc_names
@@ -75,6 +69,7 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
 
     def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict):
         folder_path = Path(self.source_data["folder_path"])
+        optogenetic_site_name = self.source_data["optogenetic_site_name"]
         with open(os.devnull, "w") as f, redirect_stdout(f):
             tdt_photometry = tdt.read_block(folder_path, evtype=["epocs"])
 
@@ -97,6 +92,8 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
             optical_fiber_model = OpticalFiberModel(**optical_fiber_model_metadata)
             nwbfile.add_device_model(optical_fiber_model)
         for optical_fiber_metadata in opto_metadata["OpticalFibers"]:
+            if not optogenetic_site_name in optical_fiber_metadata["name"]:
+                continue
             model_name = optical_fiber_metadata["model"]
             if model_name in nwbfile.device_models:
                 optical_fiber_metadata["model"] = nwbfile.device_models[model_name]
@@ -122,6 +119,8 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
 
         name_to_virus_injection = {}
         for virus_injection_metadata in opto_metadata["OptogeneticVirusInjections"]:
+            if not optogenetic_site_name in virus_injection_metadata["name"]:
+                continue
             if virus_injection_metadata["viral_vector"] in name_to_virus:
                 virus_injection_metadata["viral_vector"] = name_to_virus[virus_injection_metadata["viral_vector"]]
             else:
@@ -140,6 +139,8 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
 
         name_to_effector = {}
         for effector_metadata in opto_metadata["OptogeneticEffectors"]:
+            if not optogenetic_site_name in effector_metadata["name"]:
+                continue
             if effector_metadata["viral_vector_injection"] in name_to_virus_injection:
                 if effector_metadata["viral_vector_injection"] in name_to_virus_injection:
                     effector_metadata["viral_vector_injection"] = name_to_virus_injection[
@@ -163,6 +164,8 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
             description=opto_metadata["OptogeneticSitesTable"]["description"]
         )
         for row_metadata in opto_metadata["OptogeneticSitesTable"]["rows"]:
+            if not optogenetic_site_name in row_metadata["name"]:
+                continue
             row_metadata.pop("name")  # dict_deep_update requires a 'name' key, but we don't need it in the NWBFile
             excitation_source_name = row_metadata["excitation_source"]
             if excitation_source_name in nwbfile.devices:
@@ -236,7 +239,7 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
             stimulus_type = self.epoc_name_to_stimulus_type[epoc_name]
             onset_times = tdt_photometry.epocs[epoc_name].onset
             offset_times = tdt_photometry.epocs[epoc_name].offset
-            row = self.epoc_name_to_optogenetic_sites_table_row[epoc_name]
+            row = 0
 
             for onset_time, offset_time in zip(onset_times, offset_times, strict=True):
                 column_name_to_data["start_time"].append(onset_time)

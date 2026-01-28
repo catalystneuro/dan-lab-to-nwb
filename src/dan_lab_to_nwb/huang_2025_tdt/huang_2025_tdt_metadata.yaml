@@ -222,7 +222,7 @@ Optogenetics:
       construct_name: pAAV-Syn-FLEX-rc[ChrimsonR-tdTomato] (AAV5)
       titer_in_vg_per_ml: 5.0e+12
   OptogeneticVirusInjections:
-    - name: virus_injection_vta
+    - name: virus_injection_mVTA
       description: Viral injection into the Ventral Tegmental Area (VTA).
       viral_vector: virus
       location: Ventral Tegmental Area (VTA)
@@ -253,11 +253,11 @@ Optogenetics:
       dv_in_mm: -3.6
       volume_in_uL: 0.700
   OptogeneticEffectors:
-    - name: chrimsonR_vta
+    - name: chrimsonR_mVTA
       description: ChrimsonR opsin used for optogenetic stimulation injected into the VTA.
       manufacturer: Addgene
       label: ChrimsonR
-      viral_vector_injection: virus_injection_vta
+      viral_vector_injection: virus_injection_mVTA
     - name: chrimsonR_bf
       description: ChrimsonR opsin used for optogenetic stimulation injected into the BF.
       manufacturer: Addgene
@@ -291,7 +291,7 @@ Optogenetics:
       ferrule_model: FC
       ferrule_diameter_in_mm: 2.5
   OpticalFibers:
-    - name: optical_fiberVTA
+    - name: optical_fiber_mVTA
       description: Optical fiber used for optogenetic stimulation in the VTA.
       model: optical_fiber_model
       fiber_insertion: # TODO: add fiber insertion details
@@ -334,15 +334,15 @@ Optogenetics:
     description: Information about each optogenetic site, including the excitation source, optical fiber, and targeted effector.
     reference: Bregma at the cortical surface
     rows:
-      - name: 0
+      - name: mVTA
         excitation_source: optogenetic_excitation_source
-        optical_fiber: optical_fiberVTA
-        effector: chrimsonR_vta
-      - name: 1
+        optical_fiber: optical_fiber_mVTA
+        effector: chrimsonR_mVTA
+      - name: BF
         excitation_source: optogenetic_excitation_source
         optical_fiber: optical_fiberBF
         effector: chrimsonR_bf
-      - name: 2
+      - name: LC
         excitation_source: optogenetic_excitation_source
         optical_fiber: optical_fiberLC
         effector: chrimsonR_lc
