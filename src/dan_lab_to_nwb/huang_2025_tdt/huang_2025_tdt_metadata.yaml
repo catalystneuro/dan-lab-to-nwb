@@ -17,7 +17,7 @@ Subject:
 Ophys:
   FiberPhotometry:
     OpticalFiberModels:
-    - name: optical_fiber_model_1
+    - name: optical_fiber_model_fiber_photometry
       description: The Splitter Branching Fiber-optic Patch Cord evenly splits the light from a large core diameter connectorized optical fiber into 2 or more branches of smaller core diameter connectorized optical fibers. A 15 cm long large core optical fiber helps obtain uniform distribution of light before a launch into 2 or more optical fibers bundled inside the central tubing. A 2-branch Splitter Branching Fiber-optic Patch Cord typically outputs around 16 % of the input power.
       manufacturer: Doric Lenses
       model_number: SBP(2)_200/220/900-0.37_1m_FCM-2xFCM, Splitter Branching Patchcord type A
@@ -25,31 +25,16 @@ Ophys:
       core_diameter_in_um: 200.0
 
     OpticalFibers:
-    - name: optical_fiber1
-      description: <description of the optical fiber>
-      model: optical_fiber_model_1
-      serial_number: "OF001"
+    - name: optical_fiber_NAc
+      description: Optical fiber used for fiber photometry recordings in the Nucleus Accumbens (NAc).
+      model: optical_fiber_model_fiber_photometry
       fiber_insertion:
-        depth_in_mm: -1.0
-        insertion_position_ap_in_mm: -1.0
-        insertion_position_ml_in_mm: -1.0
-        insertion_position_dv_in_mm: -1.0
+        depth_in_mm: -1.0 # TODO: add depth in mm
+        insertion_position_ap_in_mm: -1.0 # TODO: add AP coordinate
+        insertion_position_ml_in_mm: -1.0 # TODO: add ML coordinate
+        insertion_position_dv_in_mm: -1.0 # TODO: add DV coordinate
         position_reference: bregma
-        hemisphere: <hemisphere>
-        insertion_angle_pitch_in_deg: 0.0
-        insertion_angle_yaw_in_deg: 0.0
-        insertion_angle_roll_in_deg: 0.0
-    - name: optical_fiber2
-      description: <description of the optical fiber>
-      model: optical_fiber_model_1
-      serial_number: "OF002"
-      fiber_insertion:
-        depth_in_mm: -1.0
-        insertion_position_ap_in_mm: -1.0
-        insertion_position_ml_in_mm: -1.0
-        insertion_position_dv_in_mm: -1.0
-        position_reference: bregma
-        hemisphere: <hemisphere>
+        hemisphere: right
         insertion_angle_pitch_in_deg: 0.0
         insertion_angle_yaw_in_deg: 0.0
         insertion_angle_roll_in_deg: 0.0
@@ -84,11 +69,11 @@ Ophys:
       model: photodetector_model
 
     FiberPhotometryViruses:
-    - name: vta_virus
-      description: <description of the viral vector for VTA>
-      manufacturer: <manufacturer of the viral vector>
-      construct_name: <construct name>
-      titer_in_vg_per_ml: -1.0
+    - name: virus_da_NAc
+      description: Expresses the 2nd generation high-affinity DA sensor GRAB_DA2h in neurons.
+      manufacturer: Addgene
+      construct_name: pAAV-hsyn-GRAB_DA2h
+      titer_in_vg_per_ml: 2.0e+13
     - name: pfc_virus
       description: <description of the viral vector for PFC>
       manufacturer: <manufacturer of the viral vector>
@@ -96,16 +81,16 @@ Ophys:
       titer_in_vg_per_ml: -1.0
 
     FiberPhotometryVirusInjections:
-    - name: vta_virus_injection
-      description: <description of viral injection for VTA>
-      viral_vector: vta_virus
-      location: <injection location>
-      hemisphere: <hemisphere>
+    - name: virus_injection_da_NAc
+      description: Viral injection of virus_da_NAc into the Nucleus Accumbens (NAc).
+      viral_vector: virus_da_NAc
+      location: Nucleus Accumbens (NAc)
+      hemisphere: right
       reference: bregma at the cortical surface
-      ap_in_mm: -1.0
-      ml_in_mm: -1.0
-      dv_in_mm: -1.0
-      volume_in_uL: -1.0
+      ap_in_mm: -1.0 # TODO: Add AP coordinate
+      ml_in_mm: -1.0 # TODO: Add ML coordinate
+      dv_in_mm: -1.0 # TODO: Add DV coordinate
+      volume_in_uL: 0.300
     - name: pfc_virus_injection
       description: <description of viral injection for PFC>
       viral_vector: pfc_virus
@@ -118,11 +103,11 @@ Ophys:
       volume_in_uL: -1.0
 
     FiberPhotometryIndicators:
-    - name: vta_indicator
-      description: <description of the indicator for VTA>
-      manufacturer: <manufacturer of the indicator>
-      label: <label of the indicator>
-      viral_vector_injection: vta_virus_injection
+    - name: indicator_da_NAc
+      description: Indicator for detecting dopamine levels in the Nucleus Accumbens (NAc).
+      manufacturer: Addgene
+      label: GRAB-DA2h
+      viral_vector_injection: virus_injection_da_NAc
     - name: pfc_indicator
       description: <description of the indicator for PFC>
       manufacturer: <manufacturer of the indicator>
@@ -133,73 +118,42 @@ Ophys:
 
     FiberPhotometryTable:
       name: fiber_photometry_table
-      description: <description of the fiber photometry setup as a whole>
+      description: Information about each fiber photometry recording site, including location, excitation wavelength, indicator, optical fiber, excitation source, and photodetector.
       rows:
       - name: 0
-        location: Ventral Tegmental Area (VTA)
+        location: Nucleus Accumbens (NAc)
         excitation_wavelength_in_nm: 465.0
-        emission_wavelength_in_nm: -1.0
-        indicator: vta_indicator
-        optical_fiber: optical_fiber1
+        emission_wavelength_in_nm: 525.0
+        indicator: indicator_da_NAc
+        optical_fiber: optical_fiber_NAc
         excitation_source: excitation_source
         photodetector: photodetector
 
       - name: 1
-        location: Ventral Tegmental Area (VTA)
+        location: Nucleus Accumbens (NAc)
         excitation_wavelength_in_nm: 405.0
-        emission_wavelength_in_nm: -1.0
-        indicator: vta_indicator
-        optical_fiber: optical_fiber1
-        excitation_source: excitation_source
-        photodetector: photodetector
-
-      - name: 2
-        location: Prefrontal Cortex (PFC)
-        excitation_wavelength_in_nm: 465.0
-        emission_wavelength_in_nm: -1.0
-        indicator: pfc_indicator
-        optical_fiber: optical_fiber2
-        excitation_source: excitation_source
-        photodetector: photodetector
-
-      - name: 3
-        location: Prefrontal Cortex (PFC)
-        excitation_wavelength_in_nm: 405.0
-        emission_wavelength_in_nm: -1.0
-        indicator: pfc_indicator
-        optical_fiber: optical_fiber2
+        emission_wavelength_in_nm: 525.0
+        indicator: indicator_da_NAc
+        optical_fiber: optical_fiber_NAc
         excitation_source: excitation_source
         photodetector: photodetector
 
     FiberPhotometryResponseSeries:
-    - name: calcium_signalVTA
-      description: The fluorescence from the calcium signal from VTA.
+    - name: calcium_signal_NAc
+      description: The fluorescence from the calcium signal from NAc.
       stream_name: _465B
       stream_indices: null
       unit: a.u.
       fiber_photometry_table_region: [0]
-      fiber_photometry_table_region_description: The region of the FiberPhotometryTable corresponding to the calcium signal of VTA.
-    - name: isosbestic_controlVTA
-      description: The fluorescence from the isosbestic control from VTA.
+      fiber_photometry_table_region_description: The region of the FiberPhotometryTable corresponding to the calcium signal of NAc.
+
+    - name: isosbestic_control_NAc
+      description: The fluorescence from the isosbestic control from NAc.
       stream_name: _405B
       stream_indices: null
       unit: a.u.
       fiber_photometry_table_region: [1]
-      fiber_photometry_table_region_description: The region of the FiberPhotometryTable corresponding to the isosbestic control of VTA.
-    - name: calcium_signalPFC
-      description: The fluorescence from the calcium signal from PFC.
-      stream_name: _465C
-      stream_indices: null
-      unit: a.u.
-      fiber_photometry_table_region: [2]
-      fiber_photometry_table_region_description: The region of the FiberPhotometryTable corresponding to the calcium signal of PFC.
-    - name: isosbestic_controlPFC
-      description: The fluorescence from the isosbestic control from PFC.
-      stream_name: _405C
-      stream_indices: null
-      unit: a.u.
-      fiber_photometry_table_region: [3]
-      fiber_photometry_table_region_description: The region of the FiberPhotometryTable corresponding to the isosbestic control of PFC.
+      fiber_photometry_table_region_description: The region of the FiberPhotometryTable corresponding to the isosbestic control of NAc.
 
 Behavior:
   ExternalVideos:
@@ -296,7 +250,7 @@ Optogenetics:
       model: optogenetic_excitation_source_model
       power_in_W: 0.020 # 20mW
   OpticalFiberModels:
-    - name: optical_fiber_model
+    - name: optical_fiber_model_optogenetics
       description: Optical fiber used for optogenetic stimulation.
       manufacturer: Doric Lenses
       model_number: MFP_200/220/900-0.37_2m_FC-FC_LAF
@@ -308,7 +262,7 @@ Optogenetics:
   OpticalFibers:
     - name: optical_fiber_mVTA
       description: Optical fiber used for optogenetic stimulation in the VTA.
-      model: optical_fiber_model
+      model: optical_fiber_model_optogenetics
       fiber_insertion: # TODO: add fiber insertion details
         depth_in_mm: -1.0 # TODO: add depth in mm
         insertion_position_ap_in_mm: -1.0 # TODO: add AP coordinate
@@ -321,7 +275,7 @@ Optogenetics:
         insertion_angle_roll_in_deg: 0.0 # TODO: add roll angle
     - name: optical_fiber_DRN
       description: Optical fiber used for optogenetic stimulation in the DRN.
-      model: optical_fiber_model
+      model: optical_fiber_model_optogenetics
       fiber_insertion:
         depth_in_mm: -1.0 # TODO: add depth in mm
         insertion_position_ap_in_mm: -1.0 # TODO: add AP coordinate
@@ -334,7 +288,7 @@ Optogenetics:
         insertion_angle_roll_in_deg: 0.0 # TODO: add roll angle
     - name: optical_fiber_BF
       description: Optical fiber used for optogenetic stimulation in the BF.
-      model: optical_fiber_model
+      model: optical_fiber_model_optogenetics
       fiber_insertion:
         depth_in_mm: -1.0 # TODO: add depth in mm
         insertion_position_ap_in_mm: -1.0 # TODO: add AP coordinate
@@ -347,7 +301,7 @@ Optogenetics:
         insertion_angle_roll_in_deg: 0.0 # TODO: add roll angle
     - name: optical_fiber_LC
       description: Optical fiber used for optogenetic stimulation in the LC.
-      model: optical_fiber_model
+      model: optical_fiber_model_optogenetics
       fiber_insertion:
         depth_in_mm: -1.0 # TODO: add depth in mm
         insertion_position_ap_in_mm: -1.0 # TODO: add AP coordinate
