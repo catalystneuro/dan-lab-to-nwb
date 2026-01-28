@@ -223,7 +223,7 @@ def main():
         stub_test=stub_test,
     )
 
-    # Setup - MollyFP
+    # Setup - MollyFP first subject
     # Note: this example session actually contains data from two subjects, but only one is included in the NWB file.
     # /Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/Setup - MollyFP/MollyFP-202508/M363_M366-250822-153604/A_Lindsay_TDTm_op1_pTra_2min-250822-153604/M363_M366-250822-153604
     metadata_df = pd.read_csv(
@@ -273,6 +273,63 @@ def main():
         tdt_fp_folder_path=tdt_fp_folder_path,
         tdt_ephys_folder_path=tdt_ephys_folder_path,
         stream_name="LFP1",
+        output_dir_path=output_dir_path,
+        subject_id=subject_id,
+        sex=sex,
+        dob=dob,
+        stub_test=stub_test,
+    )
+
+    # Setup - MollyFP second subject
+    # Note: this example session actually contains data from two subjects, but only one is included in the NWB file.
+    # /Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/Setup - MollyFP/MollyFP-202508/M363_M366-250822-153604/A_Lindsay_TDTm_op1_pTra_2min-250822-153604/M363_M366-250822-153604
+    metadata_df = pd.read_csv(
+        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets disorganized/metadata/opto-signal sum/Sert-cre_DRN_2min-pTra-stim - GS - Sheet1.csv"
+    )
+    subject_id = "M366"
+    row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
+    sex = "M" if row["M"] == 1 else "F"
+    pst = ZoneInfo("US/Pacific")
+    dob = datetime.datetime.strptime(row["DOB"], "%m/%d/%Y").replace(tzinfo=pst)
+    info_file_path = (
+        data_dir_path
+        / "Setup - MollyFP"
+        / "MollyFP-202508"
+        / "M363_M366-250822-153604"
+        / "A_Lindsay_TDTm_op1_pTra_2min-250822-153604"
+        / "M363_M366-250822-153604"
+        / "Info.mat"
+    )
+    video_file_path = (
+        data_dir_path
+        / "Setup - MollyFP"
+        / "MollyFP-202508"
+        / "M363_M366-250822-153604"
+        / "A_Lindsay_TDTm_op1_pTra_2min-250822-153604"
+        / "M363_M366-250822-153604"
+        / "A_Lindsay_TDTm_op1_pTra_2min-250822-153604_M363_M366-250822-153604_Cam2.avi"
+    )
+    tdt_fp_folder_path = (
+        data_dir_path
+        / "Setup - MollyFP"
+        / "MollyFP-202508"
+        / "M363_M366-250822-153604"
+        / "A_Lindsay_TDTm_op1_pTra_2min-250822-153604"
+        / "M363_M366-250822-153604"
+    )
+    tdt_ephys_folder_path = (
+        data_dir_path
+        / "Setup - MollyFP"
+        / "MollyFP-202508"
+        / "M363_M366-250822-153604"
+        / "A_Lindsay_TDTm_op1_pTra_2min-250822-153604"
+    )
+    session_to_nwb(
+        info_file_path=info_file_path,
+        video_file_path=video_file_path,
+        tdt_fp_folder_path=tdt_fp_folder_path,
+        tdt_ephys_folder_path=tdt_ephys_folder_path,
+        stream_name="LFP2",
         output_dir_path=output_dir_path,
         subject_id=subject_id,
         sex=sex,
