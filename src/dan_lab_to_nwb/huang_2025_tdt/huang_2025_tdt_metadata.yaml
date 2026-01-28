@@ -242,7 +242,7 @@ Optogenetics:
       ml_in_mm: -1.0 # TODO: Add ML coordinate
       dv_in_mm: -1.0 # TODO: Add DV coordinate
       volume_in_uL: 0.700
-    - name: virus_injection_bf
+    - name: virus_injection_BF
       description: Viral injection into the Basal Forebrain (BF).
       viral_vector: virus
       location: Basal Forebrain (BF)
@@ -273,11 +273,11 @@ Optogenetics:
       manufacturer: Addgene
       label: ChrimsonR
       viral_vector_injection: virus_injection_DRN
-    - name: chrimsonR_bf
+    - name: chrimsonR_BF
       description: ChrimsonR opsin used for optogenetic stimulation injected into the BF.
       manufacturer: Addgene
       label: ChrimsonR
-      viral_vector_injection: virus_injection_bf
+      viral_vector_injection: virus_injection_BF
     - name: chrimsonR_lc
       description: ChrimsonR opsin used for optogenetic stimulation injected into the LC.
       manufacturer: Addgene
@@ -332,7 +332,7 @@ Optogenetics:
         insertion_angle_pitch_in_deg: 0.0 # TODO: add pitch angle
         insertion_angle_yaw_in_deg: 0.0 # TODO: add yaw angle
         insertion_angle_roll_in_deg: 0.0 # TODO: add roll angle
-    - name: optical_fiberBF
+    - name: optical_fiber_BF
       description: Optical fiber used for optogenetic stimulation in the BF.
       model: optical_fiber_model
       fiber_insertion:
@@ -372,8 +372,8 @@ Optogenetics:
         effector: chrimsonR_DRN
       - name: BF
         excitation_source: optogenetic_excitation_source
-        optical_fiber: optical_fiberBF
-        effector: chrimsonR_bf
+        optical_fiber: optical_fiber_BF
+        effector: chrimsonR_BF
       - name: LC
         excitation_source: optogenetic_excitation_source
         optical_fiber: optical_fiberLC
