@@ -1,11 +1,14 @@
 """Primary script to run to convert all sessions in a dataset using session_to_nwb."""
+import datetime
 import shutil
 import traceback
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 from pprint import pformat
 from typing import Union
+from zoneinfo import ZoneInfo
 
+import pandas as pd
 from pydantic import DirectoryPath
 from pymatreader import read_mat
 from tqdm import tqdm
@@ -92,9 +95,58 @@ def get_nwbfile_name(*, session_to_nwb_kwargs: dict) -> str:
     info_file_path = session_to_nwb_kwargs["info_file_path"]
     info = read_mat(filename=info_file_path)["Info"]
     session_id = info["blockname"]
-    subject_id = info["Subject"]
+    subject_id = session_to_nwb_kwargs["subject_id"]
     nwbfile_name = f"sub-{subject_id}_ses-{session_id}.nwb"
     return nwbfile_name
+
+
+def read_excel_metadata(*, metadata_folder_path: DirectoryPath):
+    """Read metadata from Excel files in the specified folder.
+
+    Parameters
+    ----------
+    metadata_folder_path : DirectoryPath
+        The path to the folder containing the metadata Excel files.
+
+    Returns
+    -------
+    dict
+        A dictionary mapping subject IDs to their metadata.
+    """
+    pst = ZoneInfo("US/Pacific")
+    subject_id_to_metadata = {}
+    metadata_folder_path = Path(metadata_folder_path)
+    metadata_sub_folder_names = ["behavioral sum", "signal sum"]
+    for sub_folder_name in metadata_sub_folder_names:
+        metadata_sub_folder_path = metadata_folder_path / sub_folder_name
+        for excel_file in metadata_sub_folder_path.glob("*.csv"):
+            if excel_file.name.startswith("._"):
+                continue
+            df = pd.read_csv(excel_file)
+            date_column_names = [name for name in df.columns if name.startswith("date")]
+            setup_column_names = [name for name in df.columns if name.startswith("setup")]
+            for _, row in df.iterrows():
+                subject_id = row["mouse ID"]
+                if subject_id not in subject_id_to_metadata:
+                    subject_id_to_metadata[subject_id] = {}
+                metadata = subject_id_to_metadata[subject_id]
+                metadata["sex"] = "M" if row["M"] == 1 else "F"
+                metadata["dob"] = datetime.datetime.strptime(row["DOB"], "%m/%d/%Y").replace(tzinfo=pst)
+                if "session_dates" not in metadata:
+                    metadata["session_dates"] = []
+                for date_column_name in date_column_names:
+                    if pd.isna(row[date_column_name]):
+                        continue
+                    session_date = datetime.datetime.strptime(row[date_column_name], "%m/%d/%Y").replace(tzinfo=pst)
+                    metadata["session_dates"].append(session_date)
+                if "session_setups" not in metadata:
+                    metadata["session_setups"] = []
+                for setup_column_name in setup_column_names:
+                    if pd.isna(row[setup_column_name]):
+                        continue
+                    session_setup = row[setup_column_name]
+                    metadata["session_setups"].append(session_setup)
+    return subject_id_to_metadata
 
 
 def get_session_to_nwb_kwargs_per_session(
@@ -113,49 +165,74 @@ def get_session_to_nwb_kwargs_per_session(
     list[dict[str, Any]]
         A list of dictionaries containing the kwargs for session_to_nwb for each session.
     """
-    sessions_to_skip = [
-        "M405_M407-250412-081001(done)",
-        "M404_M409-250406-141501(done)",
-        "M404_M409-250405-151801(done)",
-        "M405_M407-250412-142001(done)",
-        "M404-M409-250406-153701 (M404 bad signal, done)",
-        "M405_M407-250413-081001(done)",
-        "M405_M407-250413-152101(done)",
-        "M409_M404-250407-153704 (done)",
-        "M405_M407-250414-081001(done)",
-    ]
+    pst = ZoneInfo("US/Pacific")
+    sessions_to_skip = []
 
     data_dir_path = Path(data_dir_path)
+    metadata_folder_path = data_dir_path / "metadata"
+    subject_id_to_metadata = read_excel_metadata(metadata_folder_path=metadata_folder_path)
     session_to_nwb_kwargs_per_session = []
     dataset_folder_names = [
-        "Bing-202504",
-        "WS8-202504",
-        "ExampleSessions",
+        "Setup - Bing",
+        "Setup - WS8",
+        "Setup - MollyFP",
     ]
     for folder_name in dataset_folder_names:
         dataset_folder = data_dir_path / folder_name
-        for outer_session_folder in dataset_folder.iterdir():
-            if not outer_session_folder.is_dir():
+        for sub_folder in dataset_folder.iterdir():
+            if not sub_folder.is_dir():
                 continue
-            if outer_session_folder.name in sessions_to_skip:
-                continue
-            for session_folder in outer_session_folder.iterdir():
-                if not session_folder.is_dir():
+            for outer_session_folder in sub_folder.iterdir():
+                # ex. M323-250120-142001 --> M323, M412_PN-250429-143001 --> M412_PN
+                subject_id = outer_session_folder.name.split("-")[0]
+                subject_id = subject_id.split("_")[0]  # ex. M323 --> M323, M412_PN --> M412
+                if subject_id.endswith("R") or subject_id.endswith("L"):
+                    subject_id = subject_id[:-1]  # ex. M267R --> M267, M267L --> M267
+                if subject_id.startswith("BBB"):
+                    subject_id = subject_id.replace("BBB", "M00")  # ex. BBB8 --> M008
+                session_date_str = outer_session_folder.name.split("-")[1]  # ex. M323-250120-142001 --> 250120
+                session_date = datetime.datetime.strptime(session_date_str, "%y%m%d").replace(tzinfo=pst)
+                if not outer_session_folder.is_dir():
                     continue
-                for segment_folder in session_folder.iterdir():
-                    if not segment_folder.is_dir():
+                if outer_session_folder.name in sessions_to_skip:
+                    continue
+                if subject_id not in subject_id_to_metadata:
+                    # Try alternative parsing for subject_id
+                    subject_id = outer_session_folder.name.split("-")[0]
+                    subject_id = subject_id.split("_")[1]  # ex. M342_M042 --> M042
+                    if subject_id.endswith("R") or subject_id.endswith("L"):
+                        subject_id = subject_id[:-1]  # ex. M267R --> M267, M267L --> M267
+                    if subject_id.startswith("BBB"):
+                        subject_id = subject_id.replace("BBB", "M00")  # ex. BBB8 --> M008
+
+                    # If still not found, skip this subject
+                    if subject_id not in subject_id_to_metadata:
                         continue
-                    info_file_path = segment_folder / "Info.mat"
-                    video_file_path = next(segment_folder.glob("*.avi"))
-                    tdt_fp_folder_path = segment_folder
-                    tdt_ephys_folder_path = session_folder
-                    session_to_nwb_kwargs = dict(
-                        info_file_path=info_file_path,
-                        video_file_path=video_file_path,
-                        tdt_fp_folder_path=tdt_fp_folder_path,
-                        tdt_ephys_folder_path=tdt_ephys_folder_path,
-                    )
-                    session_to_nwb_kwargs_per_session.append(session_to_nwb_kwargs)
+                subject_metadata = subject_id_to_metadata[subject_id]
+                if session_date not in subject_metadata["session_dates"]:
+                    continue
+                sex = subject_metadata["sex"]
+                dob = subject_metadata["dob"]
+                for session_folder in outer_session_folder.iterdir():
+                    if not session_folder.is_dir():
+                        continue
+                    for segment_folder in session_folder.iterdir():
+                        if not segment_folder.is_dir():
+                            continue
+                        info_file_path = segment_folder / "Info.mat"
+                        video_file_path = next(segment_folder.glob("*.avi"))
+                        tdt_fp_folder_path = segment_folder
+                        tdt_ephys_folder_path = session_folder
+                        session_to_nwb_kwargs = dict(
+                            info_file_path=info_file_path,
+                            video_file_path=video_file_path,
+                            tdt_fp_folder_path=tdt_fp_folder_path,
+                            tdt_ephys_folder_path=tdt_ephys_folder_path,
+                            subject_id=subject_id,
+                            sex=sex,
+                            dob=dob,
+                        )
+                        session_to_nwb_kwargs_per_session.append(session_to_nwb_kwargs)
 
     return session_to_nwb_kwargs_per_session
 
@@ -163,9 +240,9 @@ def get_session_to_nwb_kwargs_per_session(
 if __name__ == "__main__":
 
     # Parameters for conversion
-    data_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/Test - TDT data")
+    data_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets")
     output_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/conversion_nwb/huang_2025_tdt")
-    max_workers = 4
+    max_workers = 10
     verbose = False
 
     if output_dir_path.exists():

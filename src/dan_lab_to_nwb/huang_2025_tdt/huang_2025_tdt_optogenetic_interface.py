@@ -37,15 +37,42 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
 
     keywords = ["optogenetics"]
 
-    def __init__(self, folder_path: DirectoryPath):
-        super().__init__(folder_path=folder_path)
+    def __init__(
+        self,
+        folder_path: DirectoryPath,
+        optogenetic_site_name: str,
+        record_fiber: int,
+        virus_volume_in_uL: float,
+        shared_test_pulse: bool = False,
+    ):
+        super().__init__(
+            folder_path=folder_path, optogenetic_site_name=optogenetic_site_name, virus_volume_in_uL=virus_volume_in_uL
+        )
 
         folder_path = Path(folder_path)
-        file_pattern_to_epoc_names = {
-            "pTra_con": ["St1_", "St2_", "Wi3_"],
-            "opto1-Evoke12_2in1": ["St1_", "St2_", "LasT"],
-            "SBOX_R_evoke_2in1": ["St1_", "St2_"],
-            "TDTb_R_evoke_2in1": ["St1_", "St2_"],
+        # file_pattern_to_epoc_names = {
+        #     "pTra_con": ["St1_", "St2_", "Wi3_"],
+        #     "opto1-Evoke12_2in1": ["St1_", "St2_", "LasT"],
+        #     "opto1_E_2": ["St1_", "St2_", "LasT"],
+        #     "opto1_E12_2in1": ["St1_", "St2_", "LasT"],
+        #     "opto_E_2": ["St1_", "LasT"],
+        #     "TDTm_R_evoke": ["St1_"],
+        #     "TDTm_op1_pTra": ["St1_", "Wi3_"],
+        #     "TDTm_op1-E_pTra": ["St1_", "Wi3_"],
+        #     "SBOX_R_evoke_2in1": ["St1_", "St2_"],
+        #     "TDTb_R_evoke_2in1": ["St1_", "St2_"],
+        # }
+        file_pattern_to_stim_epoc_name = {
+            "pTra_con": "Wi3_",
+            "opto1-Evoke12_2in1": "LasT",
+            "opto1_E_2": "LasT",
+            "opto1_E12_2in1": "LasT",
+            "opto_E_2": "LasT",
+            "TDTm_R_evoke": None,
+            "TDTm_op1_pTra": "Wi3_",
+            "TDTm_op1-E_pTra": "Wi3_",
+            "SBOX_R_evoke_2in1": None,
+            "TDTb_R_evoke_2in1": None,
         }
         self.epoc_name_to_stimulus_type = {
             "St1_": "test_pulse",
@@ -53,22 +80,30 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
             "Wi3_": "intense_stimulation",
             "LasT": "intense_stimulation",
         }
-        self.epoc_name_to_optogenetic_sites_table_row = {
-            "St1_": 0,
-            "St2_": 1,
-            "Wi3_": 0,
-            "LasT": 0,
-        }
-        for file_pattern, epoc_names in file_pattern_to_epoc_names.items():
+        self.epoc_names = []
+        if shared_test_pulse:
+            self.epoc_names.append("St1_")
+        else:
+            if record_fiber == 1:
+                self.epoc_names.append("St1_")
+            elif record_fiber == 2:
+                self.epoc_names.append("St2_")
+            else:
+                raise ValueError(f"record_fiber must be 1 or 2, got {record_fiber}")
+        for file_pattern, epoc_name in file_pattern_to_stim_epoc_name.items():
+            if epoc_name is None:
+                continue
             if file_pattern in folder_path.parent.name:
-                self.epoc_names = epoc_names
+                self.epoc_names.append(epoc_name)
                 return
         raise ValueError(
-            f"No matching file pattern found in {folder_path.parent}. Expected one of: {list(file_pattern_to_epoc_names.keys())}"
+            f"No matching file pattern found in {folder_path.parent}. Expected one of: {list(file_pattern_to_stim_epoc_name.keys())}"
         )
 
     def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict):
         folder_path = Path(self.source_data["folder_path"])
+        optogenetic_site_name = self.source_data["optogenetic_site_name"]
+        virus_volume_in_uL = self.source_data["virus_volume_in_uL"]
         with open(os.devnull, "w") as f, redirect_stdout(f):
             tdt_photometry = tdt.read_block(folder_path, evtype=["epocs"])
 
@@ -91,6 +126,8 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
             optical_fiber_model = OpticalFiberModel(**optical_fiber_model_metadata)
             nwbfile.add_device_model(optical_fiber_model)
         for optical_fiber_metadata in opto_metadata["OpticalFibers"]:
+            if not optogenetic_site_name in optical_fiber_metadata["name"]:
+                continue
             model_name = optical_fiber_metadata["model"]
             if model_name in nwbfile.device_models:
                 optical_fiber_metadata["model"] = nwbfile.device_models[model_name]
@@ -116,6 +153,9 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
 
         name_to_virus_injection = {}
         for virus_injection_metadata in opto_metadata["OptogeneticVirusInjections"]:
+            if not optogenetic_site_name in virus_injection_metadata["name"]:
+                continue
+            virus_injection_metadata["volume_in_uL"] = virus_volume_in_uL
             if virus_injection_metadata["viral_vector"] in name_to_virus:
                 virus_injection_metadata["viral_vector"] = name_to_virus[virus_injection_metadata["viral_vector"]]
             else:
@@ -134,6 +174,8 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
 
         name_to_effector = {}
         for effector_metadata in opto_metadata["OptogeneticEffectors"]:
+            if not optogenetic_site_name in effector_metadata["name"]:
+                continue
             if effector_metadata["viral_vector_injection"] in name_to_virus_injection:
                 if effector_metadata["viral_vector_injection"] in name_to_virus_injection:
                     effector_metadata["viral_vector_injection"] = name_to_virus_injection[
@@ -157,6 +199,8 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
             description=opto_metadata["OptogeneticSitesTable"]["description"]
         )
         for row_metadata in opto_metadata["OptogeneticSitesTable"]["rows"]:
+            if not optogenetic_site_name in row_metadata["name"]:
+                continue
             row_metadata.pop("name")  # dict_deep_update requires a 'name' key, but we don't need it in the NWBFile
             excitation_source_name = row_metadata["excitation_source"]
             if excitation_source_name in nwbfile.devices:
@@ -230,7 +274,7 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
             stimulus_type = self.epoc_name_to_stimulus_type[epoc_name]
             onset_times = tdt_photometry.epocs[epoc_name].onset
             offset_times = tdt_photometry.epocs[epoc_name].offset
-            row = self.epoc_name_to_optogenetic_sites_table_row[epoc_name]
+            row = 0
 
             for onset_time, offset_time in zip(onset_times, offset_times, strict=True):
                 column_name_to_data["start_time"].append(onset_time)

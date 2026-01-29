@@ -19,6 +19,7 @@ dependencies = [
   "nwbinspector",
   "pre-commit",
   "pymatreader",
+  "openpyxl",
   "ipykernel",
   "matplotlib",
   "ndx-optogenetics @ git+https://github.com/rly/ndx-optogenetics.git@main",
