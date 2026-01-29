@@ -165,329 +165,329 @@ def main():
     if output_dir_path.exists():
         shutil.rmtree(output_dir_path)
 
-    # # opto-signal sum Example Sessions
-    # # ------------------------------------------------------------------------------------------------------------------
+    # opto-signal sum Example Sessions
+    # ------------------------------------------------------------------------------------------------------------------
 
-    # # Setup - Bing
-    # # '/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/Setup - Bing/202409-old setting/M301-240904-072001/Lindsay_SBO_op1-E_2in1_pTra_con-240902-231421/M301-240904-072001'
-    # metadata_df = pd.read_csv(
-    #     "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-signal sum/Dat-cre_mVTA_3h-stim_low virus - Sheet1.csv"
-    # )
-    # subject_id = "M301"
-    # row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
-    # sex = "M" if row["M"] == 1 else "F"
-    # pst = ZoneInfo("US/Pacific")
-    # dob = datetime.datetime.strptime(row["DOB"], "%m/%d/%Y").replace(tzinfo=pst)
-    # optogenetic_site_name = row["Stim region"]
-    # date_column_names = [name for name in metadata_df.columns if name.startswith("date")]
-    # record_fiber_column_names = [name for name in metadata_df.columns if name.startswith("Record fiber")]
-    # session_index = 0
-    # date_column_name = date_column_names[session_index]
-    # record_fiber_column_name = record_fiber_column_names[session_index]
-    # record_fiber = int(row[record_fiber_column_name])
-    # fiber_photometry_site_name = row["Record region"]
-    # virus_volume_column_names = [name for name in metadata_df.columns if name.startswith("virus volume")]
-    # optogenetic_virus_volume_column_name = virus_volume_column_names[0]
-    # fiber_photometry_virus_volume_column_name = virus_volume_column_names[1]
-    # optogenetic_virus_volume_in_nL = float(
-    #     row[optogenetic_virus_volume_column_name].replace("nL", "")
-    # )  # 300nL --> 300.0
-    # optogenetic_virus_volume_in_uL = optogenetic_virus_volume_in_nL / 1000.0
-    # fiber_photometry_virus_volume_in_nL = float(
-    #     row[fiber_photometry_virus_volume_column_name].replace("nL", "")
-    # )  # 300nL --> 300.0
-    # fiber_photometry_virus_volume_in_uL = fiber_photometry_virus_volume_in_nL / 1000.0
+    # Setup - Bing
+    # '/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/Setup - Bing/202409-old setting/M301-240904-072001/Lindsay_SBO_op1-E_2in1_pTra_con-240902-231421/M301-240904-072001'
+    metadata_df = pd.read_csv(
+        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-signal sum/Dat-cre_mVTA_3h-stim_low virus - Sheet1.csv"
+    )
+    subject_id = "M301"
+    row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
+    sex = "M" if row["M"] == 1 else "F"
+    pst = ZoneInfo("US/Pacific")
+    dob = datetime.datetime.strptime(row["DOB"], "%m/%d/%Y").replace(tzinfo=pst)
+    optogenetic_site_name = row["Stim region"]
+    date_column_names = [name for name in metadata_df.columns if name.startswith("date")]
+    record_fiber_column_names = [name for name in metadata_df.columns if name.startswith("Record fiber")]
+    session_index = 0
+    date_column_name = date_column_names[session_index]
+    record_fiber_column_name = record_fiber_column_names[session_index]
+    record_fiber = int(row[record_fiber_column_name])
+    fiber_photometry_site_name = row["Record region"]
+    virus_volume_column_names = [name for name in metadata_df.columns if name.startswith("virus volume")]
+    optogenetic_virus_volume_column_name = virus_volume_column_names[0]
+    fiber_photometry_virus_volume_column_name = virus_volume_column_names[1]
+    optogenetic_virus_volume_in_nL = float(
+        row[optogenetic_virus_volume_column_name].replace("nL", "")
+    )  # 300nL --> 300.0
+    optogenetic_virus_volume_in_uL = optogenetic_virus_volume_in_nL / 1000.0
+    fiber_photometry_virus_volume_in_nL = float(
+        row[fiber_photometry_virus_volume_column_name].replace("nL", "")
+    )  # 300nL --> 300.0
+    fiber_photometry_virus_volume_in_uL = fiber_photometry_virus_volume_in_nL / 1000.0
 
-    # info_file_path = (
-    #     data_dir_path
-    #     / "Setup - Bing"
-    #     / "202409-old setting"
-    #     / "M301-240904-072001"
-    #     / "Lindsay_SBO_op1-E_2in1_pTra_con-240902-231421"
-    #     / "M301-240904-072001"
-    #     / "Info.mat"
-    # )
-    # video_file_path = (
-    #     data_dir_path
-    #     / "Setup - Bing"
-    #     / "202409-old setting"
-    #     / "M301-240904-072001"
-    #     / "Lindsay_SBO_op1-E_2in1_pTra_con-240902-231421"
-    #     / "M301-240904-072001"
-    #     / "Lindsay_SBO_op1-E_2in1_pTra_con-240902-231421_M301-240904-072001_Cam1.avi"
-    # )
-    # tdt_fp_folder_path = (
-    #     data_dir_path
-    #     / "Setup - Bing"
-    #     / "202409-old setting"
-    #     / "M301-240904-072001"
-    #     / "Lindsay_SBO_op1-E_2in1_pTra_con-240902-231421"
-    #     / "M301-240904-072001"
-    # )
-    # tdt_ephys_folder_path = (
-    #     data_dir_path
-    #     / "Setup - Bing"
-    #     / "202409-old setting"
-    #     / "M301-240904-072001"
-    #     / "Lindsay_SBO_op1-E_2in1_pTra_con-240902-231421"
-    # )
-    # session_to_nwb(
-    #     info_file_path=info_file_path,
-    #     video_file_path=video_file_path,
-    #     tdt_fp_folder_path=tdt_fp_folder_path,
-    #     record_fiber=record_fiber,
-    #     tdt_ephys_folder_path=tdt_ephys_folder_path,
-    #     output_dir_path=output_dir_path,
-    #     subject_id=subject_id,
-    #     sex=sex,
-    #     dob=dob,
-    #     optogenetic_site_name=optogenetic_site_name,
-    #     fiber_photometry_site_name=fiber_photometry_site_name,
-    #     stub_test=stub_test,
-    #     stream_name="LFP1",
-    #     optogenetic_virus_volume_in_uL=optogenetic_virus_volume_in_uL,
-    #     fiber_photometry_virus_volume_in_uL=fiber_photometry_virus_volume_in_uL,
-    # )
+    info_file_path = (
+        data_dir_path
+        / "Setup - Bing"
+        / "202409-old setting"
+        / "M301-240904-072001"
+        / "Lindsay_SBO_op1-E_2in1_pTra_con-240902-231421"
+        / "M301-240904-072001"
+        / "Info.mat"
+    )
+    video_file_path = (
+        data_dir_path
+        / "Setup - Bing"
+        / "202409-old setting"
+        / "M301-240904-072001"
+        / "Lindsay_SBO_op1-E_2in1_pTra_con-240902-231421"
+        / "M301-240904-072001"
+        / "Lindsay_SBO_op1-E_2in1_pTra_con-240902-231421_M301-240904-072001_Cam1.avi"
+    )
+    tdt_fp_folder_path = (
+        data_dir_path
+        / "Setup - Bing"
+        / "202409-old setting"
+        / "M301-240904-072001"
+        / "Lindsay_SBO_op1-E_2in1_pTra_con-240902-231421"
+        / "M301-240904-072001"
+    )
+    tdt_ephys_folder_path = (
+        data_dir_path
+        / "Setup - Bing"
+        / "202409-old setting"
+        / "M301-240904-072001"
+        / "Lindsay_SBO_op1-E_2in1_pTra_con-240902-231421"
+    )
+    session_to_nwb(
+        info_file_path=info_file_path,
+        video_file_path=video_file_path,
+        tdt_fp_folder_path=tdt_fp_folder_path,
+        record_fiber=record_fiber,
+        tdt_ephys_folder_path=tdt_ephys_folder_path,
+        output_dir_path=output_dir_path,
+        subject_id=subject_id,
+        sex=sex,
+        dob=dob,
+        optogenetic_site_name=optogenetic_site_name,
+        fiber_photometry_site_name=fiber_photometry_site_name,
+        stub_test=stub_test,
+        stream_name="LFP1",
+        optogenetic_virus_volume_in_uL=optogenetic_virus_volume_in_uL,
+        fiber_photometry_virus_volume_in_uL=fiber_photometry_virus_volume_in_uL,
+    )
 
-    # # Setup - WS8
-    # # /Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/Setup - WS8/202404/202410/M296-241018-072001/Lindsay_SBO_op1-E_2in1_pTra_con-241017-190451/M296-241018-072001
-    # metadata_df = pd.read_csv(
-    #     "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-signal sum/Dat-cre_mVTA_3h-stim_low virus - Sheet1.csv"
-    # )
-    # subject_id = "M296"
-    # row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
-    # sex = "M" if row["M"] == 1 else "F"
-    # pst = ZoneInfo("US/Pacific")
-    # dob = datetime.datetime.strptime(row["DOB"], "%m/%d/%Y").replace(tzinfo=pst)
-    # optogenetic_site_name = row["Stim region"]
-    # date_column_names = [name for name in metadata_df.columns if name.startswith("date")]
-    # record_fiber_column_names = [name for name in metadata_df.columns if name.startswith("Record fiber")]
-    # session_index = 0
-    # date_column_name = date_column_names[session_index]
-    # record_fiber_column_name = record_fiber_column_names[session_index]
-    # record_fiber = int(row[record_fiber_column_name])
-    # fiber_photometry_site_name = row["Record region"]
-    # virus_volume_column_names = [name for name in metadata_df.columns if name.startswith("virus volume")]
-    # optogenetic_virus_volume_column_name = virus_volume_column_names[0]
-    # fiber_photometry_virus_volume_column_name = virus_volume_column_names[1]
-    # optogenetic_virus_volume_in_nL = float(
-    #     row[optogenetic_virus_volume_column_name].replace("nL", "")
-    # )  # 300nL --> 300.0
-    # optogenetic_virus_volume_in_uL = optogenetic_virus_volume_in_nL / 1000.0
-    # fiber_photometry_virus_volume_in_nL = float(
-    #     row[fiber_photometry_virus_volume_column_name].replace("nL", "")
-    # )  # 300nL --> 300.0
-    # fiber_photometry_virus_volume_in_uL = fiber_photometry_virus_volume_in_nL / 1000.0
-    # info_file_path = (
-    #     data_dir_path
-    #     / "Setup - WS8"
-    #     / "202404"
-    #     / "202410"
-    #     / "M296-241018-072001"
-    #     / "Lindsay_SBO_op1-E_2in1_pTra_con-241017-190451"
-    #     / "M296-241018-072001"
-    #     / "Info.mat"
-    # )
-    # video_file_path = (
-    #     data_dir_path
-    #     / "Setup - WS8"
-    #     / "202404"
-    #     / "202410"
-    #     / "M296-241018-072001"
-    #     / "Lindsay_SBO_op1-E_2in1_pTra_con-241017-190451"
-    #     / "M296-241018-072001"
-    #     / "Lindsay_SBO_op1-E_2in1_pTra_con-241017-190451_M296-241018-072001_Cam1.avi"
-    # )
-    # tdt_fp_folder_path = (
-    #     data_dir_path
-    #     / "Setup - WS8"
-    #     / "202404"
-    #     / "202410"
-    #     / "M296-241018-072001"
-    #     / "Lindsay_SBO_op1-E_2in1_pTra_con-241017-190451"
-    #     / "M296-241018-072001"
-    # )
-    # tdt_ephys_folder_path = (
-    #     data_dir_path
-    #     / "Setup - WS8"
-    #     / "202404"
-    #     / "202410"
-    #     / "M296-241018-072001"
-    #     / "Lindsay_SBO_op1-E_2in1_pTra_con-241017-190451"
-    # )
-    # session_to_nwb(
-    #     info_file_path=info_file_path,
-    #     video_file_path=video_file_path,
-    #     tdt_fp_folder_path=tdt_fp_folder_path,
-    #     record_fiber=record_fiber,
-    #     tdt_ephys_folder_path=tdt_ephys_folder_path,
-    #     stream_name="LFP1",
-    #     output_dir_path=output_dir_path,
-    #     subject_id=subject_id,
-    #     sex=sex,
-    #     dob=dob,
-    #     optogenetic_site_name=optogenetic_site_name,
-    #     fiber_photometry_site_name=fiber_photometry_site_name,
-    #     optogenetic_virus_volume_in_uL=optogenetic_virus_volume_in_uL,
-    #     fiber_photometry_virus_volume_in_uL=fiber_photometry_virus_volume_in_uL,
-    #     stub_test=stub_test,
-    # )
+    # Setup - WS8
+    # /Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/Setup - WS8/202404/202410/M296-241018-072001/Lindsay_SBO_op1-E_2in1_pTra_con-241017-190451/M296-241018-072001
+    metadata_df = pd.read_csv(
+        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-signal sum/Dat-cre_mVTA_3h-stim_low virus - Sheet1.csv"
+    )
+    subject_id = "M296"
+    row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
+    sex = "M" if row["M"] == 1 else "F"
+    pst = ZoneInfo("US/Pacific")
+    dob = datetime.datetime.strptime(row["DOB"], "%m/%d/%Y").replace(tzinfo=pst)
+    optogenetic_site_name = row["Stim region"]
+    date_column_names = [name for name in metadata_df.columns if name.startswith("date")]
+    record_fiber_column_names = [name for name in metadata_df.columns if name.startswith("Record fiber")]
+    session_index = 0
+    date_column_name = date_column_names[session_index]
+    record_fiber_column_name = record_fiber_column_names[session_index]
+    record_fiber = int(row[record_fiber_column_name])
+    fiber_photometry_site_name = row["Record region"]
+    virus_volume_column_names = [name for name in metadata_df.columns if name.startswith("virus volume")]
+    optogenetic_virus_volume_column_name = virus_volume_column_names[0]
+    fiber_photometry_virus_volume_column_name = virus_volume_column_names[1]
+    optogenetic_virus_volume_in_nL = float(
+        row[optogenetic_virus_volume_column_name].replace("nL", "")
+    )  # 300nL --> 300.0
+    optogenetic_virus_volume_in_uL = optogenetic_virus_volume_in_nL / 1000.0
+    fiber_photometry_virus_volume_in_nL = float(
+        row[fiber_photometry_virus_volume_column_name].replace("nL", "")
+    )  # 300nL --> 300.0
+    fiber_photometry_virus_volume_in_uL = fiber_photometry_virus_volume_in_nL / 1000.0
+    info_file_path = (
+        data_dir_path
+        / "Setup - WS8"
+        / "202404"
+        / "202410"
+        / "M296-241018-072001"
+        / "Lindsay_SBO_op1-E_2in1_pTra_con-241017-190451"
+        / "M296-241018-072001"
+        / "Info.mat"
+    )
+    video_file_path = (
+        data_dir_path
+        / "Setup - WS8"
+        / "202404"
+        / "202410"
+        / "M296-241018-072001"
+        / "Lindsay_SBO_op1-E_2in1_pTra_con-241017-190451"
+        / "M296-241018-072001"
+        / "Lindsay_SBO_op1-E_2in1_pTra_con-241017-190451_M296-241018-072001_Cam1.avi"
+    )
+    tdt_fp_folder_path = (
+        data_dir_path
+        / "Setup - WS8"
+        / "202404"
+        / "202410"
+        / "M296-241018-072001"
+        / "Lindsay_SBO_op1-E_2in1_pTra_con-241017-190451"
+        / "M296-241018-072001"
+    )
+    tdt_ephys_folder_path = (
+        data_dir_path
+        / "Setup - WS8"
+        / "202404"
+        / "202410"
+        / "M296-241018-072001"
+        / "Lindsay_SBO_op1-E_2in1_pTra_con-241017-190451"
+    )
+    session_to_nwb(
+        info_file_path=info_file_path,
+        video_file_path=video_file_path,
+        tdt_fp_folder_path=tdt_fp_folder_path,
+        record_fiber=record_fiber,
+        tdt_ephys_folder_path=tdt_ephys_folder_path,
+        stream_name="LFP1",
+        output_dir_path=output_dir_path,
+        subject_id=subject_id,
+        sex=sex,
+        dob=dob,
+        optogenetic_site_name=optogenetic_site_name,
+        fiber_photometry_site_name=fiber_photometry_site_name,
+        optogenetic_virus_volume_in_uL=optogenetic_virus_volume_in_uL,
+        fiber_photometry_virus_volume_in_uL=fiber_photometry_virus_volume_in_uL,
+        stub_test=stub_test,
+    )
 
-    # # Setup - MollyFP first subject
-    # # Note: this example session actually contains data from two subjects, but only one is included in the NWB file.
-    # # /Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/Setup - MollyFP/MollyFP-202508/M363_M366-250822-153604/A_Lindsay_TDTm_op1_pTra_2min-250822-153604/M363_M366-250822-153604
-    # metadata_df = pd.read_csv(
-    #     "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets disorganized/metadata/opto-signal sum/Sert-cre_DRN_2min-pTra-stim - GS - Sheet1.csv"
-    # )
-    # subject_id = "M363"
-    # row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
-    # sex = "M" if row["M"] == 1 else "F"
-    # pst = ZoneInfo("US/Pacific")
-    # dob = datetime.datetime.strptime(row["DOB"], "%m/%d/%Y").replace(tzinfo=pst)
-    # optogenetic_site_name = row["Stim region"]
-    # fiber_photometry_site_name = row["Record region"]
-    # record_fiber = 1
-    # shared_test_pulse = True
-    # virus_volume_column_names = [name for name in metadata_df.columns if name.startswith("virus volume")]
-    # optogenetic_virus_volume_column_name = virus_volume_column_names[0]
-    # fiber_photometry_virus_volume_column_name = virus_volume_column_names[1]
-    # optogenetic_virus_volume_in_nL = float(
-    #     row[optogenetic_virus_volume_column_name].replace("nL", "")
-    # )  # 300nL --> 300.0
-    # optogenetic_virus_volume_in_uL = optogenetic_virus_volume_in_nL / 1000.0
-    # fiber_photometry_virus_volume_in_nL = float(
-    #     row[fiber_photometry_virus_volume_column_name].replace("nL", "")
-    # )  # 300nL --> 300.0
-    # fiber_photometry_virus_volume_in_uL = fiber_photometry_virus_volume_in_nL / 1000.0
-    # info_file_path = (
-    #     data_dir_path
-    #     / "Setup - MollyFP"
-    #     / "MollyFP-202508"
-    #     / "M363_M366-250822-153604"
-    #     / "A_Lindsay_TDTm_op1_pTra_2min-250822-153604"
-    #     / "M363_M366-250822-153604"
-    #     / "Info.mat"
-    # )
-    # video_file_path = (
-    #     data_dir_path
-    #     / "Setup - MollyFP"
-    #     / "MollyFP-202508"
-    #     / "M363_M366-250822-153604"
-    #     / "A_Lindsay_TDTm_op1_pTra_2min-250822-153604"
-    #     / "M363_M366-250822-153604"
-    #     / "A_Lindsay_TDTm_op1_pTra_2min-250822-153604_M363_M366-250822-153604_Cam1.avi"
-    # )
-    # tdt_fp_folder_path = (
-    #     data_dir_path
-    #     / "Setup - MollyFP"
-    #     / "MollyFP-202508"
-    #     / "M363_M366-250822-153604"
-    #     / "A_Lindsay_TDTm_op1_pTra_2min-250822-153604"
-    #     / "M363_M366-250822-153604"
-    # )
-    # tdt_ephys_folder_path = (
-    #     data_dir_path
-    #     / "Setup - MollyFP"
-    #     / "MollyFP-202508"
-    #     / "M363_M366-250822-153604"
-    #     / "A_Lindsay_TDTm_op1_pTra_2min-250822-153604"
-    # )
-    # session_to_nwb(
-    #     info_file_path=info_file_path,
-    #     video_file_path=video_file_path,
-    #     tdt_fp_folder_path=tdt_fp_folder_path,
-    #     tdt_ephys_folder_path=tdt_ephys_folder_path,
-    #     stream_name="LFP1",
-    #     output_dir_path=output_dir_path,
-    #     subject_id=subject_id,
-    #     sex=sex,
-    #     dob=dob,
-    #     optogenetic_site_name=optogenetic_site_name,
-    #     fiber_photometry_site_name=fiber_photometry_site_name,
-    #     record_fiber=record_fiber,
-    #     optogenetic_virus_volume_in_uL=optogenetic_virus_volume_in_uL,
-    #     fiber_photometry_virus_volume_in_uL=fiber_photometry_virus_volume_in_uL,
-    #     shared_test_pulse=shared_test_pulse,
-    #     stub_test=stub_test,
-    # )
+    # Setup - MollyFP first subject
+    # Note: this example session actually contains data from two subjects, but only one is included in the NWB file.
+    # /Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/Setup - MollyFP/MollyFP-202508/M363_M366-250822-153604/A_Lindsay_TDTm_op1_pTra_2min-250822-153604/M363_M366-250822-153604
+    metadata_df = pd.read_csv(
+        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets disorganized/metadata/opto-signal sum/Sert-cre_DRN_2min-pTra-stim - GS - Sheet1.csv"
+    )
+    subject_id = "M363"
+    row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
+    sex = "M" if row["M"] == 1 else "F"
+    pst = ZoneInfo("US/Pacific")
+    dob = datetime.datetime.strptime(row["DOB"], "%m/%d/%Y").replace(tzinfo=pst)
+    optogenetic_site_name = row["Stim region"]
+    fiber_photometry_site_name = row["Record region"]
+    record_fiber = 1
+    shared_test_pulse = True
+    virus_volume_column_names = [name for name in metadata_df.columns if name.startswith("virus volume")]
+    optogenetic_virus_volume_column_name = virus_volume_column_names[0]
+    fiber_photometry_virus_volume_column_name = virus_volume_column_names[1]
+    optogenetic_virus_volume_in_nL = float(
+        row[optogenetic_virus_volume_column_name].replace("nL", "")
+    )  # 300nL --> 300.0
+    optogenetic_virus_volume_in_uL = optogenetic_virus_volume_in_nL / 1000.0
+    fiber_photometry_virus_volume_in_nL = float(
+        row[fiber_photometry_virus_volume_column_name].replace("nL", "")
+    )  # 300nL --> 300.0
+    fiber_photometry_virus_volume_in_uL = fiber_photometry_virus_volume_in_nL / 1000.0
+    info_file_path = (
+        data_dir_path
+        / "Setup - MollyFP"
+        / "MollyFP-202508"
+        / "M363_M366-250822-153604"
+        / "A_Lindsay_TDTm_op1_pTra_2min-250822-153604"
+        / "M363_M366-250822-153604"
+        / "Info.mat"
+    )
+    video_file_path = (
+        data_dir_path
+        / "Setup - MollyFP"
+        / "MollyFP-202508"
+        / "M363_M366-250822-153604"
+        / "A_Lindsay_TDTm_op1_pTra_2min-250822-153604"
+        / "M363_M366-250822-153604"
+        / "A_Lindsay_TDTm_op1_pTra_2min-250822-153604_M363_M366-250822-153604_Cam1.avi"
+    )
+    tdt_fp_folder_path = (
+        data_dir_path
+        / "Setup - MollyFP"
+        / "MollyFP-202508"
+        / "M363_M366-250822-153604"
+        / "A_Lindsay_TDTm_op1_pTra_2min-250822-153604"
+        / "M363_M366-250822-153604"
+    )
+    tdt_ephys_folder_path = (
+        data_dir_path
+        / "Setup - MollyFP"
+        / "MollyFP-202508"
+        / "M363_M366-250822-153604"
+        / "A_Lindsay_TDTm_op1_pTra_2min-250822-153604"
+    )
+    session_to_nwb(
+        info_file_path=info_file_path,
+        video_file_path=video_file_path,
+        tdt_fp_folder_path=tdt_fp_folder_path,
+        tdt_ephys_folder_path=tdt_ephys_folder_path,
+        stream_name="LFP1",
+        output_dir_path=output_dir_path,
+        subject_id=subject_id,
+        sex=sex,
+        dob=dob,
+        optogenetic_site_name=optogenetic_site_name,
+        fiber_photometry_site_name=fiber_photometry_site_name,
+        record_fiber=record_fiber,
+        optogenetic_virus_volume_in_uL=optogenetic_virus_volume_in_uL,
+        fiber_photometry_virus_volume_in_uL=fiber_photometry_virus_volume_in_uL,
+        shared_test_pulse=shared_test_pulse,
+        stub_test=stub_test,
+    )
 
-    # # Setup - MollyFP second subject
-    # # Note: this example session actually contains data from two subjects, but only one is included in the NWB file.
-    # # /Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/Setup - MollyFP/MollyFP-202508/M363_M366-250822-153604/A_Lindsay_TDTm_op1_pTra_2min-250822-153604/M363_M366-250822-153604
-    # metadata_df = pd.read_csv(
-    #     "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets disorganized/metadata/opto-signal sum/Sert-cre_DRN_2min-pTra-stim - GS - Sheet1.csv"
-    # )
-    # subject_id = "M366"
-    # row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
-    # sex = "M" if row["M"] == 1 else "F"
-    # pst = ZoneInfo("US/Pacific")
-    # dob = datetime.datetime.strptime(row["DOB"], "%m/%d/%Y").replace(tzinfo=pst)
-    # optogenetic_site_name = row["Stim region"]
-    # fiber_photometry_site_name = row["Record region"]
-    # record_fiber = 2
-    # shared_test_pulse = True
-    # virus_volume_column_names = [name for name in metadata_df.columns if name.startswith("virus volume")]
-    # optogenetic_virus_volume_column_name = virus_volume_column_names[0]
-    # fiber_photometry_virus_volume_column_name = virus_volume_column_names[1]
-    # optogenetic_virus_volume_in_nL = float(
-    #     row[optogenetic_virus_volume_column_name].replace("nL", "")
-    # )  # 300nL --> 300.0
-    # optogenetic_virus_volume_in_uL = optogenetic_virus_volume_in_nL / 1000.0
-    # fiber_photometry_virus_volume_in_nL = float(
-    #     row[fiber_photometry_virus_volume_column_name].replace("nL", "")
-    # )  # 300nL --> 300.0
-    # fiber_photometry_virus_volume_in_uL = fiber_photometry_virus_volume_in_nL / 1000.0
-    # info_file_path = (
-    #     data_dir_path
-    #     / "Setup - MollyFP"
-    #     / "MollyFP-202508"
-    #     / "M363_M366-250822-153604"
-    #     / "A_Lindsay_TDTm_op1_pTra_2min-250822-153604"
-    #     / "M363_M366-250822-153604"
-    #     / "Info.mat"
-    # )
-    # video_file_path = (
-    #     data_dir_path
-    #     / "Setup - MollyFP"
-    #     / "MollyFP-202508"
-    #     / "M363_M366-250822-153604"
-    #     / "A_Lindsay_TDTm_op1_pTra_2min-250822-153604"
-    #     / "M363_M366-250822-153604"
-    #     / "A_Lindsay_TDTm_op1_pTra_2min-250822-153604_M363_M366-250822-153604_Cam2.avi"
-    # )
-    # tdt_fp_folder_path = (
-    #     data_dir_path
-    #     / "Setup - MollyFP"
-    #     / "MollyFP-202508"
-    #     / "M363_M366-250822-153604"
-    #     / "A_Lindsay_TDTm_op1_pTra_2min-250822-153604"
-    #     / "M363_M366-250822-153604"
-    # )
-    # tdt_ephys_folder_path = (
-    #     data_dir_path
-    #     / "Setup - MollyFP"
-    #     / "MollyFP-202508"
-    #     / "M363_M366-250822-153604"
-    #     / "A_Lindsay_TDTm_op1_pTra_2min-250822-153604"
-    # )
-    # session_to_nwb(
-    #     info_file_path=info_file_path,
-    #     video_file_path=video_file_path,
-    #     tdt_fp_folder_path=tdt_fp_folder_path,
-    #     tdt_ephys_folder_path=tdt_ephys_folder_path,
-    #     stream_name="LFP2",
-    #     output_dir_path=output_dir_path,
-    #     subject_id=subject_id,
-    #     sex=sex,
-    #     dob=dob,
-    #     optogenetic_site_name=optogenetic_site_name,
-    #     fiber_photometry_site_name=fiber_photometry_site_name,
-    #     record_fiber=record_fiber,
-    #     shared_test_pulse=shared_test_pulse,
-    #     optogenetic_virus_volume_in_uL=optogenetic_virus_volume_in_uL,
-    #     fiber_photometry_virus_volume_in_uL=fiber_photometry_virus_volume_in_uL,
-    #     stub_test=stub_test,
-    # )
+    # Setup - MollyFP second subject
+    # Note: this example session actually contains data from two subjects, but only one is included in the NWB file.
+    # /Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/Setup - MollyFP/MollyFP-202508/M363_M366-250822-153604/A_Lindsay_TDTm_op1_pTra_2min-250822-153604/M363_M366-250822-153604
+    metadata_df = pd.read_csv(
+        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets disorganized/metadata/opto-signal sum/Sert-cre_DRN_2min-pTra-stim - GS - Sheet1.csv"
+    )
+    subject_id = "M366"
+    row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
+    sex = "M" if row["M"] == 1 else "F"
+    pst = ZoneInfo("US/Pacific")
+    dob = datetime.datetime.strptime(row["DOB"], "%m/%d/%Y").replace(tzinfo=pst)
+    optogenetic_site_name = row["Stim region"]
+    fiber_photometry_site_name = row["Record region"]
+    record_fiber = 2
+    shared_test_pulse = True
+    virus_volume_column_names = [name for name in metadata_df.columns if name.startswith("virus volume")]
+    optogenetic_virus_volume_column_name = virus_volume_column_names[0]
+    fiber_photometry_virus_volume_column_name = virus_volume_column_names[1]
+    optogenetic_virus_volume_in_nL = float(
+        row[optogenetic_virus_volume_column_name].replace("nL", "")
+    )  # 300nL --> 300.0
+    optogenetic_virus_volume_in_uL = optogenetic_virus_volume_in_nL / 1000.0
+    fiber_photometry_virus_volume_in_nL = float(
+        row[fiber_photometry_virus_volume_column_name].replace("nL", "")
+    )  # 300nL --> 300.0
+    fiber_photometry_virus_volume_in_uL = fiber_photometry_virus_volume_in_nL / 1000.0
+    info_file_path = (
+        data_dir_path
+        / "Setup - MollyFP"
+        / "MollyFP-202508"
+        / "M363_M366-250822-153604"
+        / "A_Lindsay_TDTm_op1_pTra_2min-250822-153604"
+        / "M363_M366-250822-153604"
+        / "Info.mat"
+    )
+    video_file_path = (
+        data_dir_path
+        / "Setup - MollyFP"
+        / "MollyFP-202508"
+        / "M363_M366-250822-153604"
+        / "A_Lindsay_TDTm_op1_pTra_2min-250822-153604"
+        / "M363_M366-250822-153604"
+        / "A_Lindsay_TDTm_op1_pTra_2min-250822-153604_M363_M366-250822-153604_Cam2.avi"
+    )
+    tdt_fp_folder_path = (
+        data_dir_path
+        / "Setup - MollyFP"
+        / "MollyFP-202508"
+        / "M363_M366-250822-153604"
+        / "A_Lindsay_TDTm_op1_pTra_2min-250822-153604"
+        / "M363_M366-250822-153604"
+    )
+    tdt_ephys_folder_path = (
+        data_dir_path
+        / "Setup - MollyFP"
+        / "MollyFP-202508"
+        / "M363_M366-250822-153604"
+        / "A_Lindsay_TDTm_op1_pTra_2min-250822-153604"
+    )
+    session_to_nwb(
+        info_file_path=info_file_path,
+        video_file_path=video_file_path,
+        tdt_fp_folder_path=tdt_fp_folder_path,
+        tdt_ephys_folder_path=tdt_ephys_folder_path,
+        stream_name="LFP2",
+        output_dir_path=output_dir_path,
+        subject_id=subject_id,
+        sex=sex,
+        dob=dob,
+        optogenetic_site_name=optogenetic_site_name,
+        fiber_photometry_site_name=fiber_photometry_site_name,
+        record_fiber=record_fiber,
+        shared_test_pulse=shared_test_pulse,
+        optogenetic_virus_volume_in_uL=optogenetic_virus_volume_in_uL,
+        fiber_photometry_virus_volume_in_uL=fiber_photometry_virus_volume_in_uL,
+        stub_test=stub_test,
+    )
 
     # opto-behavioral sum Example Sessions
     # ------------------------------------------------------------------------------------------------------------------
