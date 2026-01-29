@@ -628,7 +628,73 @@ def main():
     )
 
     # Setup - MollyFP
-    # '/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets disorganized/Setup - MollyFP/MollyFP-202507/M363_M364-250721-191039'
+    # '/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/Setup - MollyFP/MollyFP-202507/M363_M364-250721-191039/A_Lindsay_TDTm_op1_pTra_2min-250721-190941/M363_M364-250721-191039'
+    metadata_df = pd.read_csv(
+        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-behavioral sum/Sert-cre_DRN_2min-pTra-stim - GS - edited - Sheet1.csv"
+    )
+    subject_id = "M363"
+    row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
+    sex = "M" if row["M"] == 1 else "F"
+    pst = ZoneInfo("US/Pacific")
+    dob = datetime.datetime.strptime(row["DOB"], "%m/%d/%Y").replace(tzinfo=pst)
+    optogenetic_site_name = row["Stim region"]
+    record_fiber = 1
+    virus_volume_column_names = [name for name in metadata_df.columns if name.startswith("virus volume")]
+    optogenetic_virus_volume_column_name = virus_volume_column_names[0]
+    optogenetic_virus_volume_in_nL = float(
+        row[optogenetic_virus_volume_column_name].replace("nL", "")
+    )  # 300nL --> 300.0
+    optogenetic_virus_volume_in_uL = optogenetic_virus_volume_in_nL / 1000.0
+    info_file_path = (
+        data_dir_path
+        / "Setup - MollyFP"
+        / "MollyFP-202507"
+        / "M363_M364-250721-191039"
+        / "A_Lindsay_TDTm_op1_pTra_2min-250721-190941"
+        / "M363_M364-250721-191039"
+        / "Info.mat"
+    )
+    video_file_path = (
+        data_dir_path
+        / "Setup - MollyFP"
+        / "MollyFP-202507"
+        / "M363_M364-250721-191039"
+        / "A_Lindsay_TDTm_op1_pTra_2min-250721-190941"
+        / "M363_M364-250721-191039"
+        / "A_Lindsay_TDTm_op1_pTra_2min-250721-190941_M363_M364-250721-191039_Cam1.avi"
+    )
+    tdt_fp_folder_path = (
+        data_dir_path
+        / "Setup - MollyFP"
+        / "MollyFP-202507"
+        / "M363_M364-250721-191039"
+        / "A_Lindsay_TDTm_op1_pTra_2min-250721-190941"
+        / "M363_M364-250721-191039"
+    )
+    tdt_ephys_folder_path = (
+        data_dir_path
+        / "Setup - MollyFP"
+        / "MollyFP-202507"
+        / "M363_M364-250721-191039"
+        / "A_Lindsay_TDTm_op1_pTra_2min-250721-190941"
+    )
+    session_to_nwb(
+        info_file_path=info_file_path,
+        video_file_path=video_file_path,
+        tdt_ephys_folder_path=tdt_ephys_folder_path,
+        tdt_fp_folder_path=tdt_fp_folder_path,
+        stream_name="LFP2",
+        output_dir_path=output_dir_path,
+        subject_id=subject_id,
+        sex=sex,
+        dob=dob,
+        optogenetic_site_name=optogenetic_site_name,
+        record_fiber=record_fiber,
+        optogenetic_virus_volume_in_uL=optogenetic_virus_volume_in_uL,
+        stub_test=stub_test,
+        skip_fiber_photometry=True,
+        shared_test_pulse=True,
+    )
 
 
 if __name__ == "__main__":
