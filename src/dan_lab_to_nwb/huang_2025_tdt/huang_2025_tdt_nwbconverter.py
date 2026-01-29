@@ -28,7 +28,7 @@ class Huang2025NWBConverter(NWBConverter):
     )
 
     def temporally_align_data_interfaces(self, metadata: dict | None = None, conversion_options: dict | None = None):
-        tdt_fp_folder_path = Path(self.data_interface_objects["FiberPhotometry"].source_data["folder_path"])
+        tdt_fp_folder_path = Path(self.data_interface_objects["Optogenetics"].source_data["folder_path"])
         with open(os.devnull, "w") as f, redirect_stdout(f):
             tdt_photometry = tdt.read_block(tdt_fp_folder_path, evtype=["epocs"])
         video_timestamps = tdt_photometry.epocs["Cam1"].onset[:]
