@@ -38,9 +38,16 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
     keywords = ["optogenetics"]
 
     def __init__(
-        self, folder_path: DirectoryPath, optogenetic_site_name: str, record_fiber: int, shared_test_pulse: bool = False
+        self,
+        folder_path: DirectoryPath,
+        optogenetic_site_name: str,
+        record_fiber: int,
+        virus_volume_in_uL: float,
+        shared_test_pulse: bool = False,
     ):
-        super().__init__(folder_path=folder_path, optogenetic_site_name=optogenetic_site_name)
+        super().__init__(
+            folder_path=folder_path, optogenetic_site_name=optogenetic_site_name, virus_volume_in_uL=virus_volume_in_uL
+        )
 
         folder_path = Path(folder_path)
         # file_pattern_to_epoc_names = {
@@ -96,6 +103,7 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
     def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict):
         folder_path = Path(self.source_data["folder_path"])
         optogenetic_site_name = self.source_data["optogenetic_site_name"]
+        virus_volume_in_uL = self.source_data["virus_volume_in_uL"]
         with open(os.devnull, "w") as f, redirect_stdout(f):
             tdt_photometry = tdt.read_block(folder_path, evtype=["epocs"])
 
@@ -147,6 +155,7 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
         for virus_injection_metadata in opto_metadata["OptogeneticVirusInjections"]:
             if not optogenetic_site_name in virus_injection_metadata["name"]:
                 continue
+            virus_injection_metadata["volume_in_uL"] = virus_volume_in_uL
             if virus_injection_metadata["viral_vector"] in name_to_virus:
                 virus_injection_metadata["viral_vector"] = name_to_virus[virus_injection_metadata["viral_vector"]]
             else:

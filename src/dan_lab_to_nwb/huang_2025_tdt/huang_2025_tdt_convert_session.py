@@ -27,6 +27,8 @@ def session_to_nwb(
     dob: str,
     optogenetic_site_name: str,
     fiber_photometry_site_name: str,
+    optogenetic_virus_volume_in_uL: float,
+    fiber_photometry_virus_volume_in_uL: float,
     shared_test_pulse: bool = False,
     stub_test: bool = False,
     verbose: bool = True,
@@ -69,6 +71,7 @@ def session_to_nwb(
         optogenetic_site_name=optogenetic_site_name,
         record_fiber=record_fiber,
         shared_test_pulse=shared_test_pulse,
+        virus_volume_in_uL=optogenetic_virus_volume_in_uL,
     )
     conversion_options["Optogenetics"] = dict()
 
@@ -106,11 +109,11 @@ def session_to_nwb(
     filtered_fp_metadata["FiberPhotometryViruses"] = [
         virus for virus in fp_metadata["FiberPhotometryViruses"] if fiber_photometry_site_name in virus["name"]
     ]
-    filtered_fp_metadata["FiberPhotometryVirusInjections"] = [
-        injection
-        for injection in fp_metadata["FiberPhotometryVirusInjections"]
-        if fiber_photometry_site_name in injection["name"]
-    ]
+    filtered_fp_metadata["FiberPhotometryVirusInjections"] = []
+    for injection_meta in fp_metadata["FiberPhotometryVirusInjections"]:
+        injection_meta["volume_in_uL"] = fiber_photometry_virus_volume_in_uL
+        if fiber_photometry_site_name in injection_meta["name"]:
+            filtered_fp_metadata["FiberPhotometryVirusInjections"].append(injection_meta)
     filtered_fp_metadata["FiberPhotometryIndicators"] = [
         indicator
         for indicator in fp_metadata["FiberPhotometryIndicators"]
@@ -181,6 +184,17 @@ def main():
     record_fiber_column_name = record_fiber_column_names[session_index]
     record_fiber = int(row[record_fiber_column_name])
     fiber_photometry_site_name = row["Record region"]
+    virus_volume_column_names = [name for name in metadata_df.columns if name.startswith("virus volume")]
+    optogenetic_virus_volume_column_name = virus_volume_column_names[0]
+    fiber_photometry_virus_volume_column_name = virus_volume_column_names[1]
+    optogenetic_virus_volume_in_nL = float(
+        row[optogenetic_virus_volume_column_name].replace("nL", "")
+    )  # 300nL --> 300.0
+    optogenetic_virus_volume_in_uL = optogenetic_virus_volume_in_nL / 1000.0
+    fiber_photometry_virus_volume_in_nL = float(
+        row[fiber_photometry_virus_volume_column_name].replace("nL", "")
+    )  # 300nL --> 300.0
+    fiber_photometry_virus_volume_in_uL = fiber_photometry_virus_volume_in_nL / 1000.0
 
     info_file_path = (
         data_dir_path
@@ -229,6 +243,8 @@ def main():
         fiber_photometry_site_name=fiber_photometry_site_name,
         stub_test=stub_test,
         stream_name="LFP1",
+        optogenetic_virus_volume_in_uL=optogenetic_virus_volume_in_uL,
+        fiber_photometry_virus_volume_in_uL=fiber_photometry_virus_volume_in_uL,
     )
 
     # Setup - WS8
@@ -249,6 +265,17 @@ def main():
     record_fiber_column_name = record_fiber_column_names[session_index]
     record_fiber = int(row[record_fiber_column_name])
     fiber_photometry_site_name = row["Record region"]
+    virus_volume_column_names = [name for name in metadata_df.columns if name.startswith("virus volume")]
+    optogenetic_virus_volume_column_name = virus_volume_column_names[0]
+    fiber_photometry_virus_volume_column_name = virus_volume_column_names[1]
+    optogenetic_virus_volume_in_nL = float(
+        row[optogenetic_virus_volume_column_name].replace("nL", "")
+    )  # 300nL --> 300.0
+    optogenetic_virus_volume_in_uL = optogenetic_virus_volume_in_nL / 1000.0
+    fiber_photometry_virus_volume_in_nL = float(
+        row[fiber_photometry_virus_volume_column_name].replace("nL", "")
+    )  # 300nL --> 300.0
+    fiber_photometry_virus_volume_in_uL = fiber_photometry_virus_volume_in_nL / 1000.0
     info_file_path = (
         data_dir_path
         / "Setup - WS8"
@@ -299,6 +326,8 @@ def main():
         dob=dob,
         optogenetic_site_name=optogenetic_site_name,
         fiber_photometry_site_name=fiber_photometry_site_name,
+        optogenetic_virus_volume_in_uL=optogenetic_virus_volume_in_uL,
+        fiber_photometry_virus_volume_in_uL=fiber_photometry_virus_volume_in_uL,
         stub_test=stub_test,
     )
 
@@ -317,6 +346,17 @@ def main():
     fiber_photometry_site_name = row["Record region"]
     record_fiber = 1
     shared_test_pulse = True
+    virus_volume_column_names = [name for name in metadata_df.columns if name.startswith("virus volume")]
+    optogenetic_virus_volume_column_name = virus_volume_column_names[0]
+    fiber_photometry_virus_volume_column_name = virus_volume_column_names[1]
+    optogenetic_virus_volume_in_nL = float(
+        row[optogenetic_virus_volume_column_name].replace("nL", "")
+    )  # 300nL --> 300.0
+    optogenetic_virus_volume_in_uL = optogenetic_virus_volume_in_nL / 1000.0
+    fiber_photometry_virus_volume_in_nL = float(
+        row[fiber_photometry_virus_volume_column_name].replace("nL", "")
+    )  # 300nL --> 300.0
+    fiber_photometry_virus_volume_in_uL = fiber_photometry_virus_volume_in_nL / 1000.0
     info_file_path = (
         data_dir_path
         / "Setup - MollyFP"
@@ -363,6 +403,8 @@ def main():
         optogenetic_site_name=optogenetic_site_name,
         fiber_photometry_site_name=fiber_photometry_site_name,
         record_fiber=record_fiber,
+        optogenetic_virus_volume_in_uL=optogenetic_virus_volume_in_uL,
+        fiber_photometry_virus_volume_in_uL=fiber_photometry_virus_volume_in_uL,
         shared_test_pulse=shared_test_pulse,
         stub_test=stub_test,
     )
@@ -382,6 +424,17 @@ def main():
     fiber_photometry_site_name = row["Record region"]
     record_fiber = 2
     shared_test_pulse = True
+    virus_volume_column_names = [name for name in metadata_df.columns if name.startswith("virus volume")]
+    optogenetic_virus_volume_column_name = virus_volume_column_names[0]
+    fiber_photometry_virus_volume_column_name = virus_volume_column_names[1]
+    optogenetic_virus_volume_in_nL = float(
+        row[optogenetic_virus_volume_column_name].replace("nL", "")
+    )  # 300nL --> 300.0
+    optogenetic_virus_volume_in_uL = optogenetic_virus_volume_in_nL / 1000.0
+    fiber_photometry_virus_volume_in_nL = float(
+        row[fiber_photometry_virus_volume_column_name].replace("nL", "")
+    )  # 300nL --> 300.0
+    fiber_photometry_virus_volume_in_uL = fiber_photometry_virus_volume_in_nL / 1000.0
     info_file_path = (
         data_dir_path
         / "Setup - MollyFP"
@@ -429,6 +482,8 @@ def main():
         fiber_photometry_site_name=fiber_photometry_site_name,
         record_fiber=record_fiber,
         shared_test_pulse=shared_test_pulse,
+        optogenetic_virus_volume_in_uL=optogenetic_virus_volume_in_uL,
+        fiber_photometry_virus_volume_in_uL=fiber_photometry_virus_volume_in_uL,
         stub_test=stub_test,
     )
 
