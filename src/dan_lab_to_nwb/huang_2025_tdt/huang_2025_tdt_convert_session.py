@@ -560,11 +560,11 @@ def main():
     )
 
     # Setup - WS8
-    # '/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/Setup - WS8/WS8-202504/M303_M042-250430-082001/A_Lindsay_SBO_opto1_E_2miceRand-250430-003440_M308_M309-250430-082001/M303_M042-250430-082001'
+    # '/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/Setup - WS8/WS8-202506/M361_M337-250609-081001/A_Lindsay_SBO_opto1_E_2miceRand-250609-081001/M361_M337-250609-081001'
     metadata_df = pd.read_csv(
         "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-behavioral sum/ChAT-cre_BF_2min-20Hz-stim - GS - Sheet1.csv"
     )
-    subject_id = "M042"
+    subject_id = "M337"
     row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
     sex = "M" if row["M"] == 1 else "F"
     pst = ZoneInfo("US/Pacific")
@@ -580,35 +580,35 @@ def main():
     info_file_path = (
         data_dir_path
         / "Setup - WS8"
-        / "WS8-202504"
-        / "M303_M042-250430-082001"
-        / "A_Lindsay_SBO_opto1_E_2miceRand-250430-003440_M308_M309-250430-082001"
-        / "M303_M042-250430-082001"
+        / "WS8-202506"
+        / "M361_M337-250609-081001"
+        / "A_Lindsay_SBO_opto1_E_2miceRand-250609-081001"
+        / "M361_M337-250609-081001"
         / "Info.mat"
     )
     video_file_path = (
         data_dir_path
         / "Setup - WS8"
-        / "WS8-202504"
-        / "M303_M042-250430-082001"
-        / "A_Lindsay_SBO_opto1_E_2miceRand-250430-003440_M308_M309-250430-082001"
-        / "M303_M042-250430-082001"
-        / "A_Lindsay_SBO_opto1_E_2miceRand-250430-003440_M308_M309-250430-082001_Cam2.avi"
+        / "WS8-202506"
+        / "M361_M337-250609-081001"
+        / "A_Lindsay_SBO_opto1_E_2miceRand-250609-081001"
+        / "M361_M337-250609-081001"
+        / "A_Lindsay_SBO_opto1_E_2miceRand-250609-081001_M361_M337-250609-081001_Cam2.avi"
     )
     tdt_fp_folder_path = (
         data_dir_path
         / "Setup - WS8"
-        / "WS8-202504"
-        / "M303_M042-250430-082001"
-        / "A_Lindsay_SBO_opto1_E_2miceRand-250430-003440_M308_M309-250430-082001"
-        / "M303_M042-250430-082001"
+        / "WS8-202506"
+        / "M361_M337-250609-081001"
+        / "A_Lindsay_SBO_opto1_E_2miceRand-250609-081001"
+        / "M361_M337-250609-081001"
     )
     tdt_ephys_folder_path = (
         data_dir_path
         / "Setup - WS8"
-        / "WS8-202504"
-        / "M303_M042-250430-082001"
-        / "A_Lindsay_SBO_opto1_E_2miceRand-250430-003440_M308_M309-250430-082001"
+        / "WS8-202506"
+        / "M361_M337-250609-081001"
+        / "A_Lindsay_SBO_opto1_E_2miceRand-250609-081001"
     )
     session_to_nwb(
         info_file_path=info_file_path,
