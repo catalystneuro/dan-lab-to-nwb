@@ -492,7 +492,7 @@ def main():
     # opto-behavioral sum Example Sessions
     # ------------------------------------------------------------------------------------------------------------------
     # Setup - Bing
-    # '/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/Setup - Bing/202408-old setting/M008-240819-071001/Lindsay_SBO_opto1-Evoke12_2in1-240817-154318_BBB8-240819-071001/M008-240819-071001'
+    # '/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/Setup - Bing/202408-old setting/M008-240819-071001/Lindsay_SBO_opto1-Evoke12_2in1-240817-154318_M008-240819-071001/M008-240819-071001'
     metadata_df = pd.read_csv(
         "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-behavioral sum/ChAT-cre_BF_2min-20Hz-stim - GS - Sheet1.csv"
     )
@@ -513,33 +513,33 @@ def main():
         data_dir_path
         / "Setup - Bing"
         / "202408-old setting"
-        / "BBB8-240819-071001"
+        / "M008-240819-071001"
         / "Lindsay_SBO_opto1-Evoke12_2in1-240817-154318"
-        / "BBB8-240819-071001"
+        / "M008-240819-071001"
         / "Info.mat"
     )
     video_file_path = (
         data_dir_path
         / "Setup - Bing"
         / "202408-old setting"
-        / "BBB8-240819-071001"
+        / "M008-240819-071001"
         / "Lindsay_SBO_opto1-Evoke12_2in1-240817-154318"
-        / "BBB8-240819-071001"
-        / "Lindsay_SBO_opto1-Evoke12_2in1-240817-154318_BBB8-240819-071001_Cam1.avi"
+        / "M008-240819-071001"
+        / "Lindsay_SBO_opto1-Evoke12_2in1-240817-154318_M008-240819-071001_Cam1.avi"
     )
     tdt_fp_folder_path = (
         data_dir_path
         / "Setup - Bing"
         / "202408-old setting"
-        / "BBB8-240819-071001"
+        / "M008-240819-071001"
         / "Lindsay_SBO_opto1-Evoke12_2in1-240817-154318"
-        / "BBB8-240819-071001"
+        / "M008-240819-071001"
     )
     tdt_ephys_folder_path = (
         data_dir_path
         / "Setup - Bing"
         / "202408-old setting"
-        / "BBB8-240819-071001"
+        / "M008-240819-071001"
         / "Lindsay_SBO_opto1-Evoke12_2in1-240817-154318"
     )
     session_to_nwb(

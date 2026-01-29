@@ -138,6 +138,16 @@ def make_neo_compatible(tdt_folder: Path, parent_folder: Path):
     if tdt_folder.name.startswith("._"):
         return
 
+    # Special case for M008: Rename files containing BBB8 to M008
+    if "M008" in tdt_folder.name:
+        print(f"Applying M008 special case - renaming BBB8 files to M008")
+        for file_path in tdt_folder.glob("*BBB8*"):
+            if file_path.is_file():
+                new_name = file_path.name.replace("BBB8", "M008")
+                new_path = file_path.parent / new_name
+                file_path.rename(new_path)
+                print(f"  Renamed: {file_path.name} → {new_name}")
+
     # Find .tsq file to extract session name (exclude Mac hidden files)
     tsq_files = [f for f in tdt_folder.glob("*.tsq") if not f.name.startswith("._")]
 
