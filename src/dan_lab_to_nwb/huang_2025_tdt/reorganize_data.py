@@ -8,8 +8,10 @@ def find_tdt_folders(root_folder: Path, max_depth: int = 10) -> list[Path]:
     Recursively find all folders containing TDT data (identified by .tsq files).
 
     Searches through nested directory structure to find folders that contain
-    .tsq files at any depth. Once a folder with .tsq files is found, does not
-    search its subdirectories (assumes TDT data is at leaf level).
+    .tsq files at any depth. If a folder with .tsq files is found to be part
+    of an already Neo-compatible structure, returns the top-level folder instead.
+    Once a folder with .tsq files is found, does not search its subdirectories
+    (assumes TDT data is at leaf level).
 
     Parameters
     ----------
@@ -21,9 +23,11 @@ def find_tdt_folders(root_folder: Path, max_depth: int = 10) -> list[Path]:
     Returns
     -------
     list[Path]
-        List of paths to folders containing .tsq files
+        List of paths to folders containing .tsq files (or their top-level
+        Neo-compatible folders if already organized)
     """
     tdt_folders = []
+    seen_folders = set()  # Track folders we've already added
 
     def search(folder: Path, depth: int = 0):
         if depth > max_depth:
@@ -34,7 +38,21 @@ def find_tdt_folders(root_folder: Path, max_depth: int = 10) -> list[Path]:
             has_tsq_files = any(folder.glob("*.tsq"))
 
             if has_tsq_files:
-                tdt_folders.append(folder)
+                # Determine which folder to add
+                if is_innermost_of_neo_structure(folder):
+                    # Return the top-level folder (grandparent) instead
+                    folder_to_add = folder.parent.parent
+                    print(f"Found already-organized Neo structure: {folder_to_add.name}")
+                else:
+                    # Regular unorganized TDT folder
+                    folder_to_add = folder
+
+                # Only add if we haven't seen this folder before
+                folder_path_str = str(folder_to_add.resolve())
+                if folder_path_str not in seen_folders:
+                    tdt_folders.append(folder_to_add)
+                    seen_folders.add(folder_path_str)
+
                 # Stop searching subdirectories - TDT data is here
                 return
 
@@ -78,6 +96,50 @@ def extract_session_name(tsq_file_path: Path, tdt_folder_name: str) -> str:
     session_name = filename_stem.replace(f"_{tdt_folder_name}", "").replace(tdt_folder_name, "").strip("_")
 
     return session_name
+
+
+def is_innermost_of_neo_structure(folder: Path) -> bool:
+    """
+    Check if a folder is the innermost part of an already Neo-compatible structure.
+
+    A folder is considered innermost of Neo structure if:
+    - It contains .tsq files
+    - Its parent is a session folder
+    - Its grandparent has the same name as the folder itself
+
+    Example structure this detects:
+        M296-241018-072001/              ← grandparent (same name as folder)
+            Lindsay_SBO.../              ← parent (session folder)
+                M296-241018-072001/      ← folder (contains .tsq files)
+
+    Parameters
+    ----------
+    folder : Path
+        The folder to check
+
+    Returns
+    -------
+    bool
+        True if folder is innermost part of Neo structure, False otherwise
+    """
+    try:
+        # Check if this folder has a grandparent
+        if folder.parent is None or folder.parent.parent is None:
+            return False
+
+        # Check if grandparent exists and has same name as this folder
+        grandparent = folder.parent.parent
+        if not grandparent.exists():
+            return False
+
+        # Key check: grandparent name should match this folder's name
+        if grandparent.name == folder.name:
+            return True
+
+        return False
+
+    except (OSError, AttributeError):
+        return False
 
 
 def is_neo_compatible(tdt_folder: Path) -> bool:
