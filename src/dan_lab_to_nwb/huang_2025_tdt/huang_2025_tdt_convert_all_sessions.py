@@ -9,7 +9,7 @@ from typing import Union
 from zoneinfo import ZoneInfo
 
 import pandas as pd
-from pydantic import DirectoryPath
+from pydantic import DirectoryPath, FilePath
 from pymatreader import read_mat
 from tqdm import tqdm
 
@@ -101,7 +101,7 @@ def get_nwbfile_name(*, session_to_nwb_kwargs: dict) -> str:
     return nwbfile_name
 
 
-def read_excel_metadata(*, metadata_folder_path: DirectoryPath):
+def collect_excel_metadata(*, metadata_folder_path: DirectoryPath):
     """Read metadata from Excel files in the specified folder.
 
     Parameters
@@ -114,64 +114,81 @@ def read_excel_metadata(*, metadata_folder_path: DirectoryPath):
     dict
         A dictionary mapping subject IDs to their metadata.
     """
-    pst = ZoneInfo("US/Pacific")
-    subject_id_to_metadata = {}
+    sheet_name_to_subject_id_to_metadata: dict[str, dict[str, dict]] = {}
     metadata_folder_path = Path(metadata_folder_path)
-    metadata_sub_folder_names = ["opto-signal sum", "opto-behavioral sum"]
-    for sub_folder_name in metadata_sub_folder_names:
-        metadata_sub_folder_path = metadata_folder_path / sub_folder_name
-        for excel_file in metadata_sub_folder_path.glob("*.csv"):
-            if excel_file.name.startswith("._"):
+    for excel_file in metadata_folder_path.glob("*.csv"):
+        if excel_file.name.startswith("._"):
+            continue
+        subject_id_to_metadata = read_metadata(excel_file)
+        sheet_name_to_subject_id_to_metadata[excel_file.stem] = subject_id_to_metadata
+    return sheet_name_to_subject_id_to_metadata
+
+
+def read_metadata(excel_file: FilePath) -> dict[str, dict]:
+    """Read metadata from a single csv file.
+
+    Parameters
+    ----------
+    pst : ZoneInfo
+        The Pacific time zone info.
+    excel_file : Path
+        The path to the metadata csv file.
+
+    Returns
+    -------
+    dict
+        A dictionary mapping subject IDs to their metadata.
+    """
+    subject_id_to_metadata = {}
+    pst = ZoneInfo("US/Pacific")
+    df = pd.read_csv(excel_file)
+    date_column_names = [name for name in df.columns if name.startswith("date")]
+    setup_column_names = [name for name in df.columns if name.startswith("setup")]
+    record_fiber_column_names = [name for name in df.columns if name.startswith("Record fiber")]
+    for _, row in df.iterrows():
+        subject_id = row["mouse ID"]
+        if subject_id not in subject_id_to_metadata:
+            subject_id_to_metadata[subject_id] = {}
+        metadata = subject_id_to_metadata[subject_id]
+        metadata["sex"] = "M" if row["M"] == 1 else "F"
+        metadata["dob"] = datetime.datetime.strptime(row["DOB"], "%m/%d/%Y").replace(tzinfo=pst)
+        metadata["optogenetic_site_name"] = row["Stim region"]
+        virus_volume_column_names = [name for name in df.columns if name.startswith("virus volume")]
+        optogenetic_virus_volume_column_name = virus_volume_column_names[0]
+        optogenetic_virus_volume_in_nL = float(
+            row[optogenetic_virus_volume_column_name].replace("nL", "")
+        )  # 300nL --> 300.0
+        metadata["optogenetic_virus_volume_in_uL"] = optogenetic_virus_volume_in_nL / 1000.0
+        if "Record region" in df.columns:
+            metadata["fiber_photometry_site_name"] = row["Record region"]
+            fiber_photometry_virus_volume_column_name = virus_volume_column_names[1]
+            fiber_photometry_virus_volume_in_nL = float(
+                row[fiber_photometry_virus_volume_column_name].replace("nL", "")
+            )  # 300nL --> 300.0
+            metadata["fiber_photometry_virus_volume_in_uL"] = fiber_photometry_virus_volume_in_nL / 1000.0
+        if "session_dates" not in metadata:
+            metadata["session_dates"] = []
+        if "session_setups" not in metadata:
+            metadata["session_setups"] = []
+        if "record_fibers" not in metadata:
+            metadata["record_fibers"] = []
+        for date_column_name, setup_column_name, record_fiber_column_name in zip(
+            date_column_names, setup_column_names, record_fiber_column_names
+        ):
+            if pd.isna(row[date_column_name]):
                 continue
-            df = pd.read_csv(excel_file)
-            date_column_names = [name for name in df.columns if name.startswith("date")]
-            setup_column_names = [name for name in df.columns if name.startswith("setup")]
-            record_fiber_column_names = [name for name in df.columns if name.startswith("Record fiber")]
-            for _, row in df.iterrows():
-                subject_id = row["mouse ID"]
-                if subject_id not in subject_id_to_metadata:
-                    subject_id_to_metadata[subject_id] = {}
-                else:
-                    raise ValueError(f"Duplicate subject ID found: {subject_id} in file {excel_file.name}")
-                metadata = subject_id_to_metadata[subject_id]
-                metadata["sex"] = "M" if row["M"] == 1 else "F"
-                metadata["dob"] = datetime.datetime.strptime(row["DOB"], "%m/%d/%Y").replace(tzinfo=pst)
-                metadata["optogenetic_site_name"] = row["Stim region"]
-                metadata["fiber_photometry_site_name"] = row["Record region"]
-                virus_volume_column_names = [name for name in df.columns if name.startswith("virus volume")]
-                optogenetic_virus_volume_column_name = virus_volume_column_names[0]
-                fiber_photometry_virus_volume_column_name = virus_volume_column_names[1]
-                optogenetic_virus_volume_in_nL = float(
-                    row[optogenetic_virus_volume_column_name].replace("nL", "")
-                )  # 300nL --> 300.0
-                metadata["optogenetic_virus_volume_in_uL"] = optogenetic_virus_volume_in_nL / 1000.0
-                fiber_photometry_virus_volume_in_nL = float(
-                    row[fiber_photometry_virus_volume_column_name].replace("nL", "")
-                )  # 300nL --> 300.0
-                metadata["fiber_photometry_virus_volume_in_uL"] = fiber_photometry_virus_volume_in_nL / 1000.0
-                if "session_dates" not in metadata:
-                    metadata["session_dates"] = []
-                if "session_setups" not in metadata:
-                    metadata["session_setups"] = []
-                if "record_fibers" not in metadata:
-                    metadata["record_fibers"] = []
-                for date_column_name, setup_column_name, record_fiber_column_name in zip(
-                    date_column_names, setup_column_names, record_fiber_column_names
-                ):
-                    if pd.isna(row[date_column_name]):
-                        continue
-                    assert not pd.isna(
-                        row[setup_column_name]
-                    ), f"Setup missing for subject {subject_id} on date {row[date_column_name]}"
-                    assert not pd.isna(
-                        row[record_fiber_column_name]
-                    ), f"Record fiber missing for subject {subject_id} on date {row[date_column_name]}"
-                    session_date = datetime.datetime.strptime(row[date_column_name], "%m/%d/%Y").replace(tzinfo=pst)
-                    session_setup = row[setup_column_name]
-                    record_fiber = int(row[record_fiber_column_name])
-                    metadata["session_setups"].append(session_setup)
-                    metadata["session_dates"].append(session_date)
-                    metadata["record_fibers"].append(record_fiber)
+            assert not pd.isna(
+                row[setup_column_name]
+            ), f"Setup missing for subject {subject_id} on date {row[date_column_name]}"
+            assert not pd.isna(
+                row[record_fiber_column_name]
+            ), f"Record fiber missing for subject {subject_id} on date {row[date_column_name]}"
+            session_date = datetime.datetime.strptime(row[date_column_name], "%m/%d/%Y").replace(tzinfo=pst)
+            session_setup = row[setup_column_name]
+            record_fiber = int(row[record_fiber_column_name])
+            metadata["session_setups"].append(session_setup)
+            metadata["session_dates"].append(session_date)
+            metadata["record_fibers"].append(record_fiber)
     return subject_id_to_metadata
 
 
@@ -196,7 +213,21 @@ def get_session_to_nwb_kwargs_per_session(
 
     data_dir_path = Path(data_dir_path)
     metadata_folder_path = data_dir_path / "metadata"
-    subject_id_to_metadata = read_excel_metadata(metadata_folder_path=metadata_folder_path)
+    signal_metadata_folder_path = metadata_folder_path / "opto-signal sum"
+    signal_sheet_name_to_subject_id_to_metadata = collect_excel_metadata(
+        metadata_folder_path=signal_metadata_folder_path
+    )
+    behavioral_metadata_folder_path = metadata_folder_path / "opto-behavioral sum"
+    behavioral_sheet_name_to_subject_id_to_metadata = collect_excel_metadata(
+        metadata_folder_path=behavioral_metadata_folder_path
+    )
+    print(f"{len(signal_sheet_name_to_subject_id_to_metadata)} signal metadata files found.")
+    print(f"{len(behavioral_sheet_name_to_subject_id_to_metadata)} behavioral metadata files found.")
+    num_subjects = sum(
+        len(subject_id_to_metadata) for subject_id_to_metadata in signal_sheet_name_to_subject_id_to_metadata.values()
+    )
+    print(f"{num_subjects} subjects found in signal metadata.")
+    return
     session_to_nwb_kwargs_per_session = []
     dataset_folder_names = [
         "Setup - Bing",
