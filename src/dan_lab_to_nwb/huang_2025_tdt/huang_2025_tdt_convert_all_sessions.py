@@ -230,9 +230,6 @@ def get_session_to_nwb_kwargs_per_session(
     list[dict[str, Any]]
         A list of dictionaries containing the kwargs for session_to_nwb for each session.
     """
-    pst = ZoneInfo("US/Pacific")
-    sessions_to_skip = []
-
     data_dir_path = Path(data_dir_path)
     metadata_folder_path = data_dir_path / "metadata"
     metadata_subfolder_path = metadata_folder_path / metadata_subfolder_name
