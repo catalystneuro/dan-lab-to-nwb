@@ -41,8 +41,10 @@ def dataset_to_nwb(
     session_to_nwb_kwargs_per_session = get_session_to_nwb_kwargs_per_session(
         data_dir_path=data_dir_path,
         setup="Bing",
-        metadata_subfolder_name="opto-signal sum",
+        metadata_subfolder_name="opto-behavioral sum",
     )
+    for kwargs in session_to_nwb_kwargs_per_session:
+        kwargs["skip_fiber_photometry"] = True
 
     futures = []
     with ProcessPoolExecutor(max_workers=max_workers) as executor:
@@ -147,6 +149,7 @@ def read_metadata(excel_file: FilePath) -> dict[str, dict]:
     date_column_names = [name for name in df.columns if name.startswith("date")]
     setup_column_names = [name for name in df.columns if name.startswith("setup")]
     record_fiber_column_names = [name for name in df.columns if name.startswith("Record fiber")]
+    has_record_fiber = bool(len(record_fiber_column_names))
     for _, row in df.iterrows():
         subject_id = row["mouse ID"]
         if subject_id not in subject_id_to_metadata:
@@ -172,25 +175,27 @@ def read_metadata(excel_file: FilePath) -> dict[str, dict]:
             metadata["session_dates"] = []
         if "session_setups" not in metadata:
             metadata["session_setups"] = []
-        if "record_fibers" not in metadata:
+        if "record_fibers" not in metadata and has_record_fiber:
             metadata["record_fibers"] = []
-        for date_column_name, setup_column_name, record_fiber_column_name in zip(
-            date_column_names, setup_column_names, record_fiber_column_names
-        ):
+        for index, date_column_name in enumerate(date_column_names):
+            setup_column_name = setup_column_names[index]
             if pd.isna(row[date_column_name]):
                 continue
             assert not pd.isna(
                 row[setup_column_name]
             ), f"Setup missing for subject {subject_id} on date {row[date_column_name]}"
-            assert not pd.isna(
-                row[record_fiber_column_name]
-            ), f"Record fiber missing for subject {subject_id} on date {row[date_column_name]}"
             session_date = datetime.datetime.strptime(row[date_column_name], "%m/%d/%Y").replace(tzinfo=pst)
             session_setup = row[setup_column_name]
-            record_fiber = int(row[record_fiber_column_name])
             metadata["session_setups"].append(session_setup)
             metadata["session_dates"].append(session_date)
-            metadata["record_fibers"].append(record_fiber)
+
+            if has_record_fiber:
+                record_fiber_column_name = record_fiber_column_names[index]
+                assert not pd.isna(
+                    row[record_fiber_column_name]
+                ), f"Record fiber missing for subject {subject_id} on date {row[date_column_name]}"
+                record_fiber = int(row[record_fiber_column_name])
+                metadata["record_fibers"].append(record_fiber)
     return subject_id_to_metadata
 
 
