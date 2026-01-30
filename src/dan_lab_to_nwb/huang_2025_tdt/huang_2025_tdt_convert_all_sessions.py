@@ -38,13 +38,7 @@ def dataset_to_nwb(
         Whether to print verbose output, by default True
     """
     data_dir_path = Path(data_dir_path)
-    session_to_nwb_kwargs_per_session = get_session_to_nwb_kwargs_per_session(
-        data_dir_path=data_dir_path,
-        setup="Bing",
-        metadata_subfolder_name="opto-behavioral sum",
-    )
-    for kwargs in session_to_nwb_kwargs_per_session:
-        kwargs["skip_fiber_photometry"] = True
+    session_to_nwb_kwargs_per_session = collect_session_to_nwb_kwargs_per_session(data_dir_path=data_dir_path)
 
     futures = []
     with ProcessPoolExecutor(max_workers=max_workers) as executor:
@@ -197,6 +191,25 @@ def read_metadata(excel_file: FilePath) -> dict[str, dict]:
                 record_fiber = int(row[record_fiber_column_name])
                 metadata["record_fibers"].append(record_fiber)
     return subject_id_to_metadata
+
+
+def collect_session_to_nwb_kwargs_per_session(*, data_dir_path: DirectoryPath):
+    # setups = ["Bing", "WS8", "MollyFP"]
+    setups = ["Bing"]
+    metadata_subfolder_names = ["opto-signal sum", "opto-behavioral sum"]
+    all_session_to_nwb_kwargs_per_session = []
+    for setup in setups:
+        for metadata_subfolder_name in metadata_subfolder_names:
+            session_to_nwb_kwargs_per_session = get_session_to_nwb_kwargs_per_session(
+                data_dir_path=data_dir_path,
+                setup=setup,
+                metadata_subfolder_name=metadata_subfolder_name,
+            )
+            if metadata_subfolder_name == "opto-behavioral sum":
+                for kwargs in session_to_nwb_kwargs_per_session:
+                    kwargs["skip_fiber_photometry"] = True
+            all_session_to_nwb_kwargs_per_session.extend(session_to_nwb_kwargs_per_session)
+    return all_session_to_nwb_kwargs_per_session
 
 
 def get_session_to_nwb_kwargs_per_session(
