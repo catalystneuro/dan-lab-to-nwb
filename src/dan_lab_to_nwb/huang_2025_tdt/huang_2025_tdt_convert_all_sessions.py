@@ -244,7 +244,7 @@ def get_session_to_nwb_kwargs_per_session(
                 outer_session_folder_name = f"{subject_id}-{session_date.strftime('%y%m%d')}"
                 matched = False
                 for tdt_folder in tdt_folders:
-                    if tdt_folder.name.startswith(outer_session_folder_name):
+                    if subject_id in tdt_folder.name and session_date.strftime("%y%m%d") in tdt_folder.name:
                         matched = True
                         session_folder = next(p for p in tdt_folder.iterdir())
                         inner_session_folder = next(p for p in session_folder.iterdir())
@@ -292,7 +292,9 @@ def get_session_to_nwb_kwargs_per_session(
                         )
                         session_to_nwb_kwargs_per_session.append(session_to_nwb_kwargs)
                 if not matched:
-                    raise ValueError(f"No matching TDT folder found for {outer_session_folder_name}")
+                    raise ValueError(
+                        f"No matching TDT folder found for {outer_session_folder_name} in sheet {sheet_name}"
+                    )
 
     return session_to_nwb_kwargs_per_session
 
