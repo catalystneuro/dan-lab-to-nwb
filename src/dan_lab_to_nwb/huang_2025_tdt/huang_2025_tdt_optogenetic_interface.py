@@ -92,7 +92,7 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
                 raise ValueError(f"record_fiber must be 1 or 2, got {record_fiber}")
         for file_pattern, epoc_name in file_pattern_to_stim_epoc_name.items():
             if epoc_name is None:
-                continue
+                return
             if file_pattern in folder_path.parent.name:
                 self.epoc_names.append(epoc_name)
                 return

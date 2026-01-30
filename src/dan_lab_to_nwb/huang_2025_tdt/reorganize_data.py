@@ -42,7 +42,6 @@ def find_tdt_folders(root_folder: Path, max_depth: int = 10) -> list[Path]:
                 if is_innermost_of_neo_structure(folder):
                     # Return the top-level folder (grandparent) instead
                     folder_to_add = folder.parent.parent
-                    print(f"Found already-organized Neo structure: {folder_to_add.name}")
                 else:
                     # Regular unorganized TDT folder
                     folder_to_add = folder

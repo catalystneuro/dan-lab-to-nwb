@@ -5,7 +5,7 @@ import traceback
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 from pprint import pformat
-from typing import Union
+from typing import Literal, Union
 from zoneinfo import ZoneInfo
 
 import pandas as pd
@@ -14,6 +14,7 @@ from pymatreader import read_mat
 from tqdm import tqdm
 
 from dan_lab_to_nwb.huang_2025_tdt.huang_2025_tdt_convert_session import session_to_nwb
+from dan_lab_to_nwb.huang_2025_tdt.reorganize_data import find_tdt_folders
 
 
 def dataset_to_nwb(
@@ -39,8 +40,9 @@ def dataset_to_nwb(
     data_dir_path = Path(data_dir_path)
     session_to_nwb_kwargs_per_session = get_session_to_nwb_kwargs_per_session(
         data_dir_path=data_dir_path,
+        setup="Bing",
+        metadata_subfolder_name="opto-signal sum",
     )
-    return
 
     futures = []
     with ProcessPoolExecutor(max_workers=max_workers) as executor:
@@ -195,6 +197,8 @@ def read_metadata(excel_file: FilePath) -> dict[str, dict]:
 def get_session_to_nwb_kwargs_per_session(
     *,
     data_dir_path: DirectoryPath,
+    setup: Literal["Bing", "WS8", "MollyFP"],
+    metadata_subfolder_name: Literal["opto-signal sum", "opto-behavioral sum"],
 ):
     """Get the kwargs for session_to_nwb for each session in the dataset.
 
@@ -213,73 +217,59 @@ def get_session_to_nwb_kwargs_per_session(
 
     data_dir_path = Path(data_dir_path)
     metadata_folder_path = data_dir_path / "metadata"
-    signal_metadata_folder_path = metadata_folder_path / "opto-signal sum"
-    signal_sheet_name_to_subject_id_to_metadata = collect_excel_metadata(
-        metadata_folder_path=signal_metadata_folder_path
-    )
-    behavioral_metadata_folder_path = metadata_folder_path / "opto-behavioral sum"
-    behavioral_sheet_name_to_subject_id_to_metadata = collect_excel_metadata(
-        metadata_folder_path=behavioral_metadata_folder_path
-    )
-    print(f"{len(signal_sheet_name_to_subject_id_to_metadata)} signal metadata files found.")
-    print(f"{len(behavioral_sheet_name_to_subject_id_to_metadata)} behavioral metadata files found.")
-    num_subjects = sum(
-        len(subject_id_to_metadata) for subject_id_to_metadata in signal_sheet_name_to_subject_id_to_metadata.values()
-    )
-    print(f"{num_subjects} subjects found in signal metadata.")
-    return
-    session_to_nwb_kwargs_per_session = []
-    dataset_folder_names = [
-        "Setup - Bing",
-        "Setup - WS8",
-        "Setup - MollyFP",
-    ]
-    for folder_name in dataset_folder_names:
-        dataset_folder = data_dir_path / folder_name
-        for sub_folder in dataset_folder.iterdir():
-            if not sub_folder.is_dir():
-                continue
-            for outer_session_folder in sub_folder.iterdir():
-                # ex. M323-250120-142001 --> M323, M412_PN-250429-143001 --> M412_PN
-                subject_id = outer_session_folder.name.split("-")[0]
-                subject_id = subject_id.split("_")[0]  # ex. M323 --> M323, M412_PN --> M412
-                if subject_id.endswith("R") or subject_id.endswith("L"):
-                    subject_id = subject_id[:-1]  # ex. M267R --> M267, M267L --> M267
-                if subject_id.startswith("BBB"):
-                    subject_id = subject_id.replace("BBB", "M00")  # ex. BBB8 --> M008
-                session_date_str = outer_session_folder.name.split("-")[1]  # ex. M323-250120-142001 --> 250120
-                session_date = datetime.datetime.strptime(session_date_str, "%y%m%d").replace(tzinfo=pst)
-                if not outer_session_folder.is_dir():
-                    continue
-                if outer_session_folder.name in sessions_to_skip:
-                    continue
-                if subject_id not in subject_id_to_metadata:
-                    # Try alternative parsing for subject_id
-                    subject_id = outer_session_folder.name.split("-")[0]
-                    subject_id = subject_id.split("_")[1]  # ex. M342_M042 --> M042
-                    if subject_id.endswith("R") or subject_id.endswith("L"):
-                        subject_id = subject_id[:-1]  # ex. M267R --> M267, M267L --> M267
-                    if subject_id.startswith("BBB"):
-                        subject_id = subject_id.replace("BBB", "M00")  # ex. BBB8 --> M008
+    metadata_subfolder_path = metadata_folder_path / metadata_subfolder_name
+    sheet_name_to_subject_id_to_metadata = collect_excel_metadata(metadata_folder_path=metadata_subfolder_path)
 
-                    # If still not found, skip this subject
-                    if subject_id not in subject_id_to_metadata:
-                        continue
-                subject_metadata = subject_id_to_metadata[subject_id]
-                if session_date not in subject_metadata["session_dates"]:
+    session_to_nwb_kwargs_per_session = []
+    setup_folder_name = f"Setup - {setup}"
+    setup_folder = data_dir_path / setup_folder_name
+    tdt_folders = find_tdt_folders(root_folder=setup_folder)
+
+    for sheet_name, subject_id_to_metadata in sheet_name_to_subject_id_to_metadata.items():
+        for subject_id, metadata in subject_id_to_metadata.items():
+            for index, session_date in enumerate(metadata["session_dates"]):
+                session_setup = metadata["session_setups"][index]
+                if "record_fibers" in metadata:
+                    record_fiber = metadata["record_fibers"][index]
+                else:
+                    record_fiber = None
+                if session_setup != setup:
                     continue
-                sex = subject_metadata["sex"]
-                dob = subject_metadata["dob"]
-                for session_folder in outer_session_folder.iterdir():
-                    if not session_folder.is_dir():
-                        continue
-                    for segment_folder in session_folder.iterdir():
-                        if not segment_folder.is_dir():
-                            continue
-                        info_file_path = segment_folder / "Info.mat"
-                        video_file_path = next(segment_folder.glob("*.avi"))
-                        tdt_fp_folder_path = segment_folder
+
+                outer_session_folder_name = f"{subject_id}-{session_date.strftime('%y%m%d')}"
+                matched = False
+                for tdt_folder in tdt_folders:
+                    if tdt_folder.name.startswith(outer_session_folder_name):
+                        matched = True
+                        session_folder = next(p for p in tdt_folder.iterdir())
+                        inner_session_folder = next(p for p in session_folder.iterdir())
+
+                        info_file_path = inner_session_folder / "Info.mat"
+                        tdt_fp_folder_path = inner_session_folder
                         tdt_ephys_folder_path = session_folder
+                        sex = metadata["sex"]
+                        dob = metadata["dob"]
+                        optogenetic_site_name = metadata["optogenetic_site_name"]
+                        optogenetic_virus_volume_in_uL = metadata["optogenetic_virus_volume_in_uL"]
+                        fiber_photometry_site_name = metadata.get("fiber_photometry_site_name", None)
+                        fiber_photometry_virus_volume_in_uL = metadata.get("fiber_photometry_virus_volume_in_uL", None)
+
+                        # Handle double-subject sessions
+                        is_double_subject = len(tdt_folder.name.split("-")[0].split("_")) > 1
+                        if is_double_subject:
+                            if subject_id == tdt_folder.name.split("-")[0].split("_")[0]:
+                                subject_number = 1
+                            else:
+                                subject_number = 2
+                        else:
+                            subject_number = 1
+                        cam_number = subject_number
+                        stream_number = subject_number
+                        video_file_path = next(inner_session_folder.glob(f"*Cam{cam_number}.avi"))
+                        stream_name = f"LFP{stream_number}"
+                        if record_fiber is None:
+                            record_fiber = subject_number
+
                         session_to_nwb_kwargs = dict(
                             info_file_path=info_file_path,
                             video_file_path=video_file_path,
@@ -288,8 +278,16 @@ def get_session_to_nwb_kwargs_per_session(
                             subject_id=subject_id,
                             sex=sex,
                             dob=dob,
+                            optogenetic_site_name=optogenetic_site_name,
+                            fiber_photometry_site_name=fiber_photometry_site_name,
+                            stream_name=stream_name,
+                            record_fiber=record_fiber,
+                            optogenetic_virus_volume_in_uL=optogenetic_virus_volume_in_uL,
+                            fiber_photometry_virus_volume_in_uL=fiber_photometry_virus_volume_in_uL,
                         )
                         session_to_nwb_kwargs_per_session.append(session_to_nwb_kwargs)
+                if not matched:
+                    raise ValueError(f"No matching TDT folder found for {outer_session_folder_name}")
 
     return session_to_nwb_kwargs_per_session
 
