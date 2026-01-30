@@ -199,6 +199,14 @@ def make_neo_compatible(tdt_folder: Path, parent_folder: Path):
     if tdt_folder.name.startswith("._"):
         return
 
+    # Special case for BBB8
+    if "BBB8" in tdt_folder.name:
+        print(f"Applying BBB8 special case - renaming folder to M008")
+        new_folder_name = tdt_folder.name.replace("BBB8", "M008")
+        new_folder_path = tdt_folder.parent / new_folder_name
+        tdt_folder.rename(new_folder_path)
+        tdt_folder = new_folder_path
+
     # Special case for M008: Rename files containing BBB8 to M008
     if "M008" in tdt_folder.name:
         print(f"Applying M008 special case - renaming BBB8 files to M008")
