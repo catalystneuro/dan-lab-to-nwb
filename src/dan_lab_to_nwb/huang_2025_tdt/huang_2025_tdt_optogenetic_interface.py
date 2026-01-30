@@ -285,6 +285,12 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
 
                 optogenetic_sites_data.append(row)
 
+        # Sort by start time
+        sort_indices = np.argsort(column_name_to_data["start_time"])
+        for key in column_name_to_data:
+            column_name_to_data[key] = [column_name_to_data[key][i] for i in sort_indices]
+        optogenetic_sites_data = [optogenetic_sites_data[i] for i in sort_indices]
+
         columns = [
             VectorData(name=colname, description=column_name_to_description[colname], data=column_name_to_data[colname])
             for colname in colnames
