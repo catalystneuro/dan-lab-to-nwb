@@ -1,8 +1,8 @@
 {
   "summary": {
     "total_session_paths": 1044,
-    "valid": 155,
-    "extra": 889,
+    "valid": 158,
+    "extra": 886,
     "missing": 0
   },
   "valid_sessions": [
@@ -87,6 +87,7 @@
     "Setup - WS8/WS8-202506/M360_M362-250620-082001",
     "Setup - WS8/WS8-202506/M360_M361-250624-142001",
     "Setup - WS8/WS8-202506/M361_M337-250609-081001",
+    "Setup - WS8/WS8-202506/M335_M361-250630-081001",
     "Setup - MollyFP/MollyFP-202507/M361_M367-250722-151525",
     "Setup - MollyFP/MollyFP-202507/M361_M367-250724-142202",
     "Setup - MollyFP/MollyFP-202507/M363_M364-250717-021237",
@@ -123,6 +124,7 @@
     "Setup - MollyFP/MollyFP-202508/M365_M367-250811-072001",
     "Setup - MollyFP/MollyFP-202508/M365_M367-250819-151725",
     "Setup - MollyFP/MollyFP-202507/M366_M367-250730-072001",
+    "Setup - MollyFP/MollyFP-202508/M364_M367-250820-072001",
     "Setup - WS8/WS8-202508/M368_M369-250819-082001",
     "Setup - WS8/WS8-202508/M368_M369-250826-082001",
     "Setup - WS8/WS8-202509/M368_M373-250923-082001-test, 30min",
@@ -144,6 +146,7 @@
     "Setup - WS8/WS8-202510/M371_M373-251026-072001",
     "Setup - WS8/WS8-202508/M372_M373-250818-082001",
     "Setup - WS8/WS8-202508/M372_M373-250821-082001",
+    "Setup - WS8/WS8-202510/M368_M373-251001-072001",
     "Setup - WS8/WS8-202509/M374_M375-250929-072001",
     "Setup - WS8/WS8-202510/M374_M375-251012-072001",
     "Setup - WS8/WS8-202510/M374_M375-251012-072001/it is M374_M375",
@@ -590,7 +593,6 @@
     "Setup - WS8/WS8-202506/M335_M361-250617-082001",
     "Setup - WS8/WS8-202506/M335_M361-250626-082001",
     "Setup - WS8/WS8-202506/M335_M361-250629-082001",
-    "Setup - WS8/WS8-202506/M335_M361-250630-081001",
     "Setup - WS8/WS8-202506/M337_M362-250625-082001",
     "Setup - WS8/202404/202412/M340_324_325_341/M340_324_325_341-241225-235155",
     "Setup - WS8/202404/202412/M340_324_325_341/M340_324_325_341-241225-235834",
@@ -753,10 +755,8 @@
     "Setup - WS8/WS8-202506/M361_M337-250603-082001",
     "Setup - WS8/WS8-202506/M361_M337-250607-082001",
     "Setup - WS8/WS8-202507/M362_M358-250724-082001",
-    "Setup - MollyFP/MollyFP-202508/M364_M367-250820-072001",
     "Setup - WS8/WS8-202508/M368_M369-250814-081001",
     "Setup - WS8/WS8-202508/M368_M372-250829-082001",
-    "Setup - WS8/WS8-202510/M368_M373-251001-072001",
     "Setup - WS8/WS8-202510/M368_M373-251003-125001-crash",
     "Setup - WS8/WS8-202510/M368_M373-251007-072001",
     "Setup - WS8/WS8-202510/M368_M373-251010-070501",
@@ -4473,14 +4473,6 @@
       "reason": "Date not in metadata"
     },
     {
-      "path": "Setup - WS8/WS8-202506/M335_M361-250630-081001",
-      "mouse_id": "M335",
-      "alt_mouse_id": "M361",
-      "date": "2025-06-30",
-      "setup": "WS8",
-      "reason": "Date not in metadata"
-    },
-    {
       "path": "Setup - WS8/WS8-202506/M337_M362-250625-082001",
       "mouse_id": "M337",
       "alt_mouse_id": "M362",
@@ -5777,14 +5769,6 @@
       "reason": "Mouse ID not in metadata"
     },
     {
-      "path": "Setup - MollyFP/MollyFP-202508/M364_M367-250820-072001",
-      "mouse_id": "M364",
-      "alt_mouse_id": "M367",
-      "date": "2025-08-20",
-      "setup": "MollyFP",
-      "reason": "Date not in metadata"
-    },
-    {
       "path": "Setup - WS8/WS8-202508/M368_M369-250814-081001",
       "mouse_id": "M368",
       "alt_mouse_id": "M369",
@@ -5797,14 +5781,6 @@
       "mouse_id": "M368",
       "alt_mouse_id": "M372",
       "date": "2025-08-29",
-      "setup": "WS8",
-      "reason": "Date not in metadata"
-    },
-    {
-      "path": "Setup - WS8/WS8-202510/M368_M373-251001-072001",
-      "mouse_id": "M368",
-      "alt_mouse_id": "M373",
-      "date": "2025-10-01",
       "setup": "WS8",
       "reason": "Date not in metadata"
     },
