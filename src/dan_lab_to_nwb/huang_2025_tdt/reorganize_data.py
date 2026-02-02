@@ -217,6 +217,14 @@ def make_neo_compatible(tdt_folder: Path, parent_folder: Path):
                 file_path.rename(new_path)
                 print(f"  Renamed: {file_path.name} → {new_name}")
 
+    # Special case for M363_M367-250724-193627(0725): Remove parenthetical suffix
+    if "(0725)" in tdt_folder.name:
+        print(f"Applying (0725) special case - removing parenthetical suffix")
+        new_folder_name = tdt_folder.name.replace("(0725)", "")
+        new_folder_path = tdt_folder.parent / new_folder_name
+        tdt_folder.rename(new_folder_path)
+        tdt_folder = new_folder_path
+
     # Find .tsq file to extract session name (exclude Mac hidden files)
     tsq_files = [f for f in tdt_folder.glob("*.tsq") if not f.name.startswith("._")]
 
