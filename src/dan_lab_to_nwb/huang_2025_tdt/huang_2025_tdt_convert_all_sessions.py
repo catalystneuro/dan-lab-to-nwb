@@ -40,6 +40,33 @@ def dataset_to_nwb(
     data_dir_path = Path(data_dir_path)
     session_to_nwb_kwargs_per_session = collect_session_to_nwb_kwargs_per_session(data_dir_path=data_dir_path)
 
+    # # Check for duplicate sessions based on NWB file name
+    # seen = {}
+    # duplicates = []
+    # for kwargs in session_to_nwb_kwargs_per_session:
+    #     nwbfile_name = get_nwbfile_name(session_to_nwb_kwargs=kwargs)
+    #     if nwbfile_name in seen:
+    #         duplicates.append((seen[nwbfile_name], kwargs))
+    #     else:
+    #         seen[nwbfile_name] = kwargs
+
+    # if duplicates:
+    #     def _diff_dicts(a: dict, b: dict) -> str:
+    #         keys = sorted(set(a) | set(b))
+    #         lines = []
+    #         for key in keys:
+    #             if a.get(key) != b.get(key):
+    #                 lines.append(f"{key}: {pformat(a.get(key))} != {pformat(b.get(key))}")
+    #         return "\n".join(lines) if lines else "No differences found."
+
+    #     duplicate_info = "\n\n".join(
+    #         f"nwbfile_name: {get_nwbfile_name(session_to_nwb_kwargs=a)}\n"
+    #         f"duplicate vs original differences:\n{_diff_dicts(a, b)}"
+    #         for a, b in duplicates[:3]
+    #     )
+    #     print(f"Duplicate session_to_nwb_kwargs detected (first 3):\n{duplicate_info}")
+    #     raise ValueError("Duplicate sessions detected. Aborting conversion.")
+
     futures = []
     with ProcessPoolExecutor(max_workers=max_workers) as executor:
         for session_to_nwb_kwargs in session_to_nwb_kwargs_per_session:
@@ -92,8 +119,11 @@ def get_nwbfile_name(*, session_to_nwb_kwargs: dict) -> str:
         The NWB file name.
     """
     info_file_path = session_to_nwb_kwargs["info_file_path"]
+    metadata_subfolder_name = session_to_nwb_kwargs["metadata_subfolder_name"]
     info = read_mat(filename=info_file_path)["Info"]
     session_id = info["blockname"]
+    session_type = "opto-signal" if metadata_subfolder_name == "opto-signal sum" else "opto-behavioral"
+    session_id = f"{session_id}-{session_type}"
     subject_id = session_to_nwb_kwargs["subject_id"]
     nwbfile_name = f"sub-{subject_id}_ses-{session_id}.nwb"
     return nwbfile_name
@@ -302,6 +332,7 @@ def get_session_to_nwb_kwargs_per_session(
                             record_fiber=record_fiber,
                             optogenetic_virus_volume_in_uL=optogenetic_virus_volume_in_uL,
                             fiber_photometry_virus_volume_in_uL=fiber_photometry_virus_volume_in_uL,
+                            metadata_subfolder_name=metadata_subfolder_name,
                         )
                         session_to_nwb_kwargs_per_session.append(session_to_nwb_kwargs)
                 if not matched:
