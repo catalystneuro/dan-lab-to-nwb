@@ -195,7 +195,7 @@ def read_metadata(excel_file: FilePath) -> dict[str, dict]:
 
 def collect_session_to_nwb_kwargs_per_session(*, data_dir_path: DirectoryPath):
     # setups = ["Bing", "WS8", "MollyFP"]
-    setups = ["Bing"]
+    setups = ["MollyFP"]
     metadata_subfolder_names = ["opto-signal sum", "opto-behavioral sum"]
     all_session_to_nwb_kwargs_per_session = []
     for setup in setups:
@@ -208,6 +208,9 @@ def collect_session_to_nwb_kwargs_per_session(*, data_dir_path: DirectoryPath):
             if metadata_subfolder_name == "opto-behavioral sum":
                 for kwargs in session_to_nwb_kwargs_per_session:
                     kwargs["skip_fiber_photometry"] = True
+            if setup == "MollyFP":
+                for kwargs in session_to_nwb_kwargs_per_session:
+                    kwargs["shared_test_pulse"] = True
             all_session_to_nwb_kwargs_per_session.extend(session_to_nwb_kwargs_per_session)
     return all_session_to_nwb_kwargs_per_session
 
