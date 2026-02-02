@@ -273,9 +273,39 @@ def get_session_to_nwb_kwargs_per_session(
     setup_folder = data_dir_path / setup_folder_name
     tdt_folders = find_tdt_folders(root_folder=setup_folder)
 
+    sessions_to_skip = [
+        (
+            "behav_ChAT-cre_mVTA_3h-stim - Sheet1",
+            "M304",
+            datetime.datetime(2024, 11, 27, tzinfo=ZoneInfo("US/Pacific")),
+        ),
+        (
+            "FP_Sert-cre_DRN_2min-pTra-stim - Sheet1",
+            "M363",
+            datetime.datetime(2025, 7, 22, tzinfo=ZoneInfo("US/Pacific")),
+        ),
+        (
+            "FP_Sert-cre_DRN_2min-pTra-stim - Sheet1",
+            "M364",
+            datetime.datetime(2025, 7, 22, tzinfo=ZoneInfo("US/Pacific")),
+        ),
+        (
+            "FP_Sert-cre_DRN_2min-pTra-stim - Sheet1",
+            "M365",
+            datetime.datetime(2025, 7, 24, tzinfo=ZoneInfo("US/Pacific")),
+        ),
+        (
+            "FP_Sert-cre_DRN_2min-pTra-stim - Sheet1",
+            "M366",
+            datetime.datetime(2025, 7, 24, tzinfo=ZoneInfo("US/Pacific")),
+        ),
+    ]
+
     for sheet_name, subject_id_to_metadata in sheet_name_to_subject_id_to_metadata.items():
         for subject_id, metadata in subject_id_to_metadata.items():
             for index, session_date in enumerate(metadata["session_dates"]):
+                if (sheet_name, subject_id, session_date) in sessions_to_skip:
+                    continue
                 session_setup = metadata["session_setups"][index]
                 if "record_fibers" in metadata:
                     record_fiber = metadata["record_fibers"][index]
