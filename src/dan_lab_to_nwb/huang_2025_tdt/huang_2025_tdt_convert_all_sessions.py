@@ -299,6 +299,11 @@ def get_session_to_nwb_kwargs_per_session(
             "M366",
             datetime.datetime(2025, 7, 24, tzinfo=ZoneInfo("US/Pacific")),
         ),
+        (
+            "FP_Sert-cre_DRN_2min-pTra-stim - Sheet1",
+            "M367",
+            datetime.datetime(2025, 7, 24, tzinfo=ZoneInfo("US/Pacific")),
+        ),
     ]
 
     for sheet_name, subject_id_to_metadata in sheet_name_to_subject_id_to_metadata.items():
@@ -343,6 +348,7 @@ def get_session_to_nwb_kwargs_per_session(
                             subject_number = 1
                         cam_number = subject_number
                         stream_number = subject_number
+                        # TODO: skip ._ .avi files
                         video_file_path = next(inner_session_folder.glob(f"*Cam{cam_number}.avi"))
                         stream_name = f"LFP{stream_number}"
                         if record_fiber is None:
