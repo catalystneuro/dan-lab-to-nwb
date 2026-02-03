@@ -304,6 +304,11 @@ def get_session_to_nwb_kwargs_per_session(
             "M367",
             datetime.datetime(2025, 7, 24, tzinfo=ZoneInfo("US/Pacific")),
         ),
+        (
+            "behav_Sert-cre_DRN_2min-pTra-stim - Sheet1",
+            "M367",
+            datetime.datetime(2025, 7, 24, tzinfo=ZoneInfo("US/Pacific")),
+        ),
     ]
 
     for sheet_name, subject_id_to_metadata in sheet_name_to_subject_id_to_metadata.items():
