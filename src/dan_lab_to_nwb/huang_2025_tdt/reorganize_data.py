@@ -225,6 +225,11 @@ def make_neo_compatible(tdt_folder: Path, parent_folder: Path):
         tdt_folder.rename(new_folder_path)
         tdt_folder = new_folder_path
 
+    # Check if already organized
+    if is_neo_compatible(tdt_folder):
+        print(f"Skipping {tdt_folder.name} - already Neo-compatible")
+        return
+
     # Find .tsq file to extract session name (exclude Mac hidden files)
     tsq_files = [f for f in tdt_folder.glob("*.tsq") if not f.name.startswith("._")]
 
@@ -234,11 +239,6 @@ def make_neo_compatible(tdt_folder: Path, parent_folder: Path):
 
     if len(tsq_files) > 1:
         print(f"Warning: Multiple .tsq files found in {tdt_folder.name}, using first one")
-
-    # Check if already organized
-    if is_neo_compatible(tdt_folder):
-        print(f"Skipping {tdt_folder.name} - already Neo-compatible")
-        return
 
     # Extract session name
     tsq_file = tsq_files[0]
