@@ -225,6 +225,16 @@ def make_neo_compatible(tdt_folder: Path, parent_folder: Path):
         tdt_folder.rename(new_folder_path)
         tdt_folder = new_folder_path
 
+    # Special case for M376_M501-251001-071000: Rename files containing M374_M501 to M376_M501
+    if tdt_folder.name == "M376_M501-251001-071000":
+        print(f"Applying M376_M501 special case - renaming M374_M501 files to M376_M501")
+        for file_path in tdt_folder.glob("*M374_M501*"):
+            if file_path.is_file():
+                new_name = file_path.name.replace("M374_M501", "M376_M501")
+                new_path = file_path.parent / new_name
+                file_path.rename(new_path)
+                print(f"  Renamed: {file_path.name} → {new_name}")
+
     # Check if already organized
     if is_neo_compatible(tdt_folder):
         print(f"Skipping {tdt_folder.name} - already Neo-compatible")
