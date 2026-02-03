@@ -324,8 +324,8 @@ def get_session_to_nwb_kwargs_per_session(
                 for tdt_folder in tdt_folders:
                     if subject_id in tdt_folder.name and session_date.strftime("%y%m%d") in tdt_folder.name:
                         matched = True
-                        session_folder = next(p for p in tdt_folder.iterdir())
-                        inner_session_folder = next(p for p in session_folder.iterdir())
+                        session_folder = next(p for p in tdt_folder.iterdir() if not p.name.startswith("._"))
+                        inner_session_folder = next(p for p in session_folder.iterdir() if not p.name.startswith("._"))
 
                         info_file_path = inner_session_folder / "Info.mat"
                         tdt_fp_folder_path = inner_session_folder
@@ -348,8 +348,9 @@ def get_session_to_nwb_kwargs_per_session(
                             subject_number = 1
                         cam_number = subject_number
                         stream_number = subject_number
-                        # TODO: skip ._ .avi files
-                        video_file_path = next(inner_session_folder.glob(f"*Cam{cam_number}.avi"))
+                        video_file_path = next(
+                            p for p in inner_session_folder.glob(f"*Cam{cam_number}.avi") if not p.name.startswith("._")
+                        )
                         stream_name = f"LFP{stream_number}"
                         if record_fiber is None:
                             record_fiber = subject_number
