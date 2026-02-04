@@ -3,6 +3,33 @@ from pathlib import Path
 
 from pydantic import FilePath
 
+# Folders where files have wrong subject ID pair in session name
+# Format: folder_name -> (wrong_pattern_in_files, correct_pattern_for_folder)
+SUBJECT_ID_CORRECTIONS = {
+    # M042 sessions where files have M304 instead of M042
+    "M042_M335-250524-082001": ("M304_M335", "M042_M335"),
+    "M042_M335-250526-082001": ("M304_M335", "M042_M335"),
+    "M042_M337-250613-082001": ("M304_M337", "M042_M337"),
+    "M042_M337-250615-082001": ("M304_M337", "M042_M337"),
+    "M042_M337-250616-082001": ("M304_M337", "M042_M337"),
+    "M042_M337-250621-082001": ("M304_M337", "M042_M337"),
+    "M042_M337-250622-082001": ("M304_M337", "M042_M337"),
+    "M042_M337-250623-082001": ("M304_M337", "M042_M337"),
+    # M042 sessions with other mismatched patterns
+    "M303_M042-250430-082001": ("M308_M309", "M303_M042"),
+    "M342_M042-250519-142501": ("M342_M304", "M342_M042"),
+    "M346_M042-250520-082001": ("M346_M403", "M346_M042"),
+    "M358_M042-250522-140001": ("M358_M304", "M358_M042"),
+    # M368/M373 session
+    "M368_M373-251004-072001": ("M368_M372", "M368_M373"),
+}
+
+# Folders with extra text that needs to be removed from folder name
+FOLDER_NAME_CORRECTIONS = {
+    "M337_M358-250723-141552(only analyze M337": "M337_M358-250723-141552",
+    "M358_M361-250711-072001 (only analyze 361": "M358_M361-250711-072001",
+}
+
 
 def find_tdt_folders(root_folder: Path, max_depth: int = 10) -> list[Path]:
     """
@@ -208,6 +235,15 @@ def make_neo_compatible(tdt_folder: Path, parent_folder: Path):
         tdt_folder.rename(new_folder_path)
         tdt_folder = new_folder_path
 
+    # Special case: folders with extra text that needs removal (e.g., "(only analyze M337")
+    if tdt_folder.name in FOLDER_NAME_CORRECTIONS:
+        print(f"Applying folder name correction for {tdt_folder.name}")
+        new_folder_name = FOLDER_NAME_CORRECTIONS[tdt_folder.name]
+        new_folder_path = tdt_folder.parent / new_folder_name
+        tdt_folder.rename(new_folder_path)
+        tdt_folder = new_folder_path
+        print(f"  Renamed folder to: {new_folder_name}")
+
     # Special case for M008: Rename files containing BBB8 to M008
     if "M008" in tdt_folder.name:
         print(f"Applying M008 special case - renaming BBB8 files to M008")
@@ -224,6 +260,17 @@ def make_neo_compatible(tdt_folder: Path, parent_folder: Path):
         for file_path in tdt_folder.glob("*M374_M501*"):
             if file_path.is_file():
                 new_name = file_path.name.replace("M374_M501", "M376_M501")
+                new_path = file_path.parent / new_name
+                file_path.rename(new_path)
+                print(f"  Renamed: {file_path.name} → {new_name}")
+
+    # Special case: folders where files have wrong subject ID pair
+    if tdt_folder.name in SUBJECT_ID_CORRECTIONS:
+        wrong_pattern, correct_pattern = SUBJECT_ID_CORRECTIONS[tdt_folder.name]
+        print(f"Applying subject ID correction for {tdt_folder.name}: {wrong_pattern} → {correct_pattern}")
+        for file_path in tdt_folder.glob(f"*{wrong_pattern}*"):
+            if file_path.is_file():
+                new_name = file_path.name.replace(wrong_pattern, correct_pattern)
                 new_path = file_path.parent / new_name
                 file_path.rename(new_path)
                 print(f"  Renamed: {file_path.name} → {new_name}")
