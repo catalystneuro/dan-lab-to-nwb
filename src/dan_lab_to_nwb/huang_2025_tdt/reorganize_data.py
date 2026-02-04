@@ -218,15 +218,6 @@ def make_neo_compatible(tdt_folder: Path, parent_folder: Path):
                 file_path.rename(new_path)
                 print(f"  Renamed: {file_path.name} → {new_name}")
 
-    # TODO: Debug this special case
-    # Special case for M363_M367-250724-193627(0725): Remove parenthetical suffix
-    if "(0725)" in tdt_folder.name:
-        print(f"Applying (0725) special case - removing parenthetical suffix")
-        new_folder_name = tdt_folder.name.replace("(0725)", "")
-        new_folder_path = tdt_folder.parent / new_folder_name
-        tdt_folder.rename(new_folder_path)
-        tdt_folder = new_folder_path
-
     # Special case for M376_M501-251001-071000: Rename files containing M374_M501 to M376_M501
     if tdt_folder.name == "M376_M501-251001-071000":
         print(f"Applying M376_M501 special case - renaming M374_M501 files to M376_M501")
