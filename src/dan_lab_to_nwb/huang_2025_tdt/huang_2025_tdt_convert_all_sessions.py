@@ -225,7 +225,7 @@ def read_metadata(excel_file: FilePath) -> dict[str, dict]:
 
 def collect_session_to_nwb_kwargs_per_session(*, data_dir_path: DirectoryPath):
     # setups = ["Bing", "WS8", "MollyFP"]
-    setups = ["MollyFP"]
+    setups = ["WS8"]
     metadata_subfolder_names = ["opto-signal sum", "opto-behavioral sum"]
     all_session_to_nwb_kwargs_per_session = []
     for setup in setups:
@@ -273,7 +273,184 @@ def get_session_to_nwb_kwargs_per_session(
     setup_folder = data_dir_path / setup_folder_name
     tdt_folders = find_tdt_folders(root_folder=setup_folder)
 
-    sessions_to_skip = []  # List of (sheet_name, subject_id, session_date) tuples to skip
+    # List of (sheet_name, subject_id, session_date) tuples to skip
+    sessions_to_skip = [  # These sessions are missing files, likely not uploaded properly.
+        (
+            "behav_ChAT-cre_BF_2min-20Hz-stim - Sheet1",
+            "M376",
+            datetime.datetime(2025, 10, 27, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_ChAT-cre_BF_2min-20Hz-stim - Sheet1",
+            "M501",
+            datetime.datetime(2025, 10, 27, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M368",
+            datetime.datetime(2025, 9, 23, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M368",
+            datetime.datetime(2025, 9, 26, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M369",
+            datetime.datetime(2025, 9, 27, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M369",
+            datetime.datetime(2025, 10, 11, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M369",
+            datetime.datetime(2025, 10, 20, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M369",
+            datetime.datetime(2025, 10, 2, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M369",
+            datetime.datetime(2025, 10, 14, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M369",
+            datetime.datetime(2025, 10, 29, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M370",
+            datetime.datetime(2025, 10, 11, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M370",
+            datetime.datetime(2025, 10, 20, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M370",
+            datetime.datetime(2025, 10, 2, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M370",
+            datetime.datetime(2025, 10, 14, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M371",
+            datetime.datetime(2025, 9, 24, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M371",
+            datetime.datetime(2025, 10, 5, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M371",
+            datetime.datetime(2025, 10, 19, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M371",
+            datetime.datetime(2025, 10, 26, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M371",
+            datetime.datetime(2025, 9, 30, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M371",
+            datetime.datetime(2025, 10, 16, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M372",
+            datetime.datetime(2025, 10, 19, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M372",
+            datetime.datetime(2025, 9, 30, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M372",
+            datetime.datetime(2025, 10, 16, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M373",
+            datetime.datetime(2025, 10, 1, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M373",
+            datetime.datetime(2025, 10, 26, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M373",
+            datetime.datetime(2025, 9, 26, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M373",
+            datetime.datetime(2025, 10, 29, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M374",
+            datetime.datetime(2025, 10, 12, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M374",
+            datetime.datetime(2025, 10, 28, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M374",
+            datetime.datetime(2025, 9, 29, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M374",
+            datetime.datetime(2025, 10, 25, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M375",
+            datetime.datetime(2025, 10, 12, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M375",
+            datetime.datetime(2025, 10, 28, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M375",
+            datetime.datetime(2025, 9, 29, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M375",
+            datetime.datetime(2025, 10, 25, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+    ]
 
     for sheet_name, subject_id_to_metadata in sheet_name_to_subject_id_to_metadata.items():
         for subject_id, metadata in subject_id_to_metadata.items():
