@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 from pydantic import FilePath
@@ -235,6 +236,57 @@ def make_neo_compatible(tdt_folder: Path, parent_folder: Path):
                 new_path = file_path.parent / new_name
                 file_path.rename(new_path)
                 print(f"  Renamed: {file_path.name} → {new_name}")
+
+    # Special case for folders with incorrect dates in file names
+    # Dates appear in two positions:
+    # 1. Session part: ...-YYMMDD-HHMMSS_M... (date before _M)
+    # 2. Subject part: M###_M###-YYMMDD-HHMMSS (date after subject IDs)
+    DATE_CORRECTION_FOLDERS = {
+        "M363_M364-250721-181720",
+        "M363_M364-250722-191039",
+        "M363_M367-250725-193627",
+        "M365_M366-250723-195039",
+        "M365_M366-250724-143650",
+    }
+    if tdt_folder.name in DATE_CORRECTION_FOLDERS:
+        print(f"Applying date correction special case for {tdt_folder.name}")
+        # Parse folder name: {subjects}-{date}-{time}
+        parts = tdt_folder.name.rsplit("-", 2)
+        subject_prefix = parts[0]  # e.g., "M363_M364"
+        correct_date = parts[1]  # e.g., "250722"
+
+        # Pattern 1: date in session part (before _M)
+        session_date_pattern = re.compile(r"-(\d{6})-(\d{6})_M")
+        # Pattern 2: date in subject part (after subject IDs like M363_M364-)
+        subject_date_pattern = re.compile(rf"{re.escape(subject_prefix)}-(\d{{6}})-")
+
+        for file_path in tdt_folder.iterdir():
+            if file_path.is_file():
+                new_name = file_path.name
+
+                # Replace session date if wrong
+                match = session_date_pattern.search(new_name)
+                if match and match.group(1) != correct_date:
+                    old_date = match.group(1)
+                    time_part = match.group(2)
+                    new_name = new_name.replace(
+                        f"-{old_date}-{time_part}_M",
+                        f"-{correct_date}-{time_part}_M",
+                    )
+
+                # Replace subject date if wrong
+                match = subject_date_pattern.search(new_name)
+                if match and match.group(1) != correct_date:
+                    old_date = match.group(1)
+                    new_name = new_name.replace(
+                        f"{subject_prefix}-{old_date}-",
+                        f"{subject_prefix}-{correct_date}-",
+                    )
+
+                if new_name != file_path.name:
+                    new_path = file_path.parent / new_name
+                    file_path.rename(new_path)
+                    print(f"  Renamed: {file_path.name} → {new_name}")
 
     # Check if already organized
     if is_neo_compatible(tdt_folder):
