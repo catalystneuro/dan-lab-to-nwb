@@ -7,7 +7,7 @@ from zoneinfo import ZoneInfo
 from pydantic import DirectoryPath, FilePath
 from pymatreader import read_mat
 
-from dan_lab_to_nwb.huang_2025_dlc import Huang2025DLCNWBConverter
+from dan_lab_to_nwb.huang_2025_001711 import Huang2025DLCNWBConverter
 from neuroconv.utils import dict_deep_update, load_dict_from_file
 
 

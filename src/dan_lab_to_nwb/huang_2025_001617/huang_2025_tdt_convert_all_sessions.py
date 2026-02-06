@@ -14,7 +14,9 @@ from pymatreader import read_mat
 from tqdm import tqdm
 
 from dan_lab_to_nwb.download_utils.reorganize_data import find_tdt_folders
-from dan_lab_to_nwb.huang_2025_tdt.huang_2025_tdt_convert_session import session_to_nwb
+from dan_lab_to_nwb.huang_2025_001617.huang_2025_tdt_convert_session import (
+    session_to_nwb,
+)
 
 
 def dataset_to_nwb(

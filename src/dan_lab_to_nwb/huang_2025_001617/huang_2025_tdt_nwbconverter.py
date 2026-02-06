@@ -5,7 +5,7 @@ from pathlib import Path
 
 import tdt
 
-from dan_lab_to_nwb.huang_2025_tdt import (
+from dan_lab_to_nwb.huang_2025_001617 import (
     Huang2025OptogeneticInterface,
     Huang2025TdtRecordingInterface,
 )

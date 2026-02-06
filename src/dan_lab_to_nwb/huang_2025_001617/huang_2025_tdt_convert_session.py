@@ -10,7 +10,7 @@ import pandas as pd
 from pydantic import DirectoryPath, FilePath
 from pymatreader import read_mat
 
-from dan_lab_to_nwb.huang_2025_tdt import Huang2025NWBConverter
+from dan_lab_to_nwb.huang_2025_001617 import Huang2025NWBConverter
 from neuroconv.utils import dict_deep_update, load_dict_from_file
 
 

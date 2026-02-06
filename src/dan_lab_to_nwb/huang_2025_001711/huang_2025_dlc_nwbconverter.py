@@ -1,5 +1,5 @@
 """Primary NWBConverter class for this dataset."""
-from dan_lab_to_nwb.huang_2025_dlc import (
+from dan_lab_to_nwb.huang_2025_001711 import (
     Huang2025DlcBehaviorInterface,
     Huang2025DlcEcephysMatInterface,
 )
