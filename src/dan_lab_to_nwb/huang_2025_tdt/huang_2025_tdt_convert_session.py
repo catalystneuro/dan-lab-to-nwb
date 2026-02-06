@@ -178,9 +178,8 @@ def main():
     # ------------------------------------------------------------------------------------------------------------------
 
     # Setup - Bing
-    # '/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/Setup - Bing/202409-old setting/M301-240904-072001/Lindsay_SBO_op1-E_2in1_pTra_con-240902-231421/M301-240904-072001'
     metadata_df = pd.read_csv(
-        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-signal sum/Dat-cre_mVTA_3h-stim_low virus - Sheet1.csv"
+        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-signal sum/FP_Dat-cre_mVTA_3h-stim_low virus - Sheet1.csv"
     )
     subject_id = "M301"
     row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
@@ -260,9 +259,8 @@ def main():
     )
 
     # Setup - WS8
-    # /Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/Setup - WS8/202404/202410/M296-241018-072001/Lindsay_SBO_op1-E_2in1_pTra_con-241017-190451/M296-241018-072001
     metadata_df = pd.read_csv(
-        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-signal sum/Dat-cre_mVTA_3h-stim_low virus - Sheet1.csv"
+        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-signal sum/FP_Dat-cre_mVTA_3h-stim_low virus - Sheet1.csv"
     )
     subject_id = "M296"
     row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
@@ -291,7 +289,6 @@ def main():
     info_file_path = (
         data_dir_path
         / "Setup - WS8"
-        / "202404"
         / "202410"
         / "M296-241018-072001"
         / "Lindsay_SBO_op1-E_2in1_pTra_con-241017-190451"
@@ -301,7 +298,6 @@ def main():
     video_file_path = (
         data_dir_path
         / "Setup - WS8"
-        / "202404"
         / "202410"
         / "M296-241018-072001"
         / "Lindsay_SBO_op1-E_2in1_pTra_con-241017-190451"
@@ -311,7 +307,6 @@ def main():
     tdt_fp_folder_path = (
         data_dir_path
         / "Setup - WS8"
-        / "202404"
         / "202410"
         / "M296-241018-072001"
         / "Lindsay_SBO_op1-E_2in1_pTra_con-241017-190451"
@@ -320,7 +315,6 @@ def main():
     tdt_ephys_folder_path = (
         data_dir_path
         / "Setup - WS8"
-        / "202404"
         / "202410"
         / "M296-241018-072001"
         / "Lindsay_SBO_op1-E_2in1_pTra_con-241017-190451"
@@ -346,9 +340,8 @@ def main():
 
     # Setup - MollyFP first subject
     # Note: this example session actually contains data from two subjects, but only one is included in the NWB file.
-    # /Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/Setup - MollyFP/MollyFP-202508/M363_M366-250822-153604/A_Lindsay_TDTm_op1_pTra_2min-250822-153604/M363_M366-250822-153604
     metadata_df = pd.read_csv(
-        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-signal sum/Sert-cre_DRN_2min-pTra-stim - GS - Sheet1.csv"
+        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-signal sum/FP_Sert-cre_DRN_2min-pTra-stim - Sheet1.csv"
     )
     subject_id = "M363"
     row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
@@ -425,9 +418,8 @@ def main():
 
     # Setup - MollyFP second subject
     # Note: this example session actually contains data from two subjects, but only one is included in the NWB file.
-    # /Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/Setup - MollyFP/MollyFP-202508/M363_M366-250822-153604/A_Lindsay_TDTm_op1_pTra_2min-250822-153604/M363_M366-250822-153604
     metadata_df = pd.read_csv(
-        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-signal sum/Sert-cre_DRN_2min-pTra-stim - GS - Sheet1.csv"
+        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-signal sum/FP_Sert-cre_DRN_2min-pTra-stim - Sheet1.csv"
     )
     subject_id = "M366"
     row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
@@ -505,9 +497,8 @@ def main():
     # opto-behavioral sum Example Sessions
     # ------------------------------------------------------------------------------------------------------------------
     # Setup - Bing
-    # '/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/Setup - Bing/202408-old setting/M008-240819-071001/Lindsay_SBO_opto1-Evoke12_2in1-240817-154318_M008-240819-071001/M008-240819-071001'
     metadata_df = pd.read_csv(
-        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-behavioral sum/ChAT-cre_BF_2min-20Hz-stim - GS - Sheet1.csv"
+        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-behavioral sum/behav_ChAT-cre_BF_2min-20Hz-stim - Sheet1.csv"
     )
     subject_id = "M008"
     row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
@@ -574,9 +565,8 @@ def main():
     )
 
     # Setup - WS8
-    # '/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/Setup - WS8/WS8-202506/M361_M337-250609-081001/A_Lindsay_SBO_opto1_E_2miceRand-250609-081001/M361_M337-250609-081001'
     metadata_df = pd.read_csv(
-        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-behavioral sum/ChAT-cre_BF_2min-20Hz-stim - GS - Sheet1.csv"
+        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-behavioral sum/behav_ChAT-cre_BF_2min-20Hz-stim - Sheet1.csv"
     )
     subject_id = "M337"
     row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
@@ -643,9 +633,8 @@ def main():
     )
 
     # Setup - MollyFP
-    # '/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/Setup - MollyFP/MollyFP-202507/M363_M364-250721-191039/A_Lindsay_TDTm_op1_pTra_2min-250721-190941/M363_M364-250721-191039'
     metadata_df = pd.read_csv(
-        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-behavioral sum/Sert-cre_DRN_2min-pTra-stim - GS - edited - Sheet1.csv"
+        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-behavioral sum/behav_Sert-cre_DRN_2min-pTra-stim - Sheet1.csv"
     )
     subject_id = "M363"
     row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
@@ -664,34 +653,34 @@ def main():
         data_dir_path
         / "Setup - MollyFP"
         / "MollyFP-202507"
-        / "M363_M364-250721-191039"
-        / "A_Lindsay_TDTm_op1_pTra_2min-250721-190941"
-        / "M363_M364-250721-191039"
+        / "M363_M364-250722-191039"
+        / "A_Lindsay_TDTm_op1_pTra_2min-250722-190941"
+        / "M363_M364-250722-191039"
         / "Info.mat"
     )
     video_file_path = (
         data_dir_path
         / "Setup - MollyFP"
         / "MollyFP-202507"
-        / "M363_M364-250721-191039"
-        / "A_Lindsay_TDTm_op1_pTra_2min-250721-190941"
-        / "M363_M364-250721-191039"
-        / "A_Lindsay_TDTm_op1_pTra_2min-250721-190941_M363_M364-250721-191039_Cam1.avi"
+        / "M363_M364-250722-191039"
+        / "A_Lindsay_TDTm_op1_pTra_2min-250722-190941"
+        / "M363_M364-250722-191039"
+        / "A_Lindsay_TDTm_op1_pTra_2min-250722-190941_M363_M364-250722-191039_Cam1.avi"
     )
     tdt_fp_folder_path = (
         data_dir_path
         / "Setup - MollyFP"
         / "MollyFP-202507"
-        / "M363_M364-250721-191039"
-        / "A_Lindsay_TDTm_op1_pTra_2min-250721-190941"
-        / "M363_M364-250721-191039"
+        / "M363_M364-250722-191039"
+        / "A_Lindsay_TDTm_op1_pTra_2min-250722-190941"
+        / "M363_M364-250722-191039"
     )
     tdt_ephys_folder_path = (
         data_dir_path
         / "Setup - MollyFP"
         / "MollyFP-202507"
-        / "M363_M364-250721-191039"
-        / "A_Lindsay_TDTm_op1_pTra_2min-250721-190941"
+        / "M363_M364-250722-191039"
+        / "A_Lindsay_TDTm_op1_pTra_2min-250722-190941"
     )
     session_to_nwb(
         info_file_path=info_file_path,
