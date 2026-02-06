@@ -10,7 +10,7 @@ from pydantic import DirectoryPath
 from pymatreader import read_mat
 from tqdm import tqdm
 
-from dan_lab_to_nwb.huang_2025_001711.huang_2025_dlc_convert_session import (
+from dan_lab_to_nwb.huang_2025_001711.huang_2025_001711_convert_session import (
     session_to_nwb,
 )
 
