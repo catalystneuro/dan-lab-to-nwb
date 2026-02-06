@@ -5,15 +5,16 @@ import traceback
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 from pprint import pformat
-from typing import Union
+from typing import Literal, Union
 from zoneinfo import ZoneInfo
 
 import pandas as pd
-from pydantic import DirectoryPath
+from pydantic import DirectoryPath, FilePath
 from pymatreader import read_mat
 from tqdm import tqdm
 
 from dan_lab_to_nwb.huang_2025_tdt.huang_2025_tdt_convert_session import session_to_nwb
+from dan_lab_to_nwb.huang_2025_tdt.reorganize_data import find_tdt_folders
 
 
 def dataset_to_nwb(
@@ -37,9 +38,7 @@ def dataset_to_nwb(
         Whether to print verbose output, by default True
     """
     data_dir_path = Path(data_dir_path)
-    session_to_nwb_kwargs_per_session = get_session_to_nwb_kwargs_per_session(
-        data_dir_path=data_dir_path,
-    )
+    session_to_nwb_kwargs_per_session = collect_session_to_nwb_kwargs_per_session(data_dir_path=data_dir_path)
 
     futures = []
     with ProcessPoolExecutor(max_workers=max_workers) as executor:
@@ -93,14 +92,17 @@ def get_nwbfile_name(*, session_to_nwb_kwargs: dict) -> str:
         The NWB file name.
     """
     info_file_path = session_to_nwb_kwargs["info_file_path"]
+    metadata_subfolder_name = session_to_nwb_kwargs["metadata_subfolder_name"]
     info = read_mat(filename=info_file_path)["Info"]
     session_id = info["blockname"]
+    session_type = "opto-signal" if metadata_subfolder_name == "opto-signal sum" else "opto-behavioral"
+    session_id = f"{session_id}-{session_type}"
     subject_id = session_to_nwb_kwargs["subject_id"]
     nwbfile_name = f"sub-{subject_id}_ses-{session_id}.nwb"
     return nwbfile_name
 
 
-def read_excel_metadata(*, metadata_folder_path: DirectoryPath):
+def collect_excel_metadata(*, metadata_folder_path: DirectoryPath):
     """Read metadata from Excel files in the specified folder.
 
     Parameters
@@ -113,45 +115,113 @@ def read_excel_metadata(*, metadata_folder_path: DirectoryPath):
     dict
         A dictionary mapping subject IDs to their metadata.
     """
-    pst = ZoneInfo("US/Pacific")
-    subject_id_to_metadata = {}
+    sheet_name_to_subject_id_to_metadata: dict[str, dict[str, dict]] = {}
     metadata_folder_path = Path(metadata_folder_path)
-    metadata_sub_folder_names = ["behavioral sum", "signal sum"]
-    for sub_folder_name in metadata_sub_folder_names:
-        metadata_sub_folder_path = metadata_folder_path / sub_folder_name
-        for excel_file in metadata_sub_folder_path.glob("*.csv"):
-            if excel_file.name.startswith("._"):
+    for excel_file in metadata_folder_path.glob("*.csv"):
+        if excel_file.name.startswith("._"):
+            continue
+        subject_id_to_metadata = read_metadata(excel_file)
+        sheet_name_to_subject_id_to_metadata[excel_file.stem] = subject_id_to_metadata
+    return sheet_name_to_subject_id_to_metadata
+
+
+def read_metadata(excel_file: FilePath) -> dict[str, dict]:
+    """Read metadata from a single csv file.
+
+    Parameters
+    ----------
+    pst : ZoneInfo
+        The Pacific time zone info.
+    excel_file : Path
+        The path to the metadata csv file.
+
+    Returns
+    -------
+    dict
+        A dictionary mapping subject IDs to their metadata.
+    """
+    subject_id_to_metadata = {}
+    pst = ZoneInfo("US/Pacific")
+    df = pd.read_csv(excel_file)
+    date_column_names = [name for name in df.columns if name.startswith("date")]
+    setup_column_names = [name for name in df.columns if name.startswith("setup")]
+    record_fiber_column_names = [name for name in df.columns if name.startswith("Record fiber")]
+    has_record_fiber = bool(len(record_fiber_column_names))
+    for _, row in df.iterrows():
+        subject_id = row["mouse ID"]
+        if subject_id not in subject_id_to_metadata:
+            subject_id_to_metadata[subject_id] = {}
+        metadata = subject_id_to_metadata[subject_id]
+        metadata["sex"] = "M" if row["M"] == 1 else "F"
+        metadata["dob"] = datetime.datetime.strptime(row["DOB"], "%m/%d/%Y").replace(tzinfo=pst)
+        metadata["optogenetic_site_name"] = row["Stim region"]
+        virus_volume_column_names = [name for name in df.columns if name.startswith("virus volume")]
+        optogenetic_virus_volume_column_name = virus_volume_column_names[0]
+        optogenetic_virus_volume_in_nL = float(
+            row[optogenetic_virus_volume_column_name].replace("nL", "")
+        )  # 300nL --> 300.0
+        metadata["optogenetic_virus_volume_in_uL"] = optogenetic_virus_volume_in_nL / 1000.0
+        if "Record region" in df.columns:
+            metadata["fiber_photometry_site_name"] = row["Record region"]
+            fiber_photometry_virus_volume_column_name = virus_volume_column_names[1]
+            fiber_photometry_virus_volume_in_nL = float(
+                row[fiber_photometry_virus_volume_column_name].replace("nL", "")
+            )  # 300nL --> 300.0
+            metadata["fiber_photometry_virus_volume_in_uL"] = fiber_photometry_virus_volume_in_nL / 1000.0
+        if "session_dates" not in metadata:
+            metadata["session_dates"] = []
+        if "session_setups" not in metadata:
+            metadata["session_setups"] = []
+        if "record_fibers" not in metadata and has_record_fiber:
+            metadata["record_fibers"] = []
+        for index, date_column_name in enumerate(date_column_names):
+            setup_column_name = setup_column_names[index]
+            if pd.isna(row[date_column_name]):
                 continue
-            df = pd.read_csv(excel_file)
-            date_column_names = [name for name in df.columns if name.startswith("date")]
-            setup_column_names = [name for name in df.columns if name.startswith("setup")]
-            for _, row in df.iterrows():
-                subject_id = row["mouse ID"]
-                if subject_id not in subject_id_to_metadata:
-                    subject_id_to_metadata[subject_id] = {}
-                metadata = subject_id_to_metadata[subject_id]
-                metadata["sex"] = "M" if row["M"] == 1 else "F"
-                metadata["dob"] = datetime.datetime.strptime(row["DOB"], "%m/%d/%Y").replace(tzinfo=pst)
-                if "session_dates" not in metadata:
-                    metadata["session_dates"] = []
-                for date_column_name in date_column_names:
-                    if pd.isna(row[date_column_name]):
-                        continue
-                    session_date = datetime.datetime.strptime(row[date_column_name], "%m/%d/%Y").replace(tzinfo=pst)
-                    metadata["session_dates"].append(session_date)
-                if "session_setups" not in metadata:
-                    metadata["session_setups"] = []
-                for setup_column_name in setup_column_names:
-                    if pd.isna(row[setup_column_name]):
-                        continue
-                    session_setup = row[setup_column_name]
-                    metadata["session_setups"].append(session_setup)
+            assert not pd.isna(
+                row[setup_column_name]
+            ), f"Setup missing for subject {subject_id} on date {row[date_column_name]}"
+            session_date = datetime.datetime.strptime(row[date_column_name], "%m/%d/%Y").replace(tzinfo=pst)
+            session_setup = row[setup_column_name]
+            metadata["session_setups"].append(session_setup)
+            metadata["session_dates"].append(session_date)
+
+            if has_record_fiber:
+                record_fiber_column_name = record_fiber_column_names[index]
+                assert not pd.isna(
+                    row[record_fiber_column_name]
+                ), f"Record fiber missing for subject {subject_id} on date {row[date_column_name]}"
+                record_fiber = int(row[record_fiber_column_name])
+                metadata["record_fibers"].append(record_fiber)
     return subject_id_to_metadata
+
+
+def collect_session_to_nwb_kwargs_per_session(*, data_dir_path: DirectoryPath):
+    setups = ["Bing", "WS8", "MollyFP"]
+    metadata_subfolder_names = ["opto-signal sum", "opto-behavioral sum"]
+    all_session_to_nwb_kwargs_per_session = []
+    for setup in setups:
+        for metadata_subfolder_name in metadata_subfolder_names:
+            session_to_nwb_kwargs_per_session = get_session_to_nwb_kwargs_per_session(
+                data_dir_path=data_dir_path,
+                setup=setup,
+                metadata_subfolder_name=metadata_subfolder_name,
+            )
+            if metadata_subfolder_name == "opto-behavioral sum":
+                for kwargs in session_to_nwb_kwargs_per_session:
+                    kwargs["skip_fiber_photometry"] = True
+            if setup == "MollyFP":
+                for kwargs in session_to_nwb_kwargs_per_session:
+                    kwargs["shared_test_pulse"] = True
+            all_session_to_nwb_kwargs_per_session.extend(session_to_nwb_kwargs_per_session)
+    return all_session_to_nwb_kwargs_per_session
 
 
 def get_session_to_nwb_kwargs_per_session(
     *,
     data_dir_path: DirectoryPath,
+    setup: Literal["Bing", "WS8", "MollyFP"],
+    metadata_subfolder_name: Literal["opto-signal sum", "opto-behavioral sum"],
 ):
     """Get the kwargs for session_to_nwb for each session in the dataset.
 
@@ -165,64 +235,244 @@ def get_session_to_nwb_kwargs_per_session(
     list[dict[str, Any]]
         A list of dictionaries containing the kwargs for session_to_nwb for each session.
     """
-    pst = ZoneInfo("US/Pacific")
-    sessions_to_skip = []
-
     data_dir_path = Path(data_dir_path)
     metadata_folder_path = data_dir_path / "metadata"
-    subject_id_to_metadata = read_excel_metadata(metadata_folder_path=metadata_folder_path)
-    session_to_nwb_kwargs_per_session = []
-    dataset_folder_names = [
-        "Setup - Bing",
-        "Setup - WS8",
-        "Setup - MollyFP",
-    ]
-    for folder_name in dataset_folder_names:
-        dataset_folder = data_dir_path / folder_name
-        for sub_folder in dataset_folder.iterdir():
-            if not sub_folder.is_dir():
-                continue
-            for outer_session_folder in sub_folder.iterdir():
-                # ex. M323-250120-142001 --> M323, M412_PN-250429-143001 --> M412_PN
-                subject_id = outer_session_folder.name.split("-")[0]
-                subject_id = subject_id.split("_")[0]  # ex. M323 --> M323, M412_PN --> M412
-                if subject_id.endswith("R") or subject_id.endswith("L"):
-                    subject_id = subject_id[:-1]  # ex. M267R --> M267, M267L --> M267
-                if subject_id.startswith("BBB"):
-                    subject_id = subject_id.replace("BBB", "M00")  # ex. BBB8 --> M008
-                session_date_str = outer_session_folder.name.split("-")[1]  # ex. M323-250120-142001 --> 250120
-                session_date = datetime.datetime.strptime(session_date_str, "%y%m%d").replace(tzinfo=pst)
-                if not outer_session_folder.is_dir():
-                    continue
-                if outer_session_folder.name in sessions_to_skip:
-                    continue
-                if subject_id not in subject_id_to_metadata:
-                    # Try alternative parsing for subject_id
-                    subject_id = outer_session_folder.name.split("-")[0]
-                    subject_id = subject_id.split("_")[1]  # ex. M342_M042 --> M042
-                    if subject_id.endswith("R") or subject_id.endswith("L"):
-                        subject_id = subject_id[:-1]  # ex. M267R --> M267, M267L --> M267
-                    if subject_id.startswith("BBB"):
-                        subject_id = subject_id.replace("BBB", "M00")  # ex. BBB8 --> M008
+    metadata_subfolder_path = metadata_folder_path / metadata_subfolder_name
+    sheet_name_to_subject_id_to_metadata = collect_excel_metadata(metadata_folder_path=metadata_subfolder_path)
 
-                    # If still not found, skip this subject
-                    if subject_id not in subject_id_to_metadata:
-                        continue
-                subject_metadata = subject_id_to_metadata[subject_id]
-                if session_date not in subject_metadata["session_dates"]:
+    session_to_nwb_kwargs_per_session = []
+    setup_folder_name = f"Setup - {setup}"
+    setup_folder = data_dir_path / setup_folder_name
+    tdt_folders = find_tdt_folders(root_folder=setup_folder)
+
+    # List of (sheet_name, subject_id, session_date) tuples to skip
+    sessions_to_skip = [  # These sessions are missing files, likely not uploaded properly.
+        (
+            "behav_ChAT-cre_BF_2min-20Hz-stim - Sheet1",
+            "M376",
+            datetime.datetime(2025, 10, 27, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_ChAT-cre_BF_2min-20Hz-stim - Sheet1",
+            "M501",
+            datetime.datetime(2025, 10, 27, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M368",
+            datetime.datetime(2025, 9, 23, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M368",
+            datetime.datetime(2025, 9, 26, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M369",
+            datetime.datetime(2025, 9, 27, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M369",
+            datetime.datetime(2025, 10, 11, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M369",
+            datetime.datetime(2025, 10, 20, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M369",
+            datetime.datetime(2025, 10, 2, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M369",
+            datetime.datetime(2025, 10, 14, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M369",
+            datetime.datetime(2025, 10, 29, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M370",
+            datetime.datetime(2025, 10, 11, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M370",
+            datetime.datetime(2025, 10, 20, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M370",
+            datetime.datetime(2025, 10, 2, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M370",
+            datetime.datetime(2025, 10, 14, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M371",
+            datetime.datetime(2025, 9, 24, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M371",
+            datetime.datetime(2025, 10, 5, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M371",
+            datetime.datetime(2025, 10, 19, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M371",
+            datetime.datetime(2025, 10, 26, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M371",
+            datetime.datetime(2025, 9, 30, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M371",
+            datetime.datetime(2025, 10, 16, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M372",
+            datetime.datetime(2025, 10, 19, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M372",
+            datetime.datetime(2025, 9, 30, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M372",
+            datetime.datetime(2025, 10, 16, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M373",
+            datetime.datetime(2025, 10, 1, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M373",
+            datetime.datetime(2025, 10, 26, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M373",
+            datetime.datetime(2025, 9, 26, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M373",
+            datetime.datetime(2025, 10, 29, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M374",
+            datetime.datetime(2025, 10, 12, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M374",
+            datetime.datetime(2025, 10, 28, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M374",
+            datetime.datetime(2025, 9, 29, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M374",
+            datetime.datetime(2025, 10, 25, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M375",
+            datetime.datetime(2025, 10, 12, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M375",
+            datetime.datetime(2025, 10, 28, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M375",
+            datetime.datetime(2025, 9, 29, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+        (
+            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
+            "M375",
+            datetime.datetime(2025, 10, 25, tzinfo=ZoneInfo(key="US/Pacific")),
+        ),
+    ]
+
+    for sheet_name, subject_id_to_metadata in sheet_name_to_subject_id_to_metadata.items():
+        for subject_id, metadata in subject_id_to_metadata.items():
+            for index, session_date in enumerate(metadata["session_dates"]):
+                if (sheet_name, subject_id, session_date) in sessions_to_skip:
                     continue
-                sex = subject_metadata["sex"]
-                dob = subject_metadata["dob"]
-                for session_folder in outer_session_folder.iterdir():
-                    if not session_folder.is_dir():
-                        continue
-                    for segment_folder in session_folder.iterdir():
-                        if not segment_folder.is_dir():
-                            continue
-                        info_file_path = segment_folder / "Info.mat"
-                        video_file_path = next(segment_folder.glob("*.avi"))
-                        tdt_fp_folder_path = segment_folder
+                session_setup = metadata["session_setups"][index]
+                if "record_fibers" in metadata:
+                    record_fiber = metadata["record_fibers"][index]
+                else:
+                    record_fiber = None
+                if session_setup != setup:
+                    continue
+
+                outer_session_folder_name = f"{subject_id}-{session_date.strftime('%y%m%d')}"
+                matched = False
+                for tdt_folder in tdt_folders:
+                    if subject_id in tdt_folder.name and session_date.strftime("%y%m%d") in tdt_folder.name:
+                        matched = True
+                        session_folder = next(p for p in tdt_folder.iterdir() if not p.name.startswith("._"))
+                        inner_session_folder = next(p for p in session_folder.iterdir() if not p.name.startswith("._"))
+
+                        info_file_path = inner_session_folder / "Info.mat"
+                        tdt_fp_folder_path = inner_session_folder
                         tdt_ephys_folder_path = session_folder
+                        sex = metadata["sex"]
+                        dob = metadata["dob"]
+                        optogenetic_site_name = metadata["optogenetic_site_name"]
+                        optogenetic_virus_volume_in_uL = metadata["optogenetic_virus_volume_in_uL"]
+                        fiber_photometry_site_name = metadata.get("fiber_photometry_site_name", None)
+                        fiber_photometry_virus_volume_in_uL = metadata.get("fiber_photometry_virus_volume_in_uL", None)
+
+                        # Handle double-subject sessions
+                        is_double_subject = len(tdt_folder.name.split("-")[0].split("_")) > 1
+                        if is_double_subject:
+                            if subject_id == tdt_folder.name.split("-")[0].split("_")[0]:
+                                subject_number = 1
+                            else:
+                                subject_number = 2
+                        else:
+                            subject_number = 1
+                        cam_number = subject_number
+                        stream_number = subject_number
+                        video_file_path = next(
+                            p for p in inner_session_folder.glob(f"*Cam{cam_number}.avi") if not p.name.startswith("._")
+                        )
+                        stream_name = f"LFP{stream_number}"
+                        if record_fiber is None:
+                            record_fiber = subject_number
+
                         session_to_nwb_kwargs = dict(
                             info_file_path=info_file_path,
                             video_file_path=video_file_path,
@@ -231,8 +481,19 @@ def get_session_to_nwb_kwargs_per_session(
                             subject_id=subject_id,
                             sex=sex,
                             dob=dob,
+                            optogenetic_site_name=optogenetic_site_name,
+                            fiber_photometry_site_name=fiber_photometry_site_name,
+                            stream_name=stream_name,
+                            record_fiber=record_fiber,
+                            optogenetic_virus_volume_in_uL=optogenetic_virus_volume_in_uL,
+                            fiber_photometry_virus_volume_in_uL=fiber_photometry_virus_volume_in_uL,
+                            metadata_subfolder_name=metadata_subfolder_name,
                         )
                         session_to_nwb_kwargs_per_session.append(session_to_nwb_kwargs)
+                if not matched:
+                    raise ValueError(
+                        f"No matching TDT folder found for {outer_session_folder_name} in sheet {sheet_name}"
+                    )
 
     return session_to_nwb_kwargs_per_session
 

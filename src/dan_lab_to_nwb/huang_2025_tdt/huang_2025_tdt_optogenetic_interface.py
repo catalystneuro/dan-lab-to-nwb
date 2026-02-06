@@ -92,7 +92,7 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
                 raise ValueError(f"record_fiber must be 1 or 2, got {record_fiber}")
         for file_pattern, epoc_name in file_pattern_to_stim_epoc_name.items():
             if epoc_name is None:
-                continue
+                return
             if file_pattern in folder_path.parent.name:
                 self.epoc_names.append(epoc_name)
                 return
@@ -284,6 +284,12 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
                 column_name_to_data["stimulus_type"].append(stimulus_type)
 
                 optogenetic_sites_data.append(row)
+
+        # Sort by start time
+        sort_indices = np.argsort(column_name_to_data["start_time"])
+        for key in column_name_to_data:
+            column_name_to_data[key] = [column_name_to_data[key][i] for i in sort_indices]
+        optogenetic_sites_data = [optogenetic_sites_data[i] for i in sort_indices]
 
         columns = [
             VectorData(name=colname, description=column_name_to_description[colname], data=column_name_to_data[colname])

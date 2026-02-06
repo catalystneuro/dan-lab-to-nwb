@@ -232,8 +232,18 @@ def validate_sessions(data_entries: List[Dict], metadata: Dict) -> Dict:
         # Check if date exists for this mouse
         mouse_metadata = metadata[mouse_id]
         if date not in mouse_metadata["dates"]:
-            extra_sessions.append({**session_info, "reason": "Date not in metadata"})
-            continue
+            # Try alternative mouse ID
+            alt_mouse_metadata = metadata.get(alt_mouse_id)
+            if alt_mouse_metadata is None:
+                extra_sessions.append({**session_info, "reason": "Date not in metadata"})
+                continue
+            elif date not in alt_mouse_metadata["dates"]:
+                extra_sessions.append({**session_info, "reason": "Date not in metadata"})
+                continue
+            else:
+                # Use alternative mouse ID
+                mouse_id = alt_mouse_id
+                mouse_metadata = alt_mouse_metadata
 
         # Check if setup matches for this date
         date_index = mouse_metadata["dates"].index(date)

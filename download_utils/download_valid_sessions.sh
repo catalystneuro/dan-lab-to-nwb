@@ -10,6 +10,8 @@ LOG_FILE="download_log.txt"
 DRY_RUN=false
 CHECK_SIZE=false
 LIMIT=0
+SETUP_FILTER=""
+LIST_SETUPS=false
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -25,12 +27,22 @@ while [[ $# -gt 0 ]]; do
             LIMIT="$2"
             shift 2
             ;;
+        --setup)
+            SETUP_FILTER="$2"
+            shift 2
+            ;;
+        --list-setups)
+            LIST_SETUPS=true
+            shift
+            ;;
         *)
             echo "Unknown option: $1"
-            echo "Usage: $0 [--dry-run] [--check-size] [--limit N]"
-            echo "  --dry-run      Show what would be downloaded without downloading"
-            echo "  --check-size   Calculate total size of sessions to download"
-            echo "  --limit N      Only process first N sessions (for testing)"
+            echo "Usage: $0 [--dry-run] [--check-size] [--limit N] [--setup \"Setup Name\"] [--list-setups]"
+            echo "  --dry-run         Show what would be downloaded without downloading"
+            echo "  --check-size      Calculate total size of sessions to download"
+            echo "  --limit N         Only process first N sessions (for testing)"
+            echo "  --setup \"Name\"    Filter sessions by setup name (e.g., \"Setup - Bing\")"
+            echo "  --list-setups     List all available setup names and exit"
             exit 1
             ;;
     esac
@@ -59,6 +71,9 @@ if [ "$CHECK_SIZE" = true ]; then
 fi
 if [ $LIMIT -gt 0 ]; then
     echo -e "${YELLOW}  [LIMIT MODE - Processing only first $LIMIT sessions]${NC}"
+fi
+if [ -n "$SETUP_FILTER" ]; then
+    echo -e "${YELLOW}  [SETUP FILTER - Only '$SETUP_FILTER' sessions]${NC}"
 fi
 echo ""
 
@@ -90,6 +105,28 @@ fi
 echo -e "${GREEN}✓ Validation report found${NC}"
 echo ""
 
+# 2.5. List setups if requested
+if [ "$LIST_SETUPS" = true ]; then
+    echo "============================================"
+    echo "  Available Setups"
+    echo "============================================"
+    echo ""
+
+    # Extract unique setup names (first directory component)
+    jq -r '.valid_sessions[]' "$VALIDATION_REPORT" | cut -d'/' -f1 | sort -u | while IFS= read -r setup; do
+        # Count sessions for this setup
+        count=$(jq -r '.valid_sessions[]' "$VALIDATION_REPORT" | grep -c "^$setup/")
+        echo "  $setup ($count sessions)"
+    done
+
+    echo ""
+    echo "============================================"
+    echo ""
+    echo "Usage: $0 --setup \"Setup Name\""
+    echo "Example: $0 --setup \"Setup - Bing\" --dry-run"
+    exit 0
+fi
+
 # 3. Parse validation report and count sessions
 echo "Reading valid sessions from $VALIDATION_REPORT..."
 # Store sessions in temp file for compatibility with older bash
@@ -102,6 +139,28 @@ while IFS= read -r session; do
     sessions+=("$session")
 done < "$temp_sessions"
 rm "$temp_sessions"
+
+# Filter by setup if specified
+if [ -n "$SETUP_FILTER" ]; then
+    echo "Filtering sessions for setup: $SETUP_FILTER"
+    filtered_sessions=()
+    for session in "${sessions[@]}"; do
+        if [[ "$session" == "$SETUP_FILTER"* ]]; then
+            filtered_sessions+=("$session")
+        fi
+    done
+    sessions=("${filtered_sessions[@]}")
+
+    # Warn if no sessions match the filter
+    if [ ${#sessions[@]} -eq 0 ]; then
+        echo -e "${YELLOW}Warning: No sessions found for setup '$SETUP_FILTER'${NC}"
+        echo "Use --list-setups to see available setup names"
+        exit 0
+    fi
+
+    echo -e "${GREEN}Found ${#sessions[@]} sessions for this setup${NC}"
+    echo ""
+fi
 
 total_sessions=${#sessions[@]}
 
@@ -128,6 +187,9 @@ fi
 echo "Total sessions: $total_sessions" >> "$LOG_FILE"
 if [ $LIMIT -gt 0 ]; then
     echo "Limit: $LIMIT sessions" >> "$LOG_FILE"
+fi
+if [ -n "$SETUP_FILTER" ]; then
+    echo "Setup filter: $SETUP_FILTER" >> "$LOG_FILE"
 fi
 echo "----------------------------------------" >> "$LOG_FILE"
 
@@ -185,6 +247,9 @@ if [ "$CHECK_SIZE" = true ]; then
         echo "============================================"
         echo "  Size Summary"
         echo "============================================"
+        if [ -n "$SETUP_FILTER" ]; then
+            echo "Setup:          $SETUP_FILTER"
+        fi
         echo "Total sessions: $total_sessions"
         if (( $(awk "BEGIN {print ($total_gb >= 1000)}") )); then
             echo "Total size:     $total_tb TB"
@@ -247,6 +312,9 @@ if [ "$DRY_RUN" = true ]; then
     echo "  (DRY RUN - No files downloaded)"
 fi
 echo "============================================"
+if [ -n "$SETUP_FILTER" ]; then
+    echo "Setup:              $SETUP_FILTER"
+fi
 echo "Total sessions:     $total_sessions"
 if [ "$DRY_RUN" = true ]; then
     echo -e "${YELLOW}Would download:     $downloaded${NC}"

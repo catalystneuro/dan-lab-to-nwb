@@ -5,6 +5,8 @@ NWBFile:
     - sleep
   session_description:
     Sleep-Wake experiments were conducted with mice while video, electrophysiology, and fiber photometry data were collected and optogenetic stimulation was delivered.
+  experiment_description:
+    Sleep-Wake experiments were conducted with mice while video, electrophysiology, and fiber photometry data were collected and optogenetic stimulation was delivered.
   institution: University of California Berkeley
   lab: Dan Lab
   experimenter:

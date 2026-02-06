@@ -1,6 +1,34 @@
+import re
 from pathlib import Path
 
 from pydantic import FilePath
+
+# Folders where files have wrong subject ID pair in session name
+# Format: folder_name -> (wrong_pattern_in_files, correct_pattern_for_folder)
+SUBJECT_ID_CORRECTIONS = {
+    # M042 sessions where files have M304 instead of M042
+    "M042_M335-250524-082001": ("M304_M335", "M042_M335"),
+    "M042_M335-250526-082001": ("M304_M335", "M042_M335"),
+    "M042_M337-250613-082001": ("M304_M337", "M042_M337"),
+    "M042_M337-250615-082001": ("M304_M337", "M042_M337"),
+    "M042_M337-250616-082001": ("M304_M337", "M042_M337"),
+    "M042_M337-250621-082001": ("M304_M337", "M042_M337"),
+    "M042_M337-250622-082001": ("M304_M337", "M042_M337"),
+    "M042_M337-250623-082001": ("M304_M337", "M042_M337"),
+    # M042 sessions with other mismatched patterns
+    "M303_M042-250430-082001": ("M308_M309", "M303_M042"),
+    "M342_M042-250519-142501": ("M342_M304", "M342_M042"),
+    "M346_M042-250520-082001": ("M346_M403", "M346_M042"),
+    "M358_M042-250522-140001": ("M358_M304", "M358_M042"),
+    # M368/M373 session
+    "M368_M373-251004-072001": ("M368_M372", "M368_M373"),
+}
+
+# Folders with extra text that needs to be removed from folder name
+FOLDER_NAME_CORRECTIONS = {
+    "M337_M358-250723-141552(only analyze M337": "M337_M358-250723-141552",
+    "M358_M361-250711-072001 (only analyze 361": "M358_M361-250711-072001",
+}
 
 
 def find_tdt_folders(root_folder: Path, max_depth: int = 10) -> list[Path]:
@@ -42,7 +70,6 @@ def find_tdt_folders(root_folder: Path, max_depth: int = 10) -> list[Path]:
                 if is_innermost_of_neo_structure(folder):
                     # Return the top-level folder (grandparent) instead
                     folder_to_add = folder.parent.parent
-                    print(f"Found already-organized Neo structure: {folder_to_add.name}")
                 else:
                     # Regular unorganized TDT folder
                     folder_to_add = folder
@@ -200,6 +227,23 @@ def make_neo_compatible(tdt_folder: Path, parent_folder: Path):
     if tdt_folder.name.startswith("._"):
         return
 
+    # Special case for BBB8
+    if "BBB8" in tdt_folder.name:
+        print(f"Applying BBB8 special case - renaming folder to M008")
+        new_folder_name = tdt_folder.name.replace("BBB8", "M008")
+        new_folder_path = tdt_folder.parent / new_folder_name
+        tdt_folder.rename(new_folder_path)
+        tdt_folder = new_folder_path
+
+    # Special case: folders with extra text that needs removal (e.g., "(only analyze M337")
+    if tdt_folder.name in FOLDER_NAME_CORRECTIONS:
+        print(f"Applying folder name correction for {tdt_folder.name}")
+        new_folder_name = FOLDER_NAME_CORRECTIONS[tdt_folder.name]
+        new_folder_path = tdt_folder.parent / new_folder_name
+        tdt_folder.rename(new_folder_path)
+        tdt_folder = new_folder_path
+        print(f"  Renamed folder to: {new_folder_name}")
+
     # Special case for M008: Rename files containing BBB8 to M008
     if "M008" in tdt_folder.name:
         print(f"Applying M008 special case - renaming BBB8 files to M008")
@@ -210,6 +254,83 @@ def make_neo_compatible(tdt_folder: Path, parent_folder: Path):
                 file_path.rename(new_path)
                 print(f"  Renamed: {file_path.name} → {new_name}")
 
+    # Special case for M376_M501-251001-071000: Rename files containing M374_M501 to M376_M501
+    if tdt_folder.name == "M376_M501-251001-071000":
+        print(f"Applying M376_M501 special case - renaming M374_M501 files to M376_M501")
+        for file_path in tdt_folder.glob("*M374_M501*"):
+            if file_path.is_file():
+                new_name = file_path.name.replace("M374_M501", "M376_M501")
+                new_path = file_path.parent / new_name
+                file_path.rename(new_path)
+                print(f"  Renamed: {file_path.name} → {new_name}")
+
+    # Special case: folders where files have wrong subject ID pair
+    if tdt_folder.name in SUBJECT_ID_CORRECTIONS:
+        wrong_pattern, correct_pattern = SUBJECT_ID_CORRECTIONS[tdt_folder.name]
+        print(f"Applying subject ID correction for {tdt_folder.name}: {wrong_pattern} → {correct_pattern}")
+        for file_path in tdt_folder.glob(f"*{wrong_pattern}*"):
+            if file_path.is_file():
+                new_name = file_path.name.replace(wrong_pattern, correct_pattern)
+                new_path = file_path.parent / new_name
+                file_path.rename(new_path)
+                print(f"  Renamed: {file_path.name} → {new_name}")
+
+    # Special case for folders with incorrect dates in file names
+    # Dates appear in two positions:
+    # 1. Session part: ...-YYMMDD-HHMMSS_M... (date before _M)
+    # 2. Subject part: M###_M###-YYMMDD-HHMMSS (date after subject IDs)
+    DATE_CORRECTION_FOLDERS = {
+        "M363_M364-250721-181720",
+        "M363_M364-250722-191039",
+        "M363_M367-250725-193627",
+        "M365_M366-250723-195039",
+        "M365_M366-250724-143650",
+    }
+    if tdt_folder.name in DATE_CORRECTION_FOLDERS:
+        print(f"Applying date correction special case for {tdt_folder.name}")
+        # Parse folder name: {subjects}-{date}-{time}
+        parts = tdt_folder.name.rsplit("-", 2)
+        subject_prefix = parts[0]  # e.g., "M363_M364"
+        correct_date = parts[1]  # e.g., "250722"
+
+        # Pattern 1: date in session part (before _M)
+        session_date_pattern = re.compile(r"-(\d{6})-(\d{6})_M")
+        # Pattern 2: date in subject part (after subject IDs like M363_M364-)
+        subject_date_pattern = re.compile(rf"{re.escape(subject_prefix)}-(\d{{6}})-")
+
+        for file_path in tdt_folder.iterdir():
+            if file_path.is_file():
+                new_name = file_path.name
+
+                # Replace session date if wrong
+                match = session_date_pattern.search(new_name)
+                if match and match.group(1) != correct_date:
+                    old_date = match.group(1)
+                    time_part = match.group(2)
+                    new_name = new_name.replace(
+                        f"-{old_date}-{time_part}_M",
+                        f"-{correct_date}-{time_part}_M",
+                    )
+
+                # Replace subject date if wrong
+                match = subject_date_pattern.search(new_name)
+                if match and match.group(1) != correct_date:
+                    old_date = match.group(1)
+                    new_name = new_name.replace(
+                        f"{subject_prefix}-{old_date}-",
+                        f"{subject_prefix}-{correct_date}-",
+                    )
+
+                if new_name != file_path.name:
+                    new_path = file_path.parent / new_name
+                    file_path.rename(new_path)
+                    print(f"  Renamed: {file_path.name} → {new_name}")
+
+    # Check if already organized
+    if is_neo_compatible(tdt_folder):
+        print(f"Skipping {tdt_folder.name} - already Neo-compatible")
+        return
+
     # Find .tsq file to extract session name (exclude Mac hidden files)
     tsq_files = [f for f in tdt_folder.glob("*.tsq") if not f.name.startswith("._")]
 
@@ -219,11 +340,6 @@ def make_neo_compatible(tdt_folder: Path, parent_folder: Path):
 
     if len(tsq_files) > 1:
         print(f"Warning: Multiple .tsq files found in {tdt_folder.name}, using first one")
-
-    # Check if already organized
-    if is_neo_compatible(tdt_folder):
-        print(f"Skipping {tdt_folder.name} - already Neo-compatible")
-        return
 
     # Extract session name
     tsq_file = tsq_files[0]
