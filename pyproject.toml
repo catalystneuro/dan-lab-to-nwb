@@ -22,7 +22,7 @@ dependencies = [
   "openpyxl",
   "ipykernel",
   "matplotlib",
-  "ndx-optogenetics @ git+https://github.com/rly/ndx-optogenetics.git@main",
+  "ndx-optogenetics==0.4.0",
 ]
 
 [project.urls]

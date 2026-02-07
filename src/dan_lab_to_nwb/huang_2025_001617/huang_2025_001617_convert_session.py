@@ -83,7 +83,7 @@ def session_to_nwb(
     metadata = converter.get_metadata()
 
     # Update default metadata with the editable in the corresponding yaml file
-    editable_metadata_path = Path(__file__).parent / "huang_2025_tdt_metadata.yaml"
+    editable_metadata_path = Path(__file__).parent / "huang_2025_001617_metadata.yaml"
     editable_metadata = load_dict_from_file(editable_metadata_path)
     metadata = dict_deep_update(metadata, editable_metadata)
 

@@ -2,7 +2,7 @@
 
 # Configuration
 REMOTE="remote:data/Dan-CN-data-share/FP and opto datasets"
-VALIDATION_REPORT="/Users/pauladkisson/Documents/CatalystNeuro/DanConv/dan-lab-to-nwb/download_utils/validation_report.json"
+VALIDATION_REPORT="/Users/pauladkisson/Documents/CatalystNeuro/DanConv/dan-lab-to-nwb/src/dan_lab_to_nwb/download_utils/validation_report.json"
 DEST_DIR="."
 LOG_FILE="download_log.txt"
 
