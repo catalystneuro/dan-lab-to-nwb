@@ -14,11 +14,36 @@ from neuroconv.utils import get_base_schema
 
 
 class Huang2025DlcBehaviorInterface(BaseDataInterface):
-    """Behavior interface for huang_2025_dlc conversion"""
+    """
+    Data interface for converting behavioral labels and summary statistics to NWB.
+
+    This interface processes behavioral state labels (REM, WAKE, NREM) and session-level
+    behavioral summary statistics from MATLAB files and CSV files, respectively.
+
+    Attributes
+    ----------
+    keywords : list of str
+        Keywords describing the data type, used for metadata organization.
+    label_id_to_name : dict
+        Mapping from numeric label IDs to behavioral state names.
+        1 = REM, 2 = WAKE, 3 = NREM.
+    """
 
     keywords = ["behavior"]
 
     def __init__(self, labels_file_path: FilePath, behavioral_summary_file_path: FilePath):
+        """
+        Initialize the behavior interface.
+
+        Parameters
+        ----------
+        labels_file_path : FilePath
+            Path to .mat file containing behavioral state labels as a 1D array.
+            Each value represents the behavioral state in 5-second epochs.
+        behavioral_summary_file_path : FilePath
+            Path to .csv file containing summary statistics for all behavioral sessions.
+            Must include a 'session' column to identify individual sessions.
+        """
         super().__init__(labels_file_path=labels_file_path, behavioral_summary_file_path=behavioral_summary_file_path)
 
         self.label_id_to_name = {
@@ -28,6 +53,15 @@ class Huang2025DlcBehaviorInterface(BaseDataInterface):
         }
 
     def get_metadata_schema(self) -> dict:
+        """
+        Get the metadata schema for the behavioral summary table.
+
+        Returns
+        -------
+        dict
+            JSON schema dictionary defining the structure and requirements for
+            behavioral metadata, including the BehavioralSummaryTable specification.
+        """
         metadata_schema = super().get_metadata_schema()
         column_schema = {
             "type": "object",
@@ -58,6 +92,31 @@ class Huang2025DlcBehaviorInterface(BaseDataInterface):
         return metadata_schema
 
     def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict):
+        """
+        Add behavioral data to an NWB file.
+
+        This method adds two types of behavioral data to the NWB file:
+        1. Behavioral state epochs (REM, WAKE, NREM) as time intervals
+        2. Session-level behavioral summary statistics as a table
+
+        Parameters
+        ----------
+        nwbfile : NWBFile
+            The NWB file object to add behavioral data to.
+        metadata : dict
+            Metadata dictionary containing behavioral table specifications
+            under metadata['Behavior']['BehavioralSummaryTable'].
+
+        Returns
+        -------
+        None
+
+        Notes
+        -----
+        Behavioral labels are converted to 5-second epochs and added to the NWB
+        file's epochs table. The behavioral summary table is added to a processing
+        module named 'behavior'.
+        """
         # Load label data
         labels_file_path = Path(self.source_data["labels_file_path"])
         label_ids = read_mat(filename=labels_file_path)["labels"]

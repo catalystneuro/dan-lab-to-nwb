@@ -25,6 +25,51 @@ def session_to_nwb(
     stub_test: bool = False,
     verbose: bool = True,
 ):
+    """
+    Convert a single session of DeepLabCut behavioral and electrophysiology data to NWB format.
+
+    This function takes raw data files from a single experimental session and converts them
+    to the Neurodata Without Borders (NWB) format. The session includes video recordings,
+    DeepLabCut pose estimation data, behavioral labels, EEG/EMG recordings, and session metadata.
+
+    Parameters
+    ----------
+    info_file_path : FilePath
+        Path to the .mat file containing session information (subject ID, session ID, start time).
+    video_file_path : FilePath
+        Path to the video file (.avi) from Cam1 or Cam2.
+    dlc_file_path : FilePath
+        Path to the DeepLabCut analysis output file (.h5).
+    labels_file_path : FilePath
+        Path to the .mat file containing behavioral state labels (REM, WAKE, NREM).
+    behavioral_summary_file_path : FilePath
+        Path to the .csv file containing summary statistics for the behavioral session.
+    eeg_file_path : FilePath
+        Path to the .mat file containing EEG (electroencephalography) data.
+    emg_file_path : FilePath
+        Path to the .mat file containing EMG (electromyography) data.
+    fs_file_path : FilePath
+        Path to the .mat file containing the sampling frequency.
+    output_dir_path : DirectoryPath
+        Directory where the output NWB file will be saved.
+    stub_test : bool, default: False
+        If True, only convert a small subset of the data for testing purposes.
+    verbose : bool, default: True
+        If True, print progress messages during conversion.
+
+    Returns
+    -------
+    None
+        The function creates an NWB file but does not return a value.
+
+    Notes
+    -----
+    The output NWB file is named following the pattern:
+    sub-{subject_id}_ses-{session_id}.nwb
+
+    The function automatically detects whether the video is from Cam1 or Cam2
+    based on the filename and names it accordingly in the NWB file.
+    """
     info_file_path = Path(info_file_path)
     video_file_path = Path(video_file_path)
     dlc_file_path = Path(dlc_file_path)
