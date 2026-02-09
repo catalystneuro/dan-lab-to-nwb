@@ -134,6 +134,11 @@ def session_to_nwb(
         filtered_fp_metadata["FiberPhotometryTable"]["rows"] = [
             row for row in fp_metadata["FiberPhotometryTable"]["rows"] if fiber_photometry_site_name in row["location"]
         ]
+        filtered_fp_metadata["FiberPhotometryResponseSeries"] = [
+            series
+            for series in fp_metadata["FiberPhotometryResponseSeries"]
+            if fiber_photometry_site_name in series["name"]
+        ]
         if record_fiber == 1:
             for series_meta in filtered_fp_metadata["FiberPhotometryResponseSeries"]:
                 if "calcium_signal" in series_meta["name"]:
