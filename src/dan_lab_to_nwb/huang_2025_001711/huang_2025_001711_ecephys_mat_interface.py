@@ -16,7 +16,7 @@ from neuroconv.utils.dict import DeepDict
 from neuroconv.utils.json_schema import get_schema_from_hdmf_class
 
 
-class Huang2025DlcEcephysMatInterface(BaseDataInterface):
+class Huang2025EcephysMatInterface(BaseDataInterface):
     """
     Data interface for converting EEG and EMG data from MATLAB files to NWB.
 

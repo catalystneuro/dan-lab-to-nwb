@@ -1,4 +1,4 @@
-from .huang_2025_001711_behavior_interface import Huang2025DlcBehaviorInterface
-from .huang_2025_001711_ecephys_mat_interface import Huang2025DlcEcephysMatInterface
+from .huang_2025_001711_behavior_interface import Huang2025BehaviorInterface
+from .huang_2025_001711_ecephys_mat_interface import Huang2025EcephysMatInterface
 
-from .huang_2025_001711_nwbconverter import Huang2025DLCNWBConverter  # isort: skip
+from .huang_2025_001711_nwbconverter import Huang2025NWBConverter  # isort: skip

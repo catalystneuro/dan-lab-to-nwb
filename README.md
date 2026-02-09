@@ -41,7 +41,7 @@ This conversion project is comprised primarily by DataInterfaces, NWBConverters,
 
 In neuroconv, a [DataInterface](https://neuroconv.readthedocs.io/en/main/user_guide/datainterfaces.html) is a class that specifies the procedure to convert a single data modality to NWB.
 This is usually accomplished with a single read operation from a distinct set of files.
-For example, in this conversion, the `Huang2025DlcBehaviorInterface` contains the code that converts all of the behavioral data to NWB from MATLAB files containing behavioral state labels and CSV files with summary statistics.
+For example, in this conversion, the `Huang2025BehaviorInterface` contains the code that converts all of the behavioral data to NWB from MATLAB files containing behavioral state labels and CSV files with summary statistics.
 
 In neuroconv, a [NWBConverter](https://neuroconv.readthedocs.io/en/main/user_guide/nwbconverter.html) is a class that combines many data interfaces and specifies the relationships between them, such as temporal alignment.
 This allows users to combine multiple modalities into a single NWB file in an efficient and modular way.
@@ -91,9 +91,9 @@ For the conversion `huang_2025_001711` (DeepLabCut pose tracking with EEG/EMG) y
     When run as a script, this file converts an example session to NWB.
 * `huang_2025_001711_convert_all_sessions.py` : This conversion script defines the `dataset_to_nwb()` function, which converts all sessions in the dataset to NWB.
     When run as a script, this file calls `dataset_to_nwb()` with the appropriate arguments.
-* `huang_2025_001711_nwbconverter.py` : This module defines the primary conversion class, `Huang2025DLCNWBConverter`, which aggregates all of the various datainterfaces relevant for this conversion.
-* `huang_2025_001711_behavior_interface.py` : This module defines `Huang2025DlcBehaviorInterface`, which is the data interface for behavioral state labels (.mat files) and summary statistics (.csv files).
-* `huang_2025_001711_ecephys_mat_interface.py` : This module defines `Huang2025DlcEcephysMatInterface`, which is the data interface for EEG and EMG data from .mat files.
+* `huang_2025_001711_nwbconverter.py` : This module defines the primary conversion class, `Huang2025NWBConverter`, which aggregates all of the various datainterfaces relevant for this conversion.
+* `huang_2025_001711_behavior_interface.py` : This module defines `Huang2025BehaviorInterface`, which is the data interface for behavioral state labels (.mat files) and summary statistics (.csv files).
+* `huang_2025_001711_ecephys_mat_interface.py` : This module defines `Huang2025EcephysMatInterface`, which is the data interface for EEG and EMG data from .mat files.
 * `huang_2025_001711_metadata.yaml` : This metadata .yaml file provides high-level metadata for the nwb files directly as well as useful dictionaries for some of the data interfaces.
     For example:
     - Subject/species is "Mus musculus", which is directly included in the NWB file.

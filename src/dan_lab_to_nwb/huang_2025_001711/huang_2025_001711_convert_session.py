@@ -7,7 +7,7 @@ from zoneinfo import ZoneInfo
 from pydantic import DirectoryPath, FilePath
 from pymatreader import read_mat
 
-from dan_lab_to_nwb.huang_2025_001711 import Huang2025DLCNWBConverter
+from dan_lab_to_nwb.huang_2025_001711 import Huang2025NWBConverter
 from neuroconv.utils import dict_deep_update, load_dict_from_file
 
 
@@ -106,7 +106,7 @@ def session_to_nwb(
     source_data["Ecephys"] = dict(eeg_file_path=eeg_file_path, emg_file_path=emg_file_path, fs_file_path=fs_file_path)
     conversion_options["Ecephys"] = dict()
 
-    converter = Huang2025DLCNWBConverter(source_data=source_data, verbose=verbose)
+    converter = Huang2025NWBConverter(source_data=source_data, verbose=verbose)
     metadata = converter.get_metadata()
 
     # Update default metadata with the editable in the corresponding yaml file

@@ -13,7 +13,7 @@ from neuroconv.tools.nwb_helpers import get_module
 from neuroconv.utils import get_base_schema
 
 
-class Huang2025DlcBehaviorInterface(BaseDataInterface):
+class Huang2025BehaviorInterface(BaseDataInterface):
     """
     Data interface for converting behavioral labels and summary statistics to NWB.
 

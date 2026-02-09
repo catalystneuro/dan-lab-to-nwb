@@ -1,7 +1,7 @@
 """Primary NWBConverter class for this dataset."""
 from dan_lab_to_nwb.huang_2025_001711 import (
-    Huang2025DlcBehaviorInterface,
-    Huang2025DlcEcephysMatInterface,
+    Huang2025BehaviorInterface,
+    Huang2025EcephysMatInterface,
 )
 from neuroconv import NWBConverter
 from neuroconv.datainterfaces import (
@@ -10,9 +10,9 @@ from neuroconv.datainterfaces import (
 )
 
 
-class Huang2025DLCNWBConverter(NWBConverter):
+class Huang2025NWBConverter(NWBConverter):
     """
-    Primary conversion class for Huang 2025 DeepLabCut dataset.
+    Primary conversion class for Huang 2025 001711 dataset.
 
     This NWBConverter combines multiple data streams from behavioral experiments
     that include video recordings, DeepLabCut pose tracking, behavioral annotations,
@@ -33,8 +33,8 @@ class Huang2025DLCNWBConverter(NWBConverter):
     data_interface_classes = dict(
         Video=ExternalVideoInterface,
         DeepLabCut=DeepLabCutInterface,
-        Behavior=Huang2025DlcBehaviorInterface,
-        Ecephys=Huang2025DlcEcephysMatInterface,
+        Behavior=Huang2025BehaviorInterface,
+        Ecephys=Huang2025EcephysMatInterface,
     )
 
     def temporally_align_data_interfaces(self, metadata: dict | None = None, conversion_options: dict | None = None):
