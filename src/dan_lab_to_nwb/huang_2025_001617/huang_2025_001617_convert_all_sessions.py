@@ -104,7 +104,7 @@ def get_nwbfile_name(*, session_to_nwb_kwargs: dict) -> str:
     return nwbfile_name
 
 
-def collect_excel_metadata(*, metadata_folder_path: DirectoryPath):
+def collect_excel_metadata(*, metadata_folder_path: DirectoryPath) -> dict[str, dict[str, dict]]:
     """Read metadata from Excel files in the specified folder.
 
     Parameters
@@ -114,8 +114,8 @@ def collect_excel_metadata(*, metadata_folder_path: DirectoryPath):
 
     Returns
     -------
-    dict
-        A dictionary mapping subject IDs to their metadata.
+    dict[str, dict[str, dict]]
+        A dictionary mapping sheet names to dictionaries that map subject IDs to their metadata.
     """
     sheet_name_to_subject_id_to_metadata: dict[str, dict[str, dict]] = {}
     metadata_folder_path = Path(metadata_folder_path)
@@ -199,6 +199,18 @@ def read_metadata(excel_file: FilePath) -> dict[str, dict]:
 
 
 def collect_session_to_nwb_kwargs_per_session(*, data_dir_path: DirectoryPath):
+    """Collect the kwargs for session_to_nwb for each session in the dataset.
+
+    Parameters
+    ----------
+    data_dir_path : DirectoryPath
+        The path to the directory containing the raw data.
+
+    Returns
+    -------
+    list[dict[str, Any]]
+        A list of dictionaries containing the kwargs for session_to_nwb for each session.
+    """
     setups = ["Bing", "WS8", "MollyFP"]
     metadata_subfolder_names = ["opto-signal sum", "opto-behavioral sum"]
     all_session_to_nwb_kwargs_per_session = []
@@ -225,12 +237,16 @@ def get_session_to_nwb_kwargs_per_session(
     setup: Literal["Bing", "WS8", "MollyFP"],
     metadata_subfolder_name: Literal["opto-signal sum", "opto-behavioral sum"],
 ):
-    """Get the kwargs for session_to_nwb for each session in the dataset.
+    """Get the kwargs for session_to_nwb for each session in the dataset for a given setup and metadata subfolder.
 
     Parameters
     ----------
     data_dir_path : DirectoryPath
         The path to the directory containing the raw data.
+    setup : Literal["Bing", "WS8", "MollyFP"]
+        The setup for which to get the session kwargs.
+    metadata_subfolder_name : Literal["opto-signal sum", "opto-behavioral sum"]
+        The metadata subfolder name.
 
     Returns
     -------

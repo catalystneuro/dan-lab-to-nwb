@@ -9,11 +9,31 @@ from neuroconv.tools.nwb_helpers import get_module
 
 
 class Huang2025TdtRecordingInterface(TdtRecordingInterface):
-    """TDT RecordingInterface for huang_2025 conversion."""
+    """
+    Data interface for converting TDT electrophysiology recordings to NWB.
+
+    This interface extends the standard TdtRecordingInterface to handle
+    EEG and EMG data from Tucker-Davis Technologies (TDT) recording systems.
+    It allows separation of EEG and EMG channels into distinct ElectricalSeries.
+
+    Attributes
+    ----------
+    Extractor : type
+        The SpikeInterface extractor class used to read TDT data.
+    """
 
     Extractor = TdtRecordingExtractor
 
     def get_metadata(self) -> dict:
+        """
+        Get metadata for the recording.
+
+        Returns
+        -------
+        dict
+            Metadata dictionary with default Device and ElectrodeGroup entries removed
+            to allow custom specification in conversion scripts.
+        """
         metadata = super().get_metadata()
         metadata["Ecephys"]["Device"] = []  # remove default device
         metadata["Ecephys"]["ElectrodeGroup"] = []  # remove default electrode group
@@ -22,6 +42,29 @@ class Huang2025TdtRecordingInterface(TdtRecordingInterface):
     def add_to_nwbfile(
         self, nwbfile: NWBFile, metadata: dict, group_names: list[str] = ["ElectrodeGroup"], **conversion_options
     ):
+        """
+        Add TDT recording data to an NWB file.
+
+        This method configures electrode metadata and adds electrophysiology data
+        as ElectricalSeries objects. It supports splitting channels into separate
+        groups (e.g., EEG and EMG).
+
+        Parameters
+        ----------
+        nwbfile : NWBFile
+            The NWB file object to add recording data to.
+        metadata : dict
+            Metadata dictionary containing electrode group specifications.
+        group_names : list of str, default: ['ElectrodeGroup']
+            Names of electrode groups to include in this electrical series.
+        **conversion_options
+            Additional conversion options, including 'stub_test' to convert only
+            a small subset of data.
+
+        Returns
+        -------
+        None
+        """
         from neuroconv.tools.spikeinterface import (
             _stub_recording,
             add_recording_metadata_to_nwbfile,

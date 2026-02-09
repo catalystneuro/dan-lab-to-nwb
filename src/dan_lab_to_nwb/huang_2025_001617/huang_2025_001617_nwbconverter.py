@@ -17,7 +17,25 @@ from neuroconv.datainterfaces import (
 
 
 class Huang2025NWBConverter(NWBConverter):
-    """Primary conversion class for my extracellular electrophysiology dataset."""
+    """
+    Primary conversion class for Huang 2025 001617 dataset.
+
+    This NWBConverter combines multiple data streams from experiments using
+    Tucker-Davis Technologies (TDT) recording systems. The data includes
+    electrophysiology (EEG/EMG), fiber photometry, optogenetic stimulation,
+    and behavioral video recordings.
+
+    Attributes
+    ----------
+    data_interface_classes : dict
+        Dictionary mapping data stream names to their respective interface classes.
+        Includes EEG, EMG, FiberPhotometry, Video, and Optogenetics interfaces.
+
+    Notes
+    -----
+    The converter automatically handles temporal alignment between the video
+    timestamps and TDT fiber photometry data using camera trigger events.
+    """
 
     data_interface_classes = dict(
         EEG=Huang2025TdtRecordingInterface,
@@ -28,6 +46,23 @@ class Huang2025NWBConverter(NWBConverter):
     )
 
     def temporally_align_data_interfaces(self, metadata: dict | None = None, conversion_options: dict | None = None):
+        """
+        Align video timestamps to match TDT camera trigger events.
+
+        This method reads the camera trigger events ('Cam1') from the TDT
+        fiber photometry data and uses them to synchronize the video timestamps.
+
+        Parameters
+        ----------
+        metadata : dict or None, optional
+            Metadata dictionary (not used in this method but required by parent class).
+        conversion_options : dict or None, optional
+            Conversion options dictionary (not used in this method but required by parent class).
+
+        Returns
+        -------
+        None
+        """
         tdt_fp_folder_path = Path(self.data_interface_objects["Optogenetics"].source_data["folder_path"])
         with open(os.devnull, "w") as f, redirect_stdout(f):
             tdt_photometry = tdt.read_block(tdt_fp_folder_path, evtype=["epocs"])

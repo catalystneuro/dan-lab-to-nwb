@@ -36,6 +36,77 @@ def session_to_nwb(
     verbose: bool = True,
     skip_fiber_photometry: bool = False,
 ):
+    """
+    Convert a single session with fiber photometry, optogenetics, and electrophysiology data to NWB.
+
+    This function processes data from TDT (Tucker-Davis Technologies) recording systems,
+    including fiber photometry signals, optogenetic stimulation, EEG/EMG recordings, and
+    behavioral video. The data is organized into an NWB file suitable for sharing and analysis.
+
+    Parameters
+    ----------
+    info_file_path : FilePath
+        Path to the .mat file containing session information (session ID, start time, subject).
+    output_dir_path : DirectoryPath
+        Directory where the output NWB file will be saved.
+    video_file_path : FilePath
+        Path to the behavioral video file (.avi) from Cam1 or Cam2.
+    record_fiber : int
+        Fiber number used for recording (1 or 2). Determines which TDT streams to use
+        for fiber photometry data.
+    tdt_fp_folder_path : DirectoryPath
+        Path to the TDT folder containing fiber photometry and optogenetic data.
+    tdt_ephys_folder_path : DirectoryPath
+        Path to the TDT folder containing EEG and EMG electrophysiology data.
+    metadata_subfolder_name : {'opto-signal sum', 'opto-behavioral sum'}
+        Type of experimental session, used to determine session classification.
+    stream_name : str
+        Name of the TDT stream containing EEG/EMG data (e.g., 'LFP1', 'LFP2').
+    subject_id : str
+        Unique identifier for the experimental subject (e.g., 'M301').
+    sex : str
+        Biological sex of the subject ('M' or 'F').
+    dob : str
+        Date of birth of the subject in '%m/%d/%Y' format.
+    optogenetic_site_name : str
+        Brain region where optogenetic stimulation was applied (e.g., 'mVTA', 'DRN').
+    optogenetic_virus_volume_in_uL : float
+        Volume of optogenetic virus injected in microliters.
+    fiber_photometry_site_name : str or None, default: None
+        Brain region where fiber photometry recording was performed.
+        Required if skip_fiber_photometry is False.
+    fiber_photometry_virus_volume_in_uL : float or None, default: None
+        Volume of fiber photometry indicator virus injected in microliters.
+        Required if skip_fiber_photometry is False.
+    shared_test_pulse : bool, default: False
+        If True, indicates that test pulse data was shared across two subjects in
+        the same recording session.
+    stub_test : bool, default: False
+        If True, only convert a small subset of the data for testing purposes.
+    verbose : bool, default: True
+        If True, print progress messages during conversion.
+    skip_fiber_photometry : bool, default: False
+        If True, skip fiber photometry data conversion (for behavioral-only sessions).
+
+    Returns
+    -------
+    None
+        The function creates an NWB file but does not return a value.
+
+    Notes
+    -----
+    The output NWB file is named following the pattern:
+    sub-{subject_id}_ses-{session_id}-{session_type}.nwb
+
+    For sessions with two subjects, this function should be called separately for
+    each subject with appropriate record_fiber and subject_id values.
+
+    If the TDT .tsq file is structured {session}_{segment}.tsq,
+    the tdt_ephys_folder_path must be named {session} with subfolder {segment} containing the .tsq file.
+    For example, if the .tsq file is named A_Lindsay_TDT_opto1_E_2miceRand-250922-173345_M368_M373-250923-082001.tsq,
+    then tdt_ephys_folder_path should be .../A_Lindsay_TDT_opto1_E_2miceRand-250922-173345 and should contain
+    a subfolder named M368_M373-250923-082001 that contains the .tsq file.
+    """
     info_file_path = Path(info_file_path)
     video_file_path = Path(video_file_path)
     tdt_fp_folder_path = Path(tdt_fp_folder_path)

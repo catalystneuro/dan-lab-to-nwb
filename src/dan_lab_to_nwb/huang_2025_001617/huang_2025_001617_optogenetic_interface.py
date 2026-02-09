@@ -33,7 +33,23 @@ from neuroconv.basedatainterface import BaseDataInterface
 
 
 class Huang2025OptogeneticInterface(BaseDataInterface):
-    """Optogenetic interface for huang_2025 conversion"""
+    """
+    Data interface for converting optogenetic stimulation data from TDT to NWB.
+
+    This interface processes optogenetic stimulation events from Tucker-Davis
+    Technologies (TDT) systems and converts them to NWB format using the
+    ndx-optogenetics extension. It handles metadata about light sources,
+    optical fibers, viral vectors, and stimulation parameters.
+
+    Attributes
+    ----------
+    keywords : list of str
+        Keywords describing the data type, used for metadata organization.
+    epoc_name_to_stimulus_type : dict
+        Mapping from TDT epoch names to stimulus types (test_pulse or intense_stimulation).
+    epoc_names : list of str
+        Names of TDT epochs containing optogenetic stimulation events for this session.
+    """
 
     keywords = ["optogenetics"]
 
@@ -45,23 +61,29 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
         virus_volume_in_uL: float,
         shared_test_pulse: bool = False,
     ):
+        """
+        Initialize the optogenetic interface.
+
+        Parameters
+        ----------
+        folder_path : DirectoryPath
+            Path to the TDT folder containing optogenetic stimulation data.
+        optogenetic_site_name : str
+            Name of the brain region where stimulation was applied (e.g., 'mVTA', 'DRN').
+        record_fiber : int
+            Fiber number used for recording (1 or 2). Determines which test pulse
+            epoch to use (St1_ for fiber 1, St2_ for fiber 2).
+        virus_volume_in_uL : float
+            Volume of optogenetic virus injected in microliters.
+        shared_test_pulse : bool, default: False
+            If True, use St1_ test pulse for both fibers (for sessions with two subjects
+            sharing the same test pulse).
+        """
         super().__init__(
             folder_path=folder_path, optogenetic_site_name=optogenetic_site_name, virus_volume_in_uL=virus_volume_in_uL
         )
 
         folder_path = Path(folder_path)
-        # file_pattern_to_epoc_names = {
-        #     "pTra_con": ["St1_", "St2_", "Wi3_"],
-        #     "opto1-Evoke12_2in1": ["St1_", "St2_", "LasT"],
-        #     "opto1_E_2": ["St1_", "St2_", "LasT"],
-        #     "opto1_E12_2in1": ["St1_", "St2_", "LasT"],
-        #     "opto_E_2": ["St1_", "LasT"],
-        #     "TDTm_R_evoke": ["St1_"],
-        #     "TDTm_op1_pTra": ["St1_", "Wi3_"],
-        #     "TDTm_op1-E_pTra": ["St1_", "Wi3_"],
-        #     "SBOX_R_evoke_2in1": ["St1_", "St2_"],
-        #     "TDTb_R_evoke_2in1": ["St1_", "St2_"],
-        # }
         file_pattern_to_stim_epoc_name = {
             "pTra_con": "Wi3_",
             "opto1-Evoke12_2in1": "LasT",
@@ -101,6 +123,30 @@ class Huang2025OptogeneticInterface(BaseDataInterface):
         )
 
     def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict):
+        """
+        Add optogenetic stimulation data to an NWB file.
+
+        This method adds comprehensive optogenetic metadata including devices
+        (light sources, optical fibers), viral vectors, effectors, stimulation sites,
+        and individual stimulation pulses with their parameters.
+
+        Parameters
+        ----------
+        nwbfile : NWBFile
+            The NWB file object to add optogenetic data to.
+        metadata : dict
+            Metadata dictionary containing optogenetic specifications
+            under metadata['Optogenetics'].
+
+        Returns
+        -------
+        None
+
+        Notes
+        -----
+        Stimulation pulses are sorted by start time and classified into types
+        (test_pulse or intense_stimulation) based on the TDT epoch name.
+        """
         folder_path = Path(self.source_data["folder_path"])
         optogenetic_site_name = self.source_data["optogenetic_site_name"]
         virus_volume_in_uL = self.source_data["virus_volume_in_uL"]
