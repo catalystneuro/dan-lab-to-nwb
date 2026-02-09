@@ -153,6 +153,15 @@ To convert all sessions in the dataset:
 
 This conversion processes TDT recordings that include fiber photometry, optogenetic stimulation, EEG/EMG, and behavioral video.
 
+Before converting, make sure to reorganize your TDT data folders using the provided `reorganize_data.py` script, as described in the steps below. This will ensure compatibility with the Neo data reader used in the conversion.
+
+1. In `src/dan_lab_to_nwb/download_utils/reorganize_data.py`, update the `data_dir_path` variable to point to your raw TDT data directory.
+
+2. Run the reorganization script:
+    ```bash
+    python src/dan_lab_to_nwb/download_utils/reorganize_data.py
+    ```
+
 To convert example sessions:
 
 1. In `src/dan_lab_to_nwb/huang_2025_001617/huang_2025_001617_convert_session.py`, update the `data_dir_path` and
