@@ -203,11 +203,19 @@ Ophys:
 
 Behavior:
   ExternalVideos:
-    VideoCamera1:
+    Video1:
       description: Video recorded by camera 1.
       unit: Frames
       device:
         name: Camera1
+        description: The B0205 is a new member of Arducam's USB camera family. Based on 1/2.7” OV2710, it's a 2MP, UVC-compliant, wide-angle USB 2.0 camera with a motorized IR-Cut filter and infrared LEDs. The motorized (switchable) IR-CUT filter and infrared LEDs can be triggered by the photoresistor according to the light environment to be ON/OFF to block or pass the infrared light. It can be widely used in wildlife photography, home security systems, baby cameras, etc.
+        manufacturer: ArduCam
+        model_name: 1080P Day & Night Vision USB Camera for Computer, 2MP Automatic IR-Cut Switching All-Day Image USB2.0 Webcam Board with IR LEDs for Windows, Linux, Android and Mac OS
+    Video2:
+      description: Video recorded by camera 2.
+      unit: Frames
+      device:
+        name: Camera2
         description: The B0205 is a new member of Arducam's USB camera family. Based on 1/2.7” OV2710, it's a 2MP, UVC-compliant, wide-angle USB 2.0 camera with a motorized IR-Cut filter and infrared LEDs. The motorized (switchable) IR-CUT filter and infrared LEDs can be triggered by the photoresistor according to the light environment to be ON/OFF to block or pass the infrared light. It can be widely used in wildlife photography, home security systems, baby cameras, etc.
         manufacturer: ArduCam
         model_name: 1080P Day & Night Vision USB Camera for Computer, 2MP Automatic IR-Cut Switching All-Day Image USB2.0 Webcam Board with IR LEDs for Windows, Linux, Android and Mac OS
