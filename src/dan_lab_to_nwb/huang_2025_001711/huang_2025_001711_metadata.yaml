@@ -45,19 +45,29 @@ Behavior:
       - name: time_out_of_nest
         description: Total time spent out of the nest in seconds.
 
+  ExternalVideos:
+    VideoCamera1:
+      description: Video recorded by camera 1.
+      unit: Frames
+      device:
+        name: Camera1
+        description: The B0205 is a new member of Arducam's USB camera family. Based on 1/2.7” OV2710, it's a 2MP, UVC-compliant, wide-angle USB 2.0 camera with a motorized IR-Cut filter and infrared LEDs. The motorized (switchable) IR-CUT filter and infrared LEDs can be triggered by the photoresistor according to the light environment to be ON/OFF to block or pass the infrared light. It can be widely used in wildlife photography, home security systems, baby cameras, etc.
+        manufacturer: ArduCam
+        model_name: 1080P Day & Night Vision USB Camera for Computer, 2MP Automatic IR-Cut Switching All-Day Image USB2.0 Webcam Board with IR LEDs for Windows, Linux, Android and Mac OS
+
 Ecephys:
   Device:
     - name: DeviceEEG
-      description: EEG electrodes consist of 2 wires with X um diameter made of material Y wrapped around a metal screw inserted into the brain in location Z.
+      description: EEG electrodes consist of 2 wires with 0.002 inch diameter made of stainless steel wrapped around a metal screw inserted into the brain 2.5mm lateral to the midline, 3mm posterior to bregma.
       manufacturer: Dan Lab
     - name: DeviceEMG
-      description: EMG electrodes consist of 2 wires with X um diameter made of material Y inserted subcutaneously in the neck.
+      description: EMG electrodes consist of 2 wires with 0.002 inch diameter made of stainless steel inserted subcutaneously in the neck.
       manufacturer: Dan Lab
   ElectrodeGroup:
     - name: ElectrodeGroupEEG
       description: ElectrodeGroup for EEG channels.
       device: DeviceEEG
-      location: Brain Region Z
+      location: 2.5mm lateral to the midline, 3mm posterior to bregma.
     - name: ElectrodeGroupEMG
       description: ElectrodeGroup for EMG channels.
       device: DeviceEMG
