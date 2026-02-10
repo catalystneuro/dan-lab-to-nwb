@@ -5,6 +5,8 @@ NWBFile:
     - sleep
   session_description:
     Sleep-Wake experiments were conducted with mice while video, electrophysiology, and pose estimation data were collected.
+  experiment_description:
+    Sleep-Wake experiments were conducted with mice while video, electrophysiology, and pose estimation data were collected.
   institution: University of California Berkeley
   lab: Dan Lab
   experimenter:

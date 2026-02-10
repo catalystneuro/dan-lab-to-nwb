@@ -153,7 +153,7 @@ if __name__ == "__main__":
     # Parameters for conversion
     data_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/Test - video analysis")
     output_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/conversion_nwb/huang_2025_001711")
-    max_workers = 4
+    max_workers = 5
     verbose = False
 
     if output_dir_path.exists():
