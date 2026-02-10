@@ -15,14 +15,6 @@ conda activate dan-lab-to-nwb-env
 
 This creates a [conda environment](https://docs.conda.io/projects/conda/en/latest/user-guide/concepts/environments.html) which isolates the conversion code from your system libraries. We recommend that you run all your conversion related tasks and analysis from the created environment in order to minimize issues related to package dependencies.
 
-Then you can run:
-
-```bash
-cd dan-lab-to-nwb
-conda env create --file make_env.yml
-conda activate dan-lab-to-nwb-env
-```
-
 Alternatively, if you want to avoid conda altogether (for example if you use another virtual environment tool) you can install the repository with the following commands using only pip:
 
 ```bash
