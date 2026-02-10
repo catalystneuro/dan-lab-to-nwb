@@ -162,6 +162,8 @@ Before converting, make sure to reorganize your TDT data folders using the provi
     python src/dan_lab_to_nwb/download_utils/reorganize_data.py
     ```
 
+Also, before converting, make sure that the metadata.xlsx files have been exported to CSVs, and that all of the date and setup columns are appropriately labeled. Note the final column in "FP_Sert-cre_DRN_2min-pTra-stim.xlsx" is labeled "Experiments" but should be labeled "date" and "setup".
+
 To convert example sessions:
 
 1. In `src/dan_lab_to_nwb/huang_2025_001617/huang_2025_001617_convert_session.py`, update the `data_dir_path` and
