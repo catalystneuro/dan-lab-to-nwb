@@ -255,7 +255,7 @@ def main():
 
     # Setup - Bing
     metadata_df = pd.read_csv(
-        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-signal sum/FP_Dat-cre_mVTA_3h-stim_low virus - Sheet1.csv"
+        data_dir_path / "metadata" / "opto-signal sum" / "FP_Dat-cre_mVTA_3h-stim_low virus - Sheet1.csv"
     )
     subject_id = "M301"
     row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
@@ -336,7 +336,7 @@ def main():
 
     # Setup - WS8
     metadata_df = pd.read_csv(
-        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-signal sum/FP_Dat-cre_mVTA_3h-stim_low virus - Sheet1.csv"
+        data_dir_path / "metadata" / "opto-signal sum" / "FP_Dat-cre_mVTA_3h-stim_low virus - Sheet1.csv"
     )
     subject_id = "M296"
     row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
@@ -417,7 +417,7 @@ def main():
     # Setup - MollyFP first subject
     # Note: this example session actually contains data from two subjects, but only one is included in the NWB file.
     metadata_df = pd.read_csv(
-        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-signal sum/FP_Sert-cre_DRN_2min-pTra-stim - Sheet1.csv"
+        data_dir_path / "metadata" / "opto-signal sum" / "FP_Sert-cre_DRN_2min-pTra-stim - Sheet1.csv"
     )
     subject_id = "M363"
     row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
@@ -495,7 +495,7 @@ def main():
     # Setup - MollyFP second subject
     # Note: this example session actually contains data from two subjects, but only one is included in the NWB file.
     metadata_df = pd.read_csv(
-        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-signal sum/FP_Sert-cre_DRN_2min-pTra-stim - Sheet1.csv"
+        data_dir_path / "metadata" / "opto-signal sum" / "FP_Sert-cre_DRN_2min-pTra-stim - Sheet1.csv"
     )
     subject_id = "M366"
     row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
@@ -574,7 +574,7 @@ def main():
     # ------------------------------------------------------------------------------------------------------------------
     # Setup - Bing
     metadata_df = pd.read_csv(
-        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-behavioral sum/behav_ChAT-cre_BF_2min-20Hz-stim - Sheet1.csv"
+        data_dir_path / "metadata" / "opto-behavioral sum" / "behav_ChAT-cre_BF_2min-20Hz-stim - Sheet1.csv"
     )
     subject_id = "M008"
     row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
@@ -642,7 +642,7 @@ def main():
 
     # Setup - WS8
     metadata_df = pd.read_csv(
-        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-behavioral sum/behav_ChAT-cre_BF_2min-20Hz-stim - Sheet1.csv"
+        data_dir_path / "metadata" / "opto-behavioral sum" / "behav_ChAT-cre_BF_2min-20Hz-stim - Sheet1.csv"
     )
     subject_id = "M337"
     row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
@@ -710,7 +710,7 @@ def main():
 
     # Setup - MollyFP
     metadata_df = pd.read_csv(
-        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-behavioral sum/behav_Sert-cre_DRN_2min-pTra-stim - Sheet1.csv"
+        data_dir_path / "metadata" / "opto-behavioral sum" / "behav_Sert-cre_DRN_2min-pTra-stim - Sheet1.csv"
     )
     subject_id = "M363"
     row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
