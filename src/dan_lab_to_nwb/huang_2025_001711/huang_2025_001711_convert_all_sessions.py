@@ -10,7 +10,9 @@ from pydantic import DirectoryPath
 from pymatreader import read_mat
 from tqdm import tqdm
 
-from dan_lab_to_nwb.huang_2025_tdt.huang_2025_tdt_convert_session import session_to_nwb
+from dan_lab_to_nwb.huang_2025_001711.huang_2025_001711_convert_session import (
+    session_to_nwb,
+)
 
 
 def dataset_to_nwb(
@@ -113,49 +115,35 @@ def get_session_to_nwb_kwargs_per_session(
     list[dict[str, Any]]
         A list of dictionaries containing the kwargs for session_to_nwb for each session.
     """
-    sessions_to_skip = [
-        "M405_M407-250412-081001(done)",
-        "M404_M409-250406-141501(done)",
-        "M404_M409-250405-151801(done)",
-        "M405_M407-250412-142001(done)",
-        "M404-M409-250406-153701 (M404 bad signal, done)",
-        "M405_M407-250413-081001(done)",
-        "M405_M407-250413-152101(done)",
-        "M409_M404-250407-153704 (done)",
-        "M405_M407-250414-081001(done)",
-    ]
 
     data_dir_path = Path(data_dir_path)
     session_to_nwb_kwargs_per_session = []
-    dataset_folder_names = [
-        "Bing-202504",
-        "WS8-202504",
-        "ExampleSessions",
-    ]
-    for folder_name in dataset_folder_names:
-        dataset_folder = data_dir_path / folder_name
-        for outer_session_folder in dataset_folder.iterdir():
-            if not outer_session_folder.is_dir():
+    for subject_folder in data_dir_path.iterdir():
+        if not subject_folder.is_dir():
+            continue
+        behavioral_summary_file_path = subject_folder / f"{subject_folder.name}_beh_summary.csv"
+        for session_folder in subject_folder.iterdir():
+            if not session_folder.is_dir():
                 continue
-            if outer_session_folder.name in sessions_to_skip:
-                continue
-            for session_folder in outer_session_folder.iterdir():
-                if not session_folder.is_dir():
-                    continue
-                for segment_folder in session_folder.iterdir():
-                    if not segment_folder.is_dir():
-                        continue
-                    info_file_path = segment_folder / "Info.mat"
-                    video_file_path = next(segment_folder.glob("*.avi"))
-                    tdt_fp_folder_path = segment_folder
-                    tdt_ephys_folder_path = session_folder
-                    session_to_nwb_kwargs = dict(
-                        info_file_path=info_file_path,
-                        video_file_path=video_file_path,
-                        tdt_fp_folder_path=tdt_fp_folder_path,
-                        tdt_ephys_folder_path=tdt_ephys_folder_path,
-                    )
-                    session_to_nwb_kwargs_per_session.append(session_to_nwb_kwargs)
+            check_FP_folder = session_folder / "check_FP"
+            info_file_path = check_FP_folder / "Info.mat"
+            video_file_path = next(session_folder.glob("*.avi"))
+            dlc_file_path = next(session_folder.glob("*DLC*.h5"))
+            labels_file_path = check_FP_folder / "labels.mat"
+            eeg_file_path = check_FP_folder / "EEG.mat"
+            emg_file_path = check_FP_folder / "EMG.mat"
+            fs_file_path = check_FP_folder / "SampFreq.mat"
+            session_to_nwb_kwargs = dict(
+                info_file_path=info_file_path,
+                video_file_path=video_file_path,
+                dlc_file_path=dlc_file_path,
+                labels_file_path=labels_file_path,
+                behavioral_summary_file_path=behavioral_summary_file_path,
+                eeg_file_path=eeg_file_path,
+                emg_file_path=emg_file_path,
+                fs_file_path=fs_file_path,
+            )
+            session_to_nwb_kwargs_per_session.append(session_to_nwb_kwargs)
 
     return session_to_nwb_kwargs_per_session
 
@@ -163,9 +151,9 @@ def get_session_to_nwb_kwargs_per_session(
 if __name__ == "__main__":
 
     # Parameters for conversion
-    data_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/Test - TDT data")
-    output_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/conversion_nwb/huang_2025_tdt")
-    max_workers = 4
+    data_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/Test - video analysis")
+    output_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/conversion_nwb/huang_2025_001711")
+    max_workers = 5
     verbose = False
 
     if output_dir_path.exists():

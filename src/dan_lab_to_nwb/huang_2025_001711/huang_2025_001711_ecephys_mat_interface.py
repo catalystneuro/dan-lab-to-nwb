@@ -16,15 +16,46 @@ from neuroconv.utils.dict import DeepDict
 from neuroconv.utils.json_schema import get_schema_from_hdmf_class
 
 
-class Huang2025DlcEcephysMatInterface(BaseDataInterface):
-    """Ecephys interface for huang_2025_dlc conversion"""
+class Huang2025EcephysMatInterface(BaseDataInterface):
+    """
+    Data interface for converting EEG and EMG data from MATLAB files to NWB.
+
+    This interface processes electroencephalography (EEG) and electromyography (EMG)
+    recordings stored in MATLAB .mat format and converts them to NWB ElectricalSeries.
+
+    Attributes
+    ----------
+    keywords : list of str
+        Keywords describing the data types handled by this interface.
+    """
 
     keywords = ["EEG", "EMG"]
 
     def __init__(self, eeg_file_path: FilePath, emg_file_path: FilePath, fs_file_path: FilePath):
+        """
+        Initialize the ecephys interface.
+
+        Parameters
+        ----------
+        eeg_file_path : FilePath
+            Path to .mat file containing EEG data as a 1D array.
+        emg_file_path : FilePath
+            Path to .mat file containing EMG data as a 1D array.
+        fs_file_path : FilePath
+            Path to .mat file containing the sampling frequency (in Hz) for both EEG and EMG.
+        """
         super().__init__(eeg_file_path=eeg_file_path, emg_file_path=emg_file_path, fs_file_path=fs_file_path)
 
     def get_metadata_schema(self) -> dict:
+        """
+        Get the metadata schema for ecephys data.
+
+        Returns
+        -------
+        dict
+            JSON schema dictionary defining the structure for ecephys metadata,
+            including Device, ElectrodeGroup, and ElectricalSeries specifications.
+        """
         metadata_schema = super().get_metadata_schema()
         metadata_schema["properties"]["Ecephys"] = get_base_schema(tag="Ecephys")
         metadata_schema["properties"]["Ecephys"]["required"] = ["Device", "ElectrodeGroup"]
@@ -64,6 +95,29 @@ class Huang2025DlcEcephysMatInterface(BaseDataInterface):
         return metadata_schema
 
     def add_to_nwbfile(self, nwbfile: NWBFile, metadata: DeepDict):
+        """
+        Add EEG and EMG data to an NWB file.
+
+        This method loads EEG and EMG data from MATLAB files, creates the necessary
+        electrode metadata, and adds the data as ElectricalSeries objects in the
+        'ecephys' processing module.
+
+        Parameters
+        ----------
+        nwbfile : NWBFile
+            The NWB file object to add ecephys data to.
+        metadata : DeepDict
+            Metadata dictionary containing device, electrode group, and electrode
+            specifications under metadata['Ecephys'].
+
+        Returns
+        -------
+        None
+
+        Notes
+        -----
+        The data is stored with a conversion factor of 1e-6 (microvolts to volts).
+        """
         # Load data
         eeg_file_path = Path(self.source_data["eeg_file_path"])
         emg_file_path = Path(self.source_data["emg_file_path"])
@@ -101,6 +155,21 @@ class Huang2025DlcEcephysMatInterface(BaseDataInterface):
 
 
 def add_electrode_groups_to_nwbfile(nwbfile: NWBFile, metadata: DeepDict):
+    """
+    Add electrode groups to an NWB file.
+
+    Parameters
+    ----------
+    nwbfile : NWBFile
+        The NWB file object to add electrode groups to.
+    metadata : DeepDict
+        Metadata dictionary containing electrode group specifications
+        under metadata['Ecephys']['ElectrodeGroup'].
+
+    Returns
+    -------
+    None
+    """
     for group_metadata in metadata["Ecephys"]["ElectrodeGroup"]:
         if group_metadata["name"] in nwbfile.electrode_groups:
             continue
@@ -112,6 +181,24 @@ def add_electrode_groups_to_nwbfile(nwbfile: NWBFile, metadata: DeepDict):
 
 
 def add_electrodes_to_nwbfile(nwbfile: NWBFile, metadata: DeepDict):
+    """
+    Add electrode entries to the NWB file's electrodes table.
+
+    Creates one electrode entry for each EEG and EMG channel with unique
+    channel names (e.g., 'EEG1', 'EMG1').
+
+    Parameters
+    ----------
+    nwbfile : NWBFile
+        The NWB file object to add electrodes to.
+    metadata : DeepDict
+        Metadata dictionary containing electrode group specifications
+        under metadata['Ecephys']['ElectrodeGroup'].
+
+    Returns
+    -------
+    None
+    """
     electrode_group_name_to_num_channels = {"ElectrodeGroupEEG": 1, "ElectrodeGroupEMG": 1}
 
     nwbfile.add_electrode_column(name="channel_name", description="unique channel reference")
@@ -136,6 +223,34 @@ def add_electrical_series_to_nwbfile(
     es_key: str = None,
     group_names: list[str] = None,
 ):
+    """
+    Add an ElectricalSeries object to an NWB file.
+
+    This function creates an ElectricalSeries object containing electrophysiology
+    data and adds it to the 'ecephys' processing module.
+
+    Parameters
+    ----------
+    nwbfile : NWBFile
+        The NWB file object to add the electrical series to.
+    metadata : DeepDict
+        Metadata dictionary containing electrical series specifications
+        under metadata['Ecephys'][es_key].
+    data : np.ndarray
+        The electrical data to store, shape (n_samples, n_channels).
+    starting_time : float, default: 0.0
+        Start time of the recording in seconds.
+    rate : float, default: 1.0
+        Sampling rate in Hz.
+    es_key : str or None, default: None
+        Key to lookup electrical series metadata. If None, uses 'ElectricalSeries'.
+    group_names : list of str or None, default: None
+        Names of electrode groups to link to this series. If None, uses ['ElectrodeGroup'].
+
+    Returns
+    -------
+    None
+    """
     es_key = es_key if es_key is not None else "ElectricalSeries"
     eseries_kwargs = dict(
         name=es_key,

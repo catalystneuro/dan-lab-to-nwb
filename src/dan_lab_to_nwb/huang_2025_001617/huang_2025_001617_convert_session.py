@@ -10,7 +10,7 @@ import pandas as pd
 from pydantic import DirectoryPath, FilePath
 from pymatreader import read_mat
 
-from dan_lab_to_nwb.huang_2025_tdt import Huang2025NWBConverter
+from dan_lab_to_nwb.huang_2025_001617 import Huang2025NWBConverter
 from neuroconv.utils import dict_deep_update, load_dict_from_file
 
 
@@ -36,6 +36,77 @@ def session_to_nwb(
     verbose: bool = True,
     skip_fiber_photometry: bool = False,
 ):
+    """
+    Convert a single session with fiber photometry, optogenetics, and electrophysiology data to NWB.
+
+    This function processes data from TDT (Tucker-Davis Technologies) recording systems,
+    including fiber photometry signals, optogenetic stimulation, EEG/EMG recordings, and
+    behavioral video. The data is organized into an NWB file suitable for sharing and analysis.
+
+    Parameters
+    ----------
+    info_file_path : FilePath
+        Path to the .mat file containing session information (session ID, start time, subject).
+    output_dir_path : DirectoryPath
+        Directory where the output NWB file will be saved.
+    video_file_path : FilePath
+        Path to the behavioral video file (.avi) from Cam1 or Cam2.
+    record_fiber : int
+        Fiber number used for recording (1 or 2). Determines which TDT streams to use
+        for fiber photometry data.
+    tdt_fp_folder_path : DirectoryPath
+        Path to the TDT folder containing fiber photometry and optogenetic data.
+    tdt_ephys_folder_path : DirectoryPath
+        Path to the TDT folder containing EEG and EMG electrophysiology data.
+    metadata_subfolder_name : {'opto-signal sum', 'opto-behavioral sum'}
+        Type of experimental session, used to determine session classification.
+    stream_name : str
+        Name of the TDT stream containing EEG/EMG data (e.g., 'LFP1', 'LFP2').
+    subject_id : str
+        Unique identifier for the experimental subject (e.g., 'M301').
+    sex : str
+        Biological sex of the subject ('M' or 'F').
+    dob : str
+        Date of birth of the subject in '%m/%d/%Y' format.
+    optogenetic_site_name : str
+        Brain region where optogenetic stimulation was applied (e.g., 'mVTA', 'DRN').
+    optogenetic_virus_volume_in_uL : float
+        Volume of optogenetic virus injected in microliters.
+    fiber_photometry_site_name : str or None, default: None
+        Brain region where fiber photometry recording was performed.
+        Required if skip_fiber_photometry is False.
+    fiber_photometry_virus_volume_in_uL : float or None, default: None
+        Volume of fiber photometry indicator virus injected in microliters.
+        Required if skip_fiber_photometry is False.
+    shared_test_pulse : bool, default: False
+        If True, indicates that test pulse data was shared across two subjects in
+        the same recording session.
+    stub_test : bool, default: False
+        If True, only convert a small subset of the data for testing purposes.
+    verbose : bool, default: True
+        If True, print progress messages during conversion.
+    skip_fiber_photometry : bool, default: False
+        If True, skip fiber photometry data conversion (for behavioral-only sessions).
+
+    Returns
+    -------
+    None
+        The function creates an NWB file but does not return a value.
+
+    Notes
+    -----
+    The output NWB file is named following the pattern:
+    sub-{subject_id}_ses-{session_id}-{session_type}.nwb
+
+    For sessions with two subjects, this function should be called separately for
+    each subject with appropriate record_fiber and subject_id values.
+
+    If the TDT .tsq file is structured {session}_{segment}.tsq,
+    the tdt_ephys_folder_path must be named {session} with subfolder {segment} containing the .tsq file.
+    For example, if the .tsq file is named A_Lindsay_TDT_opto1_E_2miceRand-250922-173345_M368_M373-250923-082001.tsq,
+    then tdt_ephys_folder_path should be .../A_Lindsay_TDT_opto1_E_2miceRand-250922-173345 and should contain
+    a subfolder named M368_M373-250923-082001 that contains the .tsq file.
+    """
     info_file_path = Path(info_file_path)
     video_file_path = Path(video_file_path)
     tdt_fp_folder_path = Path(tdt_fp_folder_path)
@@ -83,7 +154,7 @@ def session_to_nwb(
     metadata = converter.get_metadata()
 
     # Update default metadata with the editable in the corresponding yaml file
-    editable_metadata_path = Path(__file__).parent / "huang_2025_tdt_metadata.yaml"
+    editable_metadata_path = Path(__file__).parent / "huang_2025_001617_metadata.yaml"
     editable_metadata = load_dict_from_file(editable_metadata_path)
     metadata = dict_deep_update(metadata, editable_metadata)
 
@@ -134,6 +205,11 @@ def session_to_nwb(
         filtered_fp_metadata["FiberPhotometryTable"]["rows"] = [
             row for row in fp_metadata["FiberPhotometryTable"]["rows"] if fiber_photometry_site_name in row["location"]
         ]
+        filtered_fp_metadata["FiberPhotometryResponseSeries"] = [
+            series
+            for series in fp_metadata["FiberPhotometryResponseSeries"]
+            if fiber_photometry_site_name in series["name"]
+        ]
         if record_fiber == 1:
             for series_meta in filtered_fp_metadata["FiberPhotometryResponseSeries"]:
                 if "calcium_signal" in series_meta["name"]:
@@ -168,8 +244,8 @@ def session_to_nwb(
 def main():
     # Parameters for conversion
     data_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets")
-    output_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/conversion_nwb/huang_2025_tdt")
-    stub_test = True
+    output_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/conversion_nwb/huang_2025_001617")
+    stub_test = False
 
     if output_dir_path.exists():
         shutil.rmtree(output_dir_path)
@@ -179,7 +255,7 @@ def main():
 
     # Setup - Bing
     metadata_df = pd.read_csv(
-        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-signal sum/FP_Dat-cre_mVTA_3h-stim_low virus - Sheet1.csv"
+        data_dir_path / "metadata" / "opto-signal sum" / "FP_Dat-cre_mVTA_3h-stim_low virus - Sheet1.csv"
     )
     subject_id = "M301"
     row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
@@ -260,7 +336,7 @@ def main():
 
     # Setup - WS8
     metadata_df = pd.read_csv(
-        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-signal sum/FP_Dat-cre_mVTA_3h-stim_low virus - Sheet1.csv"
+        data_dir_path / "metadata" / "opto-signal sum" / "FP_Dat-cre_mVTA_3h-stim_low virus - Sheet1.csv"
     )
     subject_id = "M296"
     row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
@@ -341,7 +417,7 @@ def main():
     # Setup - MollyFP first subject
     # Note: this example session actually contains data from two subjects, but only one is included in the NWB file.
     metadata_df = pd.read_csv(
-        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-signal sum/FP_Sert-cre_DRN_2min-pTra-stim - Sheet1.csv"
+        data_dir_path / "metadata" / "opto-signal sum" / "FP_Sert-cre_DRN_2min-pTra-stim - Sheet1.csv"
     )
     subject_id = "M363"
     row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
@@ -419,7 +495,7 @@ def main():
     # Setup - MollyFP second subject
     # Note: this example session actually contains data from two subjects, but only one is included in the NWB file.
     metadata_df = pd.read_csv(
-        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-signal sum/FP_Sert-cre_DRN_2min-pTra-stim - Sheet1.csv"
+        data_dir_path / "metadata" / "opto-signal sum" / "FP_Sert-cre_DRN_2min-pTra-stim - Sheet1.csv"
     )
     subject_id = "M366"
     row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
@@ -498,7 +574,7 @@ def main():
     # ------------------------------------------------------------------------------------------------------------------
     # Setup - Bing
     metadata_df = pd.read_csv(
-        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-behavioral sum/behav_ChAT-cre_BF_2min-20Hz-stim - Sheet1.csv"
+        data_dir_path / "metadata" / "opto-behavioral sum" / "behav_ChAT-cre_BF_2min-20Hz-stim - Sheet1.csv"
     )
     subject_id = "M008"
     row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
@@ -566,7 +642,7 @@ def main():
 
     # Setup - WS8
     metadata_df = pd.read_csv(
-        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-behavioral sum/behav_ChAT-cre_BF_2min-20Hz-stim - Sheet1.csv"
+        data_dir_path / "metadata" / "opto-behavioral sum" / "behav_ChAT-cre_BF_2min-20Hz-stim - Sheet1.csv"
     )
     subject_id = "M337"
     row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]
@@ -634,7 +710,7 @@ def main():
 
     # Setup - MollyFP
     metadata_df = pd.read_csv(
-        "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets/metadata/opto-behavioral sum/behav_Sert-cre_DRN_2min-pTra-stim - Sheet1.csv"
+        data_dir_path / "metadata" / "opto-behavioral sum" / "behav_Sert-cre_DRN_2min-pTra-stim - Sheet1.csv"
     )
     subject_id = "M363"
     row = metadata_df[metadata_df["mouse ID"] == subject_id].iloc[0]

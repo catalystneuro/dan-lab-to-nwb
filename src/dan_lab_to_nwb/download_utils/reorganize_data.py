@@ -22,12 +22,16 @@ SUBJECT_ID_CORRECTIONS = {
     "M358_M042-250522-140001": ("M358_M304", "M358_M042"),
     # M368/M373 session
     "M368_M373-251004-072001": ("M368_M372", "M368_M373"),
+    # M374/M375 session
+    "M374_M375-251012-072001": ("M369_M370", "M374_M375"),
 }
 
 # Folders with extra text that needs to be removed from folder name
 FOLDER_NAME_CORRECTIONS = {
     "M337_M358-250723-141552(only analyze M337": "M337_M358-250723-141552",
     "M358_M361-250711-072001 (only analyze 361": "M358_M361-250711-072001",
+    "M374_M375-251025-072001 (bad channels for EEG)": "M374_M375-251025-072001",
+    "M368_M373-250923-082001-test, 30min": "M368_M373-250923-082001",
 }
 
 

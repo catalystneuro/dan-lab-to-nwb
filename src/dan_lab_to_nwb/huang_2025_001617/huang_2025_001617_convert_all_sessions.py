@@ -13,8 +13,10 @@ from pydantic import DirectoryPath, FilePath
 from pymatreader import read_mat
 from tqdm import tqdm
 
-from dan_lab_to_nwb.huang_2025_tdt.huang_2025_tdt_convert_session import session_to_nwb
-from dan_lab_to_nwb.huang_2025_tdt.reorganize_data import find_tdt_folders
+from dan_lab_to_nwb.download_utils.reorganize_data import find_tdt_folders
+from dan_lab_to_nwb.huang_2025_001617.huang_2025_001617_convert_session import (
+    session_to_nwb,
+)
 
 
 def dataset_to_nwb(
@@ -102,7 +104,7 @@ def get_nwbfile_name(*, session_to_nwb_kwargs: dict) -> str:
     return nwbfile_name
 
 
-def collect_excel_metadata(*, metadata_folder_path: DirectoryPath):
+def collect_excel_metadata(*, metadata_folder_path: DirectoryPath) -> dict[str, dict[str, dict]]:
     """Read metadata from Excel files in the specified folder.
 
     Parameters
@@ -112,8 +114,8 @@ def collect_excel_metadata(*, metadata_folder_path: DirectoryPath):
 
     Returns
     -------
-    dict
-        A dictionary mapping subject IDs to their metadata.
+    dict[str, dict[str, dict]]
+        A dictionary mapping sheet names to dictionaries that map subject IDs to their metadata.
     """
     sheet_name_to_subject_id_to_metadata: dict[str, dict[str, dict]] = {}
     metadata_folder_path = Path(metadata_folder_path)
@@ -197,6 +199,18 @@ def read_metadata(excel_file: FilePath) -> dict[str, dict]:
 
 
 def collect_session_to_nwb_kwargs_per_session(*, data_dir_path: DirectoryPath):
+    """Collect the kwargs for session_to_nwb for each session in the dataset.
+
+    Parameters
+    ----------
+    data_dir_path : DirectoryPath
+        The path to the directory containing the raw data.
+
+    Returns
+    -------
+    list[dict[str, Any]]
+        A list of dictionaries containing the kwargs for session_to_nwb for each session.
+    """
     setups = ["Bing", "WS8", "MollyFP"]
     metadata_subfolder_names = ["opto-signal sum", "opto-behavioral sum"]
     all_session_to_nwb_kwargs_per_session = []
@@ -223,12 +237,16 @@ def get_session_to_nwb_kwargs_per_session(
     setup: Literal["Bing", "WS8", "MollyFP"],
     metadata_subfolder_name: Literal["opto-signal sum", "opto-behavioral sum"],
 ):
-    """Get the kwargs for session_to_nwb for each session in the dataset.
+    """Get the kwargs for session_to_nwb for each session in the dataset for a given setup and metadata subfolder.
 
     Parameters
     ----------
     data_dir_path : DirectoryPath
         The path to the directory containing the raw data.
+    setup : Literal["Bing", "WS8", "MollyFP"]
+        The setup for which to get the session kwargs.
+    metadata_subfolder_name : Literal["opto-signal sum", "opto-behavioral sum"]
+        The metadata subfolder name.
 
     Returns
     -------
@@ -246,183 +264,7 @@ def get_session_to_nwb_kwargs_per_session(
     tdt_folders = find_tdt_folders(root_folder=setup_folder)
 
     # List of (sheet_name, subject_id, session_date) tuples to skip
-    sessions_to_skip = [  # These sessions are missing files, likely not uploaded properly.
-        (
-            "behav_ChAT-cre_BF_2min-20Hz-stim - Sheet1",
-            "M376",
-            datetime.datetime(2025, 10, 27, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_ChAT-cre_BF_2min-20Hz-stim - Sheet1",
-            "M501",
-            datetime.datetime(2025, 10, 27, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
-            "M368",
-            datetime.datetime(2025, 9, 23, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
-            "M368",
-            datetime.datetime(2025, 9, 26, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
-            "M369",
-            datetime.datetime(2025, 9, 27, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
-            "M369",
-            datetime.datetime(2025, 10, 11, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
-            "M369",
-            datetime.datetime(2025, 10, 20, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
-            "M369",
-            datetime.datetime(2025, 10, 2, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
-            "M369",
-            datetime.datetime(2025, 10, 14, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
-            "M369",
-            datetime.datetime(2025, 10, 29, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
-            "M370",
-            datetime.datetime(2025, 10, 11, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
-            "M370",
-            datetime.datetime(2025, 10, 20, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
-            "M370",
-            datetime.datetime(2025, 10, 2, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
-            "M370",
-            datetime.datetime(2025, 10, 14, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
-            "M371",
-            datetime.datetime(2025, 9, 24, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
-            "M371",
-            datetime.datetime(2025, 10, 5, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
-            "M371",
-            datetime.datetime(2025, 10, 19, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
-            "M371",
-            datetime.datetime(2025, 10, 26, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
-            "M371",
-            datetime.datetime(2025, 9, 30, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
-            "M371",
-            datetime.datetime(2025, 10, 16, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
-            "M372",
-            datetime.datetime(2025, 10, 19, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
-            "M372",
-            datetime.datetime(2025, 9, 30, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
-            "M372",
-            datetime.datetime(2025, 10, 16, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
-            "M373",
-            datetime.datetime(2025, 10, 1, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
-            "M373",
-            datetime.datetime(2025, 10, 26, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
-            "M373",
-            datetime.datetime(2025, 9, 26, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
-            "M373",
-            datetime.datetime(2025, 10, 29, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
-            "M374",
-            datetime.datetime(2025, 10, 12, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
-            "M374",
-            datetime.datetime(2025, 10, 28, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
-            "M374",
-            datetime.datetime(2025, 9, 29, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
-            "M374",
-            datetime.datetime(2025, 10, 25, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
-            "M375",
-            datetime.datetime(2025, 10, 12, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
-            "M375",
-            datetime.datetime(2025, 10, 28, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
-            "M375",
-            datetime.datetime(2025, 9, 29, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-        (
-            "behav_Dat-cre_mVTA_3h-stim - Sheet1",
-            "M375",
-            datetime.datetime(2025, 10, 25, tzinfo=ZoneInfo(key="US/Pacific")),
-        ),
-    ]
+    sessions_to_skip = []
 
     for sheet_name, subject_id_to_metadata in sheet_name_to_subject_id_to_metadata.items():
         for subject_id, metadata in subject_id_to_metadata.items():
@@ -502,7 +344,7 @@ if __name__ == "__main__":
 
     # Parameters for conversion
     data_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets")
-    output_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/conversion_nwb/huang_2025_tdt")
+    output_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/conversion_nwb/huang_2025_001617")
     max_workers = 10
     verbose = False
 

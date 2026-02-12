@@ -7,7 +7,7 @@ from zoneinfo import ZoneInfo
 from pydantic import DirectoryPath, FilePath
 from pymatreader import read_mat
 
-from dan_lab_to_nwb.huang_2025_dlc import Huang2025DLCNWBConverter
+from dan_lab_to_nwb.huang_2025_001711 import Huang2025NWBConverter
 from neuroconv.utils import dict_deep_update, load_dict_from_file
 
 
@@ -25,6 +25,51 @@ def session_to_nwb(
     stub_test: bool = False,
     verbose: bool = True,
 ):
+    """
+    Convert a single session of DeepLabCut behavioral and electrophysiology data to NWB format.
+
+    This function takes raw data files from a single experimental session and converts them
+    to the Neurodata Without Borders (NWB) format. The session includes video recordings,
+    DeepLabCut pose estimation data, behavioral labels, EEG/EMG recordings, and session metadata.
+
+    Parameters
+    ----------
+    info_file_path : FilePath
+        Path to the .mat file containing session information (subject ID, session ID, start time).
+    video_file_path : FilePath
+        Path to the video file (.avi) from Cam1 or Cam2.
+    dlc_file_path : FilePath
+        Path to the DeepLabCut analysis output file (.h5).
+    labels_file_path : FilePath
+        Path to the .mat file containing behavioral state labels (REM, WAKE, NREM).
+    behavioral_summary_file_path : FilePath
+        Path to the .csv file containing summary statistics for the behavioral session.
+    eeg_file_path : FilePath
+        Path to the .mat file containing EEG (electroencephalography) data.
+    emg_file_path : FilePath
+        Path to the .mat file containing EMG (electromyography) data.
+    fs_file_path : FilePath
+        Path to the .mat file containing the sampling frequency.
+    output_dir_path : DirectoryPath
+        Directory where the output NWB file will be saved.
+    stub_test : bool, default: False
+        If True, only convert a small subset of the data for testing purposes.
+    verbose : bool, default: True
+        If True, print progress messages during conversion.
+
+    Returns
+    -------
+    None
+        The function creates an NWB file but does not return a value.
+
+    Notes
+    -----
+    The output NWB file is named following the pattern:
+    sub-{subject_id}_ses-{session_id}.nwb
+
+    The function automatically detects whether the video is from Cam1 or Cam2
+    based on the filename and names it accordingly in the NWB file.
+    """
     info_file_path = Path(info_file_path)
     video_file_path = Path(video_file_path)
     dlc_file_path = Path(dlc_file_path)
@@ -61,11 +106,11 @@ def session_to_nwb(
     source_data["Ecephys"] = dict(eeg_file_path=eeg_file_path, emg_file_path=emg_file_path, fs_file_path=fs_file_path)
     conversion_options["Ecephys"] = dict()
 
-    converter = Huang2025DLCNWBConverter(source_data=source_data, verbose=verbose)
+    converter = Huang2025NWBConverter(source_data=source_data, verbose=verbose)
     metadata = converter.get_metadata()
 
     # Update default metadata with the editable in the corresponding yaml file
-    editable_metadata_path = Path(__file__).parent / "huang_2025_dlc_metadata.yaml"
+    editable_metadata_path = Path(__file__).parent / "huang_2025_001711_metadata.yaml"
     editable_metadata = load_dict_from_file(editable_metadata_path)
     metadata = dict_deep_update(metadata, editable_metadata)
 
@@ -92,7 +137,7 @@ def session_to_nwb(
 def main():
     # Parameters for conversion
     data_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/Test - video analysis")
-    output_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/conversion_nwb/huang_2025_dlc")
+    output_dir_path = Path("/Volumes/T7/CatalystNeuro/Dan/conversion_nwb/huang_2025_001711")
     stub_test = False
 
     if output_dir_path.exists():
