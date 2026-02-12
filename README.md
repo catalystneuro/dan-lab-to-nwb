@@ -156,6 +156,10 @@ Before converting, make sure to reorganize your TDT data folders using the provi
 
 Also, before converting, make sure that the metadata.xlsx files have been exported to CSVs, and that all of the date and setup columns are appropriately labeled. Note the final column in "FP_Sert-cre_DRN_2min-pTra-stim.xlsx" is labeled "Experiments" but should be labeled "date" and "setup".
 
+Note the metadata CSV files must be located in the same directories as on the Google Drive:
+- `FP and opto datasets/metadata/opto-signal sum`
+- `FP and opto datasets/metadata/opto-behavioral sum`
+
 To convert example sessions:
 
 1. In `src/dan_lab_to_nwb/huang_2025_001617/huang_2025_001617_convert_session.py`, update the `data_dir_path` and
