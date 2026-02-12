@@ -124,11 +124,11 @@ To convert an example session:
 
 2. Run the conversion script:
     ```bash
-    python src/dan_lab_to_nwb/huang_2025_001711/huang_2025_001711_convert_session.py
+    python -W ignore src/dan_lab_to_nwb/huang_2025_001711/huang_2025_001711_convert_session.py
     ```
     Or, if running on a Windows machine:
     ```bash
-    python src\\dan_lab_to_nwb\\huang_2025_001711\\huang_2025_001711_convert_session.py
+    python -W ignore src\\dan_lab_to_nwb\\huang_2025_001711\\huang_2025_001711_convert_session.py
     ```
 
 To convert all sessions in the dataset:
@@ -138,7 +138,7 @@ To convert all sessions in the dataset:
 
 2. Run the conversion script:
     ```bash
-    python src/dan_lab_to_nwb/huang_2025_001711/huang_2025_001711_convert_all_sessions.py
+    python -W ignore src/dan_lab_to_nwb/huang_2025_001711/huang_2025_001711_convert_all_sessions.py
     ```
 
 ### huang_2025_001617 (Fiber Photometry with Optogenetics)
@@ -174,7 +174,7 @@ To convert example sessions:
 
 3. Run the conversion script:
     ```bash
-    python src/dan_lab_to_nwb/huang_2025_001617/huang_2025_001617_convert_session.py
+    python -W ignore src/dan_lab_to_nwb/huang_2025_001617/huang_2025_001617_convert_session.py
     ```
 
 To convert all sessions in the dataset:
@@ -184,7 +184,7 @@ To convert all sessions in the dataset:
 
 2. Run the conversion script:
     ```bash
-    python src/dan_lab_to_nwb/huang_2025_001617/huang_2025_001617_convert_all_sessions.py
+    python -W ignore src/dan_lab_to_nwb/huang_2025_001617/huang_2025_001617_convert_all_sessions.py
     ```
 
 Note: The `huang_2025_001617` conversion supports multiprocessing to speed up conversion of large datasets. You can adjust the
