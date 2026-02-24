@@ -145,7 +145,7 @@ convert_directory() {
             converted=$((converted + 1))
         else
             echo "  → Converting..."
-            if ffmpeg -i "$avi_file" -c:v libx264 -crf 18 -pix_fmt yuv420p -c:a copy "$mp4_file" -loglevel warning; then
+            if ffmpeg -nostdin -i "$avi_file" -c:v libx264 -crf 18 -pix_fmt yuv420p -preset fast -c:a copy "$mp4_file" -loglevel warning; then
                 echo -e "  ${GREEN}✓ Done: $(basename "$mp4_file")${NC}"
                 echo "[$(date '+%Y-%m-%d %H:%M:%S')] SUCCESS: $avi_file" >> "$LOG_FILE"
                 converted=$((converted + 1))
