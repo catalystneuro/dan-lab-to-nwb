@@ -59,6 +59,8 @@ Each conversion is organized in a directory of its own in the `src` directory:
             │   ├── reorganize_data.py
             │   ├── unorganize_data.py
             │   └── validate_paths.py
+            ├── video_utils
+            │   └── convert_videos_to_h264.sh
             ├── huang_2025_001711
             │   ├── __init__.py
             │   ├── huang_2025_001711_behavior_interface.py
@@ -109,11 +111,25 @@ The `download_utils` directory contains utility scripts for reorganizing TDT dat
 * `unorganize_data.py` : Script to reverse the reorganization (for backup purposes)
 * `validate_paths.py` : Script to validate file paths before conversion
 
+The `video_utils` directory contains utility scripts for preparing video files before conversion:
+
+* `convert_videos_to_h264.sh` : Shell script that re-encodes `.avi` videos to H.264 `.mp4` for compatibility with NWB visualization widgets, which require browser-native codecs (H.264, VP8/VP9, or AV1). Must be run before the NWB conversion.
+
 ## Running a Conversion
 
 ### huang_2025_001711 (DeepLabCut with EEG/EMG)
 
 This conversion processes behavioral video data analyzed with DeepLabCut along with EEG and EMG recordings.
+
+Before converting, re-encode the raw `.avi` videos to H.264 `.mp4` so they render correctly in NWB visualization widgets:
+
+```bash
+bash src/dan_lab_to_nwb/video_utils/convert_videos_to_h264.sh \
+    "/Volumes/T7/CatalystNeuro/Dan/Test - video analysis" \
+    --delete-originals
+```
+
+You can add `--dry-run` first to preview which files will be converted without actually converting them.
 
 To convert an example session:
 
@@ -145,7 +161,19 @@ To convert all sessions in the dataset:
 
 This conversion processes TDT recordings that include fiber photometry, optogenetic stimulation, EEG/EMG, and behavioral video.
 
-Before converting, make sure to reorganize your TDT data folders using the provided `reorganize_data.py` script, as described in the steps below. This will ensure compatibility with the Neo data reader used in the conversion.
+Before converting, complete the following pre-conversion steps.
+
+First, re-encode the raw `.avi` videos to H.264 `.mp4` so they render correctly in NWB visualization widgets:
+
+```bash
+bash src/dan_lab_to_nwb/video_utils/convert_videos_to_h264.sh \
+    "/Volumes/T7/CatalystNeuro/Dan/FP and opto datasets" \
+    --delete-originals
+```
+
+You can add `--dry-run` first to preview which files will be converted without actually converting them.
+
+Second, make sure to reorganize your TDT data folders using the provided `reorganize_data.py` script, as described in the steps below. This will ensure compatibility with the Neo data reader used in the conversion.
 
 1. In `src/dan_lab_to_nwb/download_utils/reorganize_data.py`, update the `data_dir_path` variable to point to your raw TDT data directory.
 

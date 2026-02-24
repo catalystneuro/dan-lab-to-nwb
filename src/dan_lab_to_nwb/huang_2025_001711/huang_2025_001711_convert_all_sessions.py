@@ -127,7 +127,7 @@ def get_session_to_nwb_kwargs_per_session(
                 continue
             check_FP_folder = session_folder / "check_FP"
             info_file_path = check_FP_folder / "Info.mat"
-            video_file_path = next(session_folder.glob("*.avi"))
+            video_file_path = next(session_folder.glob("*.mp4"))
             dlc_file_path = next(session_folder.glob("*DLC*.h5"))
             labels_file_path = check_FP_folder / "labels.mat"
             eeg_file_path = check_FP_folder / "EEG.mat"

@@ -309,7 +309,7 @@ def get_session_to_nwb_kwargs_per_session(
                         cam_number = subject_number
                         stream_number = subject_number
                         video_file_path = next(
-                            p for p in inner_session_folder.glob(f"*Cam{cam_number}.avi") if not p.name.startswith("._")
+                            p for p in inner_session_folder.glob(f"*Cam{cam_number}.mp4") if not p.name.startswith("._")
                         )
                         stream_name = f"LFP{stream_number}"
                         if record_fiber is None:
