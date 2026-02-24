@@ -50,7 +50,7 @@ def session_to_nwb(
     output_dir_path : DirectoryPath
         Directory where the output NWB file will be saved.
     video_file_path : FilePath
-        Path to the behavioral video file (.avi) from Cam1 or Cam2.
+        Path to the behavioral video file (.mp4) from Cam1 or Cam2.
     record_fiber : int
         Fiber number used for recording (1 or 2). Determines which TDT streams to use
         for fiber photometry data.
@@ -298,7 +298,7 @@ def main():
         / "M301-240904-072001"
         / "Lindsay_SBO_op1-E_2in1_pTra_con-240902-231421"
         / "M301-240904-072001"
-        / "Lindsay_SBO_op1-E_2in1_pTra_con-240902-231421_M301-240904-072001_Cam1.avi"
+        / "Lindsay_SBO_op1-E_2in1_pTra_con-240902-231421_M301-240904-072001_Cam1.mp4"
     )
     tdt_fp_folder_path = (
         data_dir_path
@@ -378,7 +378,7 @@ def main():
         / "M296-241018-072001"
         / "Lindsay_SBO_op1-E_2in1_pTra_con-241017-190451"
         / "M296-241018-072001"
-        / "Lindsay_SBO_op1-E_2in1_pTra_con-241017-190451_M296-241018-072001_Cam1.avi"
+        / "Lindsay_SBO_op1-E_2in1_pTra_con-241017-190451_M296-241018-072001_Cam1.mp4"
     )
     tdt_fp_folder_path = (
         data_dir_path
@@ -455,7 +455,7 @@ def main():
         / "M363_M366-250822-153604"
         / "A_Lindsay_TDTm_op1_pTra_2min-250822-153604"
         / "M363_M366-250822-153604"
-        / "A_Lindsay_TDTm_op1_pTra_2min-250822-153604_M363_M366-250822-153604_Cam1.avi"
+        / "A_Lindsay_TDTm_op1_pTra_2min-250822-153604_M363_M366-250822-153604_Cam1.mp4"
     )
     tdt_fp_folder_path = (
         data_dir_path
@@ -533,7 +533,7 @@ def main():
         / "M363_M366-250822-153604"
         / "A_Lindsay_TDTm_op1_pTra_2min-250822-153604"
         / "M363_M366-250822-153604"
-        / "A_Lindsay_TDTm_op1_pTra_2min-250822-153604_M363_M366-250822-153604_Cam2.avi"
+        / "A_Lindsay_TDTm_op1_pTra_2min-250822-153604_M363_M366-250822-153604_Cam2.mp4"
     )
     tdt_fp_folder_path = (
         data_dir_path
@@ -605,7 +605,7 @@ def main():
         / "M008-240819-071001"
         / "Lindsay_SBO_opto1-Evoke12_2in1-240817-154318"
         / "M008-240819-071001"
-        / "Lindsay_SBO_opto1-Evoke12_2in1-240817-154318_M008-240819-071001_Cam1.avi"
+        / "Lindsay_SBO_opto1-Evoke12_2in1-240817-154318_M008-240819-071001_Cam1.mp4"
     )
     tdt_fp_folder_path = (
         data_dir_path
@@ -673,7 +673,7 @@ def main():
         / "M361_M337-250609-081001"
         / "A_Lindsay_SBO_opto1_E_2miceRand-250609-081001"
         / "M361_M337-250609-081001"
-        / "A_Lindsay_SBO_opto1_E_2miceRand-250609-081001_M361_M337-250609-081001_Cam2.avi"
+        / "A_Lindsay_SBO_opto1_E_2miceRand-250609-081001_M361_M337-250609-081001_Cam2.mp4"
     )
     tdt_fp_folder_path = (
         data_dir_path
@@ -741,7 +741,7 @@ def main():
         / "M363_M364-250722-191039"
         / "A_Lindsay_TDTm_op1_pTra_2min-250722-190941"
         / "M363_M364-250722-191039"
-        / "A_Lindsay_TDTm_op1_pTra_2min-250722-190941_M363_M364-250722-191039_Cam1.avi"
+        / "A_Lindsay_TDTm_op1_pTra_2min-250722-190941_M363_M364-250722-191039_Cam1.mp4"
     )
     tdt_fp_folder_path = (
         data_dir_path
