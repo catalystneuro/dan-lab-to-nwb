@@ -120,7 +120,7 @@ def collect_excel_metadata(*, metadata_folder_path: DirectoryPath) -> dict[str, 
     sheet_name_to_subject_id_to_metadata: dict[str, dict[str, dict]] = {}
     metadata_folder_path = Path(metadata_folder_path)
     for excel_file in metadata_folder_path.glob("*.csv"):
-        if excel_file.name.startswith("._"):
+        if excel_file.name.startswith("."):
             continue
         subject_id_to_metadata = read_metadata(excel_file)
         sheet_name_to_subject_id_to_metadata[excel_file.stem] = subject_id_to_metadata
@@ -284,8 +284,8 @@ def get_session_to_nwb_kwargs_per_session(
                 for tdt_folder in tdt_folders:
                     if subject_id in tdt_folder.name and session_date.strftime("%y%m%d") in tdt_folder.name:
                         matched = True
-                        session_folder = next(p for p in tdt_folder.iterdir() if not p.name.startswith("._"))
-                        inner_session_folder = next(p for p in session_folder.iterdir() if not p.name.startswith("._"))
+                        session_folder = next(p for p in tdt_folder.iterdir() if not p.name.startswith("."))
+                        inner_session_folder = next(p for p in session_folder.iterdir() if not p.name.startswith("."))
 
                         info_file_path = inner_session_folder / "Info.mat"
                         tdt_fp_folder_path = inner_session_folder
@@ -309,7 +309,7 @@ def get_session_to_nwb_kwargs_per_session(
                         cam_number = subject_number
                         stream_number = subject_number
                         video_file_path = next(
-                            p for p in inner_session_folder.glob(f"*Cam{cam_number}.mp4") if not p.name.startswith("._")
+                            p for p in inner_session_folder.glob(f"*Cam{cam_number}.mp4") if not p.name.startswith(".")
                         )
                         stream_name = f"LFP{stream_number}"
                         if record_fiber is None:
