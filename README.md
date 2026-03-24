@@ -122,6 +122,9 @@ To convert an example session:
     the directory containing your raw data. `output_dir_path` can be any valid path on your system where the output
     NWB files will be stored.
 
+    > [!WARNING]
+    > The `convert_session` workflow will delete whatever folder is specified by the output directory path. Use an empty folder for `output_dir_path`, and do not point it to any directory that contains sensitive or irreplaceable data. The `data_dir_path` should point to your source data directory.
+
 2. Run the conversion script:
     ```bash
     python -W ignore src/dan_lab_to_nwb/huang_2025_001711/huang_2025_001711_convert_session.py
@@ -135,6 +138,9 @@ To convert all sessions in the dataset:
 
 1. Update `data_dir_path` and `output_dir_path` in `src/dan_lab_to_nwb/huang_2025_001711/huang_2025_001711_convert_all_sessions.py`
     as with the example sessions.
+
+    > [!WARNING]
+    > The `convert_session` workflow will delete whatever folder is specified by the output directory path. Use an empty folder for `output_dir_path`, and do not point it to any directory that contains sensitive or irreplaceable data. The `data_dir_path` should point to your source data directory.
 
 2. Run the conversion script:
     ```bash
@@ -173,6 +179,9 @@ To convert example sessions:
 1. In `src/dan_lab_to_nwb/huang_2025_001617/huang_2025_001617_convert_session.py`, update the `data_dir_path` and
     `output_dir_path` variables in the `main()` function to appropriate local paths.
 
+    > [!WARNING]
+    > The `convert_session` workflow will delete whatever folder is specified by the output directory path. Use an empty folder for `output_dir_path`, and do not point it to any directory that contains sensitive or irreplaceable data. The `data_dir_path` should point to your source data directory.
+
 2. Before running the conversion, you may need to reorganize the TDT data folders to be compatible with the Neo data reader.
     You can do this by running:
     ```bash
@@ -189,6 +198,9 @@ To convert all sessions in the dataset:
 
 1. Update `data_dir_path` and `output_dir_path` in `src/dan_lab_to_nwb/huang_2025_001617/huang_2025_001617_convert_all_sessions.py`
     as with the example sessions.
+
+    > [!WARNING]
+    > The `convert_session` workflow will delete whatever folder is specified by the output directory path. Use an empty folder for `output_dir_path`, and do not point it to any directory that contains sensitive or irreplaceable data. The `data_dir_path` should point to your source data directory.
 
 2. Run the conversion script:
     ```bash
