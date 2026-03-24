@@ -122,8 +122,8 @@ To convert an example session:
     the directory containing your raw data. `output_dir_path` can be any valid path on your system where the output
     NWB files will be stored.
 
-    > [!WARNING]
-    > The `convert_session` workflow will delete whatever folder is specified by the output directory path. Use an empty folder for `output_dir_path`, and do not point it to any directory that contains sensitive or irreplaceable data. The `data_dir_path` should point to your source data directory.
+> [!WARNING]
+> The `convert_session` workflow will delete whatever folder is specified by the output directory path. Use an empty folder for `output_dir_path`, and do not point it to any directory that contains sensitive or irreplaceable data. The `data_dir_path` should point to your source data directory.
 
 2. Run the conversion script:
     ```bash
