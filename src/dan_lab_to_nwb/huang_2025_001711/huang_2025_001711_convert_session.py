@@ -37,7 +37,7 @@ def session_to_nwb(
     info_file_path : FilePath
         Path to the .mat file containing session information (subject ID, session ID, start time).
     video_file_path : FilePath
-        Path to the video file (.avi) from Cam1 or Cam2.
+        Path to the video file (.mp4) from Cam1 or Cam2.
     dlc_file_path : FilePath
         Path to the DeepLabCut analysis output file (.h5).
     labels_file_path : FilePath
@@ -146,7 +146,7 @@ def main():
     # Example Session
     info_file_path = data_dir_path / "M407" / "M407-S1" / "check_FP" / "Info.mat"
     video_file_path = (
-        data_dir_path / "M407" / "M407-S1" / "Lindsay_SBOX_2animals_R-250411-223215_M405_M407-250412-081001_Cam2.avi"
+        data_dir_path / "M407" / "M407-S1" / "Lindsay_SBOX_2animals_R-250411-223215_M405_M407-250412-081001_Cam2.mp4"
     )
     dlc_file_path = (
         data_dir_path
