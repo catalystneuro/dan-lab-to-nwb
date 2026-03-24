@@ -160,6 +160,14 @@ Note the metadata CSV files must be located in the same directories as on the Go
 - `FP and opto datasets/metadata/opto-signal sum`
 - `FP and opto datasets/metadata/opto-behavioral sum`
 
+And note that the metadata CSV files must match the file names in `huang_2025_001617_convert_session.py` in order to run that script.
+Specifically, the script looks for the following metadata files:
+- `opto-signal sum/FP_Dat-cre_mVTA_3h-stim_low virus - Sheet1.csv`
+- `opto-signal sum/FP_Sert-cre_DRN_2min-pTra-stim - Sheet1.csv`
+- `opto-behavioral sum/behav_ChAT-cre_BF_2min-20Hz-stim - Sheet1.csv`
+- `opto-behavioral sum/behav_Sert-cre_DRN_2min-pTra-stim - Sheet1.csv`
+
+
 To convert example sessions:
 
 1. In `src/dan_lab_to_nwb/huang_2025_001617/huang_2025_001617_convert_session.py`, update the `data_dir_path` and
