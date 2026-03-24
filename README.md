@@ -27,6 +27,25 @@ Note:
 both of the methods above install the repository in [editable mode](https://pip.pypa.io/en/stable/cli/pip_install/#editable-installs).
 The dependencies for this environment are stored in the dependencies section of the `pyproject.toml` file.
 
+## Installing ffmpeg
+
+The video conversion script requires [ffmpeg](https://ffmpeg.org/) to be installed separately. Install it using the appropriate command for your operating system:
+
+**macOS:**
+```bash
+brew install ffmpeg
+```
+
+**Windows:**
+```bash
+winget install ffmpeg
+```
+
+Or, if you use [Chocolatey](https://chocolatey.org/):
+```bash
+choco install ffmpeg
+```
+
 ## Helpful Definitions
 
 This conversion project is comprised primarily by DataInterfaces, NWBConverters, and conversion scripts.
