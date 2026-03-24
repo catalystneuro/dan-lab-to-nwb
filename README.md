@@ -10,7 +10,7 @@ From a terminal (note that conda should install one in your system) you can do t
 git clone https://github.com/catalystneuro/dan-lab-to-nwb
 cd dan-lab-to-nwb
 conda env create --file make_env.yml
-conda activate dan-lab-to-nwb-env
+conda activate dan_lab_to_nwb_env
 ```
 
 This creates a [conda environment](https://docs.conda.io/projects/conda/en/latest/user-guide/concepts/environments.html) which isolates the conversion code from your system libraries. We recommend that you run all your conversion related tasks and analysis from the created environment in order to minimize issues related to package dependencies.
@@ -138,6 +138,9 @@ To convert an example session:
     the directory containing your raw data. `output_dir_path` can be any valid path on your system where the output
     NWB files will be stored.
 
+> [!WARNING]
+> The `convert_session` workflow will delete whatever folder is specified by the output directory path. Use an empty folder for `output_dir_path`.
+
 2. Run the conversion script:
     ```bash
     python -W ignore src/dan_lab_to_nwb/huang_2025_001711/huang_2025_001711_convert_session.py
@@ -151,6 +154,9 @@ To convert all sessions in the dataset:
 
 1. Update `data_dir_path` and `output_dir_path` in `src/dan_lab_to_nwb/huang_2025_001711/huang_2025_001711_convert_all_sessions.py`
     as with the example sessions.
+
+> [!WARNING]
+> The `convert_session` workflow will delete whatever folder is specified by the output directory path. Use an empty folder for `output_dir_path`.
 
 2. Run the conversion script:
     ```bash
@@ -188,10 +194,21 @@ Note the metadata CSV files must be located in the same directories as on the Go
 - `FP and opto datasets/metadata/opto-signal sum`
 - `FP and opto datasets/metadata/opto-behavioral sum`
 
+And note that the metadata CSV files must match the file names in `huang_2025_001617_convert_session.py` in order to run that script.
+Specifically, the script looks for the following metadata files:
+- `opto-signal sum/FP_Dat-cre_mVTA_3h-stim_low virus - Sheet1.csv`
+- `opto-signal sum/FP_Sert-cre_DRN_2min-pTra-stim - Sheet1.csv`
+- `opto-behavioral sum/behav_ChAT-cre_BF_2min-20Hz-stim - Sheet1.csv`
+- `opto-behavioral sum/behav_Sert-cre_DRN_2min-pTra-stim - Sheet1.csv`
+
+
 To convert example sessions:
 
 1. In `src/dan_lab_to_nwb/huang_2025_001617/huang_2025_001617_convert_session.py`, update the `data_dir_path` and
     `output_dir_path` variables in the `main()` function to appropriate local paths.
+
+> [!WARNING]
+> The `convert_session` workflow will delete whatever folder is specified by the output directory path. Use an empty folder for `output_dir_path`.
 
 2. Before running the conversion, you may need to reorganize the TDT data folders to be compatible with the Neo data reader.
     You can do this by running:
@@ -209,6 +226,9 @@ To convert all sessions in the dataset:
 
 1. Update `data_dir_path` and `output_dir_path` in `src/dan_lab_to_nwb/huang_2025_001617/huang_2025_001617_convert_all_sessions.py`
     as with the example sessions.
+
+> [!WARNING]
+> The `convert_session` workflow will delete whatever folder is specified by the output directory path. Use an empty folder for `output_dir_path`.
 
 2. Run the conversion script:
     ```bash
